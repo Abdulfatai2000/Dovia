@@ -42,7 +42,7 @@ export function Tooltip({ content, children, wrapperClassName }: TooltipProps) {
     </span>
     {!position && <span id={id} role="tooltip" className="sr-only">{content}</span>}
     {position && createPortal(<span id={id} role="tooltip" onMouseEnter={cancelTimer} onMouseLeave={scheduleHide}
-      className="fixed z-50 w-64 max-w-[calc(100vw-2rem)] rounded-default bg-sidebar px-3 py-2 text-xs leading-relaxed text-sidebar-text shadow-default"
+      className="fixed z-[var(--z-tooltip)] w-64 max-w-[calc(100vw-2rem)] rounded-default bg-sidebar px-3 py-2 text-xs leading-relaxed text-sidebar-text shadow-default"
       style={{ left: position.left, top: position.top, transform: position.above ? "translateY(-100%)" : undefined }}>{content}</span>, position.container)}
   </>;
 }

@@ -1,8 +1,9 @@
+import { PageHeader } from "@/components/ui/page-header";
+
 export default function Page() {
   return (
-    <main>
-      <h1>Dovia Settings Account</h1>
-      <p>This page will be implemented in a later phase.</p>
-    </main>
+    <div className="space-y-3">
+      <PageHeader title="Dovia Settings Account" description="This page will be implemented in a later phase." />
+    </div>
   );
 }

@@ -1,3 +1,3 @@
 export default function Loading() {
-  return <main><p role="status">Loading Dovia...</p></main>;
+  return <div className="space-y-3"><p role="status">Loading Dovia...</p></div>;
 }
