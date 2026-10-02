@@ -1,6 +1,69 @@
-import type { ReactNode } from "react";
+"use client";
 
-// TODO: Implement modal UI and behavior. This is a structural placeholder only.
-export default function Modal({ children }: { children?: ReactNode }) {
-  return <div data-placeholder="modal">{children ?? "Modal placeholder"}</div>;
+import { useEffect, useId, useRef, type ReactNode } from "react";
+import { X } from "lucide-react";
+import { Button, type ButtonVariant } from "./button";
+import { IconButton } from "./icon-button";
+import { cn } from "@/lib/utils";
+
+export interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  description?: string;
+  children: ReactNode;
+  footer?: ReactNode;
+  onConfirm?: () => void;
+  confirmLabel?: string;
+  confirmVariant?: ButtonVariant;
+  confirmDisabled?: boolean;
+  confirmLoading?: boolean;
+  size?: "sm" | "md" | "lg";
+  closeOnBackdrop?: boolean;
+  className?: string;
 }
+export function Modal({ open, onClose, title, description, children, footer, onConfirm, confirmLabel = "Confirm", confirmVariant = "primary", confirmDisabled, confirmLoading, size = "md", closeOnBackdrop = true, className }: ModalProps) {
+  const id = useId();
+  const dialog = useRef<HTMLDialogElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    const element = dialog.current;
+    if (!element) return;
+    if (!open) { if (element.open) element.close(); return; }
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (!element.open) element.showModal();
+    titleRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      if (element.open) element.close();
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus();
+    };
+  }, [open]);
+  // Keep native close events from effect cleanup from cancelling a subsequent open.
+  useEffect(() => { wasOpen.current = open; }, [open]);
+  return <dialog ref={dialog} aria-modal="true" aria-labelledby={id + "-title"} aria-describedby={description ? id + "-description" : undefined}
+    onCancel={event => { event.preventDefault(); onClose(); }}
+    onClose={() => { if (wasOpen.current && !dialog.current?.open) onClose(); }}
+    onClick={event => {
+      if (!closeOnBackdrop || event.target !== event.currentTarget) return;
+      const rect = event.currentTarget.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose();
+    }}
+    className={cn("dovia-modal", { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" }[size], className)}>
+    <div className="mb-5 flex items-start justify-between gap-4">
+      <div className="min-w-0 space-y-2">
+        <h2 ref={titleRef} tabIndex={-1} id={id + "-title"} className="dovia-section-title break-words">{title}</h2>
+        {description && <p id={id + "-description"} className="text-sm text-text-secondary">{description}</p>}
+      </div>
+      <IconButton aria-label="Close dialog" onClick={onClose}><X aria-hidden="true" /></IconButton>
+    </div>
+    <div className="min-w-0">{children}</div>
+    {(footer !== undefined || onConfirm) && <div className="mt-6 flex flex-wrap justify-end gap-3 border-t border-border pt-4">
+      {footer ?? <><Button variant="outline" onClick={onClose}>Cancel</Button><Button variant={confirmVariant} onClick={onConfirm} disabled={confirmDisabled} loading={confirmLoading}>{confirmLabel}</Button></>}
+    </div>}
+  </dialog>;
+}
+export default Modal;

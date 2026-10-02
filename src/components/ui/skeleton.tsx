@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithRef } from "react";
+import { cn } from "@/lib/utils";
 
-// TODO: Implement skeleton UI and behavior. This is a structural placeholder only.
-export default function Skeleton({ children }: { children?: ReactNode }) {
-  return <div data-placeholder="skeleton">{children ?? "Skeleton placeholder"}</div>;
+export function Skeleton({ className, ...props }: ComponentPropsWithRef<"div">) {
+  return <div {...props} aria-hidden="true" className={cn("dovia-skeleton h-4 rounded-default bg-border", className)} />;
 }
+export default Skeleton;
