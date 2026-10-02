@@ -37,7 +37,8 @@ export function Modal({ id: dialogId, open, onClose, title, titleContent, placem
     if (!open) { if (element.open) element.close(); return; }
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (!element.open) element.showModal();
-    titleRef.current?.focus();
+    if (titleRef.current?.classList.contains("sr-only")) element.querySelector<HTMLElement>("a, button")?.focus();
+    else titleRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {

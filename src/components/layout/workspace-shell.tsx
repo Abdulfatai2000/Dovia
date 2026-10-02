@@ -8,6 +8,13 @@ import { Topbar } from "./topbar";
 export function WorkspaceShell({ children }: { children: ReactNode }) {
   const [sidebarMode, setSidebarMode] = useState<"auto" | "expanded" | "collapsed">("auto");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const changeSidebar = (mode: "expanded" | "collapsed") => {
+    setSidebarMode(mode);
+    requestAnimationFrame(() => {
+      const label = mode === "collapsed" ? "Expand sidebar" : "Collapse sidebar";
+      document.getElementById("workspace-sidebar")?.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`)?.focus();
+    });
+  };
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 768px)");
     const close = () => setMobileOpen(false);
@@ -19,7 +26,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
   return <div className="workspace-shell min-h-dvh bg-background" data-sidebar={sidebarMode}>
     <a href="#main-content" className="fixed top-3 left-3 z-[var(--z-skip)] rounded-default bg-primary px-4 py-3 text-sm font-medium text-on-brand shadow-default not-focus:sr-only focus:text-on-brand"
       onClick={() => document.getElementById("main-content")?.focus()}>Skip to main content</a>
-    <Sidebar onCollapse={() => setSidebarMode("collapsed")} onExpand={() => setSidebarMode("expanded")} />
+    <Sidebar onCollapse={() => changeSidebar("collapsed")} onExpand={() => changeSidebar("expanded")} />
     <div className="min-w-0">
       <Topbar onOpenNavigation={() => setMobileOpen(true)} navigationOpen={mobileOpen} />
       <main id="main-content" tabIndex={-1} className="dovia-page min-h-[calc(100dvh-var(--topbar-height))] scroll-mt-24 focus-visible:outline-offset-[-4px]">{children}</main>

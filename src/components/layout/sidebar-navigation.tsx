@@ -17,7 +17,7 @@ export function SidebarNavigation({ mobile = false, onNavigate }: { mobile?: boo
           className={cn("sidebar-link group flex min-h-11 w-full items-center gap-3 rounded-default px-3 py-2.5 text-sm font-medium transition-colors duration-200 hover:no-underline focus-visible:outline-sidebar-text", active ? "dovia-gradient text-on-brand hover:text-on-brand" : "text-sidebar-text hover:bg-sidebar-hover hover:text-on-brand")}>
           <Icon aria-hidden="true" className={cn("size-5 shrink-0", active ? "text-on-brand" : "text-sidebar-muted group-hover:text-sidebar-text")} />
           <span className={cn("truncate", !mobile && "sidebar-label")}>{item.label}</span>
-          {active && <span aria-hidden="true" className={cn("ml-auto size-1.5 shrink-0 rounded-pill bg-on-brand", !mobile && "sidebar-label")} />
+          {active && <span aria-hidden="true" className={cn("ml-auto size-1.5 shrink-0 rounded-pill bg-on-brand", !mobile && "sidebar-label")} />}
         </Link>;
         return <li key={item.href}>{mobile ? link : <Tooltip content={item.label} wrapperClassName="flex w-full">{link}</Tooltip>}</li>;
       })}
