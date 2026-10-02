@@ -19,6 +19,8 @@ The shared workspace shell is frontend-only. Pages remain placeholders; authenti
 
 The existing app icon was copied unchanged to `public/logo/dovia-mark.png` for a stable public URL. No new logo was invented.
 
+Root metadata also references that asset as the favicon. This avoids the existing `/favicon.ico` 404 caused by the original `icon.png.png` filename, while preserving the original file, title, and description. The Next.js development indicator is positioned bottom-right so it does not cover the sidebar's expand control; this has no production UI effect.
+
 ## Navigation and active routes
 
 One configuration supplies both navigation presentations:
@@ -91,5 +93,7 @@ Example for a future page:
 ## Verification scope
 
 Check 375, 768, 1024, and 1440px; sidebar defaults and toggling; all workspace route families and nested active states; profile/notification menus; mobile search; drawer dismissal, focus containment/restoration; skip link; overflow; console/hydration errors; and absence of `/api/` requests. Run `npm run lint` followed by `npm run build` before accepting the phase.
+
+Browser review verified 18 route examples, including every requested route family and the nested meeting/task/settings cases. The four viewport sizes, collapse persistence, search-value persistence during navigation, sticky positioning while scrolling, menu navigation, sign-out feedback, skip link, drawer close/Escape/backdrop/navigation/breakpoint behavior, focus restoration, and reduced motion passed. No application API requests or browser console/hydration errors were observed in the final checked flows. axe WCAG 2 A/AA and 2.1 AA scans reported zero violations in the four shell layouts, collapsed rail, desktop/mobile menus, and mobile drawer. Desktop, mobile, notification, and drawer screenshots were visually reviewed. These checks are scoped to the implemented shell and are not a full assistive-technology audit.
 
 The next phase is **Phase 3 — Landing Page & Authentication UI**. It is not part of this implementation.
