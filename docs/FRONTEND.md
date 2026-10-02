@@ -2,6 +2,8 @@ DOVIA
 
 Frontend Implementation Handbook
 
+> Current implementation note — Phase 2 (frontend-first): the shared Workspace Shell & Navigation is implemented. The server workspace layout wraps a client shell with a responsive navy sidebar, sticky topbar, mobile drawer, segment-aware navigation, mock notification/profile previews, and explicit breadcrumbs. All workspace pages remain placeholders. No authentication, fetching, or backend functionality is connected. See [WORKSPACE_SHELL.md](./WORKSPACE_SHELL.md) for architecture and behavior. This current sequence takes precedence over the historical phase numbering below: Phase 0 scaffold, Phase 1 design system, Phase 2 workspace shell, then Phase 3 Landing Page & Authentication UI. Existing Phase 1 primitives are reused; no Radix/shadcn or other framework was added for this phase.
+
 Comprehensive phased build plan for every Dovia user-facing experience
 
 > Purpose This document is the implementation handbook for the Frontend developers, UI/UX engineers, QA and product reviewers side of Dovia. It is intentionally phased so a developer can build the product in a controlled order while keeping the same product workflow, shared API contracts and MongoDB-backed data model.

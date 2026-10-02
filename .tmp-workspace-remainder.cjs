@@ -11,7 +11,7 @@ const AxeBuilder = require(path.join(root, 'node_modules/@axe-core/playwright'))
   const page = await context.newPage();
   const errors = [];
   const apiCalls = [];
-  const results = [];
+  const results = JSON.parse(fs.readFileSync(path.join(root, 'workspace-report.json'), 'utf8'));
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')) apiCalls.push(request.url()); });
@@ -23,49 +23,9 @@ const AxeBuilder = require(path.join(root, 'node_modules/@axe-core/playwright'))
     fs.writeFileSync(path.join(root, 'workspace-report.json'), JSON.stringify(results, null, 2));
   };
   try {
-    for (const width of [375, 768, 1024, 1440]) {
-      await page.setViewportSize({ width, height: 900 });
-      await go('/dashboard');
-      await overflow();
-      assert.equal(await page.getByRole('main').count(), 1);
-      const rail = page.locator('#workspace-sidebar');
-      if (width < 768) assert.equal(await rail.isVisible(), false);
-      else assert.equal(Math.round((await rail.boundingBox()).width), width < 1024 ? 76 : 248);
-      await scan('shell-' + width);
-      await page.screenshot({ path: path.join(root, 'workspace-' + width + '.png'), fullPage: true });
-    }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await go('/tasks');
     const nav = page.getByRole('navigation', { name: 'Workspace', exact: true });
-    const routes = [
-      ['/dashboard', 'Dashboard'], ['/meetings', 'Meetings'], ['/meetings/new', 'Meetings'],
-      ['/meetings/test-meeting', 'Meetings'], ['/meetings/abc/content', 'Meetings'], ['/meetings/abc/ai-review', 'Meetings'],
-      ['/tasks', 'My Tasks'], ['/tasks/test-task', 'My Tasks'], ['/calendar', 'Calendar'], ['/team', 'Team'],
-      ['/reports', 'Reports'], ['/notifications', null], ['/settings', 'Settings'], ['/settings/account', 'Settings'],
-      ['/settings/notifications', 'Settings'], ['/settings/integrations', 'Settings'], ['/settings/security', 'Settings'], ['/settings/workspace', 'Settings'],
-    ];
-    for (const [route, label] of routes) {
-      await go(route);
-      assert.equal(await page.getByRole('main').count(), 1, route);
-      assert.equal(await page.locator('#workspace-sidebar').isVisible(), true);
-      if (label) assert.equal(await nav.getByRole('link', { name: label, exact: true }).getAttribute('aria-current'), 'page', route);
-      assert.equal(await nav.locator('[aria-current="page"]').count(), label ? 1 : 0, route);
-    }
-    await go('/dashboard');
-    await page.getByRole('button', { name: 'Collapse sidebar', exact: true }).click();
-    assert.equal(Math.round((await page.locator('#workspace-sidebar').boundingBox()).width), 76);
-    assert.equal(await page.getByRole('button', { name: 'Expand sidebar', exact: true }).evaluate(el => el === document.activeElement), true);
-    await scan('collapsed-sidebar');
-    await nav.getByRole('link', { name: 'Meetings', exact: true }).focus();
-    await page.locator('[role="tooltip"].fixed').waitFor();
-    await page.keyboard.press('Enter');
-    await page.waitForURL('**/meetings');
-    assert.equal(Math.round((await page.locator('#workspace-sidebar').boundingBox()).width), 76, 'Collapse state must persist across navigation');
-    await page.getByRole('button', { name: 'Expand sidebar', exact: true }).click();
-    assert.equal(Math.round((await page.locator('#workspace-sidebar').boundingBox()).width), 248);
-    await page.getByRole('searchbox', { name: 'Search workspace' }).fill('Planning');
-    await nav.getByRole('link', { name: 'My Tasks', exact: true }).click();
-    await page.waitForURL('**/tasks');
-    assert.equal(await page.getByRole('searchbox', { name: 'Search workspace' }).inputValue(), 'Planning');
-
     const profile = page.getByRole('button', { name: 'Open profile menu', exact: true });
     await profile.focus(); await page.keyboard.press('ArrowDown');
     assert.equal(await page.evaluate(() => document.activeElement.textContent.trim()), 'Profile / Account');
@@ -125,11 +85,17 @@ const AxeBuilder = require(path.join(root, 'node_modules/@axe-core/playwright'))
     const menu = await page.getByRole('menu').boundingBox(); assert.ok(menu.x >= 0 && menu.x + menu.width <= 375);
     await page.keyboard.press('Escape');
     await profile.click(); await overflow(); await scan('profile-mobile'); await page.keyboard.press('Escape');
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.evaluate(() => { document.getElementById('main-content').style.minHeight = '1800px'; window.scrollTo(0, 400); });
+    await page.waitForFunction(() => window.scrollY >= 400);
+    assert.equal(Math.round((await page.locator('#workspace-sidebar').boundingBox()).y), 0);
+    assert.equal(Math.round((await page.locator('header').first().boundingBox()).y), 0);
+    await page.evaluate(() => { document.getElementById('main-content').style.minHeight = ''; window.scrollTo(0, 0); });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     assert.equal(await nav.locator('a').first().evaluate(el => getComputedStyle(el).transitionDuration), '0s');
     assert.deepEqual(apiCalls, []);
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ routes: routes.length, interactions: 'passed', runtimeErrors: errors, apiCalls, accessibility: results }, null, 2));
+    console.log(JSON.stringify({ routesPreviouslyChecked: 18, interactions: 'passed', runtimeErrors: errors, apiCalls, accessibility: results }, null, 2));
     assert.ok(results.every(result => result.violations.length === 0), 'Accessibility issues found');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

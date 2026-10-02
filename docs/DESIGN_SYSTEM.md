@@ -2,7 +2,7 @@
 
 Dovia is an AI-powered meeting-to-execution workspace. **Turn conversations into action.** This foundation communicates clarity, productivity, trust, collaboration, and progress. White surfaces, a light workspace, navy navigation tokens, and selective blue/violet accents keep the interface suitable for professional work.
 
-This phase implements reusable components only. All application pages and backend handlers remain Phase 0 placeholders. The next phase is **Phase 2 — Workspace Shell & Navigation**.
+Phase 1 implements reusable components. Phase 2 composes these into the workspace shell; page content and backend handlers remain placeholders. See [WORKSPACE_SHELL.md](./WORKSPACE_SHELL.md) for shell usage.
 
 ## Design principles
 
@@ -232,3 +232,12 @@ The review fixture was rendered temporarily in local Chrome at 375, 768, 1024, a
 axe WCAG 2 A/AA and 2.1 AA scans reported zero violations at each width and in the open dialog. No page runtime errors were observed. These checks cover the fixture, not every possible future composition or a full assistive-technology audit. Temporary Playwright/axe tools were installed outside the product dependencies; the temporary route and runner were removed after review.
 
 Review fixes included explicit dialog Tab wrapping, recovery from avatar image failures before hydration, and a semantic role for the fixture's skeleton group. Final acceptance requires `npm run lint` and `npm run build` to pass with only the original application routes present.
+
+## Phase 2 shell extensions
+
+- Dropdown now supports either an `href` (Next.js Link) or an `onSelect` action, optional descriptions/meta text, separators, a header, two menu widths, and an IconButton trigger. Existing action-item usage remains valid. Do not nest a button or link inside trigger content.
+- Modal supports `placement="left"`, `titleContent`, `closeLabel`, and an optional element ID. Default centered dialogs retain their existing API. Left placement is used for the mobile navigation drawer and shares native backdrop/focus behavior.
+- Tooltip accepts `wrapperClassName` for full-width sidebar links.
+- Breadcrumbs is exported from the UI barrel; its explicit items avoid guessing names from route IDs. It owns its navigation landmark, so PageHeader's breadcrumbs slot is now a neutral wrapper.
+- Shell dimensions and stacking levels are semantic CSS tokens. WorkspaceShell owns content padding and the main landmark; individual workspace pages should not add another main or duplicate shell padding.
+- The shell reuses Avatar, SearchInput, IconButton, Dropdown, Modal, Badge, Toast, Tooltip, and PageHeader. No new package is required.
