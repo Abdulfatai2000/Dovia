@@ -45,6 +45,19 @@ export function Modal({ open, onClose, title, description, children, footer, onC
   // Keep native close events from effect cleanup from cancelling a subsequent open.
   useEffect(() => { wasOpen.current = open; }, [open]);
   return <dialog ref={dialog} aria-modal="true" aria-labelledby={id + "-title"} aria-describedby={description ? id + "-description" : undefined}
+    onKeyDown={event => {
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex], [contenteditable="true"]'))
+        .filter(element => element.tabIndex >= 0 && !element.matches(":disabled") && element.getClientRects().length > 0 && !element.closest("[hidden], [inert]"));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first) { event.preventDefault(); titleRef.current?.focus(); return; }
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === titleRef.current)) {
+        event.preventDefault(); last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+      }
+    }}
     onCancel={event => { event.preventDefault(); onClose(); }}
     onClose={() => { if (wasOpen.current && !dialog.current?.open) onClose(); }}
     onClick={event => {

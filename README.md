@@ -21,3 +21,5 @@ npm start
 ```
 
 See [the route inventory](docs/ROUTES.md), [product requirements](docs/SRS.md), and [AI review flow](docs/AI.md). AI suggestions must be reviewed and confirmed by a human before final tasks are created.
+
+Phase 1 provides Dovia's reusable tokens and UI primitives. See [the design-system reference](docs/DESIGN_SYSTEM.md) for colors, typography, component APIs, interaction contracts, and accessibility conventions. The component review fixture in `docs/design-system-preview.tsx` is not exposed as an application route.

@@ -85,7 +85,7 @@ export default function DesignSystemPreview() {
       <div className="grid gap-4 md:grid-cols-2">{(["success", "error", "warning", "info"] as const).map(variant => <Toast key={variant} variant={variant} title={variant + " feedback"} description="Clear, contextual feedback for the next step." />)}{toast && <Toast title="Dismissible feedback" onDismiss={() => setToast(false)} />}</div>
       <EmptyState icon={<Calendar />} title="Nothing here yet" description="Start with one focused action." action={<Button>Get started</Button>} />
       <ErrorState description="We couldn't load this example." onRetry={() => setMessage("Retry selected")} />
-      <LoadingState label="Loading component preview..." /><div className="space-y-3" aria-label="Loading content"><Skeleton className="h-20" /><Skeleton className="w-2/3" /></div>
+      <LoadingState label="Loading component preview..." /><div role="group" className="space-y-3" aria-label="Loading content"><Skeleton className="h-20" /><Skeleton className="w-2/3" /></div>
       <AIProcessingState state="idle" /><AIProcessingState state="processing" step={2} /><AIProcessingState state="success" /><AIProcessingState state="error" />
     </section>
   </main>;
