@@ -71,15 +71,6 @@
   --page-padding: var(--space-4);
   --card-padding: var(--space-4);
   --section-gap: var(--space-6);
-  --radius-sm: 6px;
-  --radius-default: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-pill: 9999px;
-  --shadow-sm: 0 1px 2px rgb(16 24 40 / 5%);
-  --shadow-default: 0 2px 8px rgb(16 24 40 / 6%);
-  --shadow-lg: 0 8px 24px rgb(16 24 40 / 8%);
   --motion-duration: 180ms;
 }
 
@@ -142,7 +133,7 @@
   ::selection { background: var(--ai-soft); color: var(--foreground); }
 }
 
-@theme {
+@theme static {
   --radius-sm: 6px;
   --radius-default: 8px;
   --radius-md: 12px;

@@ -13,7 +13,7 @@ export function Tooltip({ content, children }: TooltipProps) {
   const id = useId();
   const root = useRef<HTMLSpanElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [position, setPosition] = useState<{ left: number; top: number; above: boolean } | null>(null);
+  const [position, setPosition] = useState<{ left: number; top: number; above: boolean; container: HTMLElement } | null>(null);
   const cancelTimer = () => { if (timer.current) clearTimeout(timer.current); };
   const hide = () => { cancelTimer(); setPosition(null); };
   const show = () => {
@@ -21,7 +21,7 @@ export function Tooltip({ content, children }: TooltipProps) {
     const rect = root.current?.getBoundingClientRect();
     if (!rect) return;
     const width = Math.min(256, window.innerWidth - 32);
-    setPosition({ left: Math.max(16, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 16)), top: rect.top > 160 ? rect.top - 8 : rect.bottom + 8, above: rect.top > 160 });
+    setPosition({ left: Math.max(16, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 16)), top: rect.top > 160 ? rect.top - 8 : rect.bottom + 8, above: rect.top > 160, container: root.current?.closest("dialog") ?? document.body });
   };
   const scheduleHide = () => { cancelTimer(); timer.current = setTimeout(() => setPosition(null), 150); };
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
@@ -41,6 +41,6 @@ export function Tooltip({ content, children }: TooltipProps) {
     {!position && <span id={id} role="tooltip" className="sr-only">{content}</span>}
     {position && createPortal(<span id={id} role="tooltip" onMouseEnter={cancelTimer} onMouseLeave={scheduleHide}
       className="fixed z-50 w-64 max-w-[calc(100vw-2rem)] rounded-default bg-sidebar px-3 py-2 text-xs leading-relaxed text-sidebar-text shadow-default"
-      style={{ left: position.left, top: position.top, transform: position.above ? "translateY(-100%)" : undefined }}>{content}</span>, document.body)}
+      style={{ left: position.left, top: position.top, transform: position.above ? "translateY(-100%)" : undefined }}>{content}</span>, position.container)}
   </>;
 }
