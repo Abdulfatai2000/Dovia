@@ -10,7 +10,7 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<"header">, "
 }
 export function PageHeader({ title, eyebrow, description, actions, breadcrumbs, className, ...props }: PageHeaderProps) {
   return <header {...props} className={cn("min-w-0 space-y-4", className)}>
-    {breadcrumbs && <nav aria-label="Breadcrumb">{breadcrumbs}</nav>}
+    {breadcrumbs && <div>{breadcrumbs}</div>}
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0 space-y-2">
         {eyebrow && <p className="text-xs font-medium tracking-wider text-primary uppercase">{eyebrow}</p>}

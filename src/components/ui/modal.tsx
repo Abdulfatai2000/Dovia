@@ -7,9 +7,13 @@ import { IconButton } from "./icon-button";
 import { cn } from "@/lib/utils";
 
 export interface ModalProps {
+  id?: string;
   open: boolean;
   onClose: () => void;
   title: string;
+  titleContent?: ReactNode;
+  placement?: "center" | "left";
+  closeLabel?: string;
   description?: string;
   children: ReactNode;
   footer?: ReactNode;
@@ -22,7 +26,7 @@ export interface ModalProps {
   closeOnBackdrop?: boolean;
   className?: string;
 }
-export function Modal({ open, onClose, title, description, children, footer, onConfirm, confirmLabel = "Confirm", confirmVariant = "primary", confirmDisabled, confirmLoading, size = "md", closeOnBackdrop = true, className }: ModalProps) {
+export function Modal({ id: dialogId, open, onClose, title, titleContent, placement = "center", closeLabel = "Close dialog", description, children, footer, onConfirm, confirmLabel = "Confirm", confirmVariant = "primary", confirmDisabled, confirmLoading, size = "md", closeOnBackdrop = true, className }: ModalProps) {
   const id = useId();
   const dialog = useRef<HTMLDialogElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -44,7 +48,7 @@ export function Modal({ open, onClose, title, description, children, footer, onC
   }, [open]);
   // Keep native close events from effect cleanup from cancelling a subsequent open.
   useEffect(() => { wasOpen.current = open; }, [open]);
-  return <dialog ref={dialog} aria-modal="true" aria-labelledby={id + "-title"} aria-describedby={description ? id + "-description" : undefined}
+  return <dialog id={dialogId} ref={dialog} aria-modal="true" aria-labelledby={id + "-title"} aria-describedby={description ? id + "-description" : undefined}
     onKeyDown={event => {
       if (event.key !== "Tab") return;
       const focusable = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex], [contenteditable="true"]'))
@@ -65,13 +69,14 @@ export function Modal({ open, onClose, title, description, children, footer, onC
       const rect = event.currentTarget.getBoundingClientRect();
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose();
     }}
-    className={cn("dovia-modal", { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" }[size], className)}>
+    className={cn("dovia-modal", placement === "left" ? "dovia-drawer" : { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" }[size], className)}>
     <div className="mb-5 flex items-start justify-between gap-4">
       <div className="min-w-0 space-y-2">
-        <h2 ref={titleRef} tabIndex={-1} id={id + "-title"} className="dovia-section-title break-words">{title}</h2>
+        <h2 ref={titleRef} tabIndex={-1} id={id + "-title"} className={cn("dovia-section-title break-words", titleContent && "sr-only")}>{title}</h2>
+        {titleContent}
         {description && <p id={id + "-description"} className="text-sm text-text-secondary">{description}</p>}
       </div>
-      <IconButton aria-label="Close dialog" onClick={onClose}><X aria-hidden="true" /></IconButton>
+      <IconButton aria-label={closeLabel} onClick={onClose}><X aria-hidden="true" /></IconButton>
     </div>
     <div className="min-w-0">{children}</div>
     {(footer !== undefined || onConfirm) && <div className="mt-6 flex flex-wrap justify-end gap-3 border-t border-border pt-4">

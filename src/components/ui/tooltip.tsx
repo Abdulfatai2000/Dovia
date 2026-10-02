@@ -2,14 +2,16 @@
 
 import { cloneElement, useEffect, useId, useRef, useState, type ReactElement } from "react";
 import { createPortal } from "react-dom";
+import { cn } from "@/lib/utils";
 
 export interface TooltipProps {
   content: string;
+  wrapperClassName?: string;
   /** A focusable element that forwards aria-describedby; keep an accessible name on icon buttons. */
   children: ReactElement<{ "aria-describedby"?: string }>;
 }
 
-export function Tooltip({ content, children }: TooltipProps) {
+export function Tooltip({ content, children, wrapperClassName }: TooltipProps) {
   const id = useId();
   const root = useRef<HTMLSpanElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -35,7 +37,7 @@ export function Tooltip({ content, children }: TooltipProps) {
     return () => { document.removeEventListener("keydown", escape, true); window.removeEventListener("resize", dismiss); window.removeEventListener("scroll", dismiss, true); };
   }, [position]);
   return <>
-    <span ref={root} className="inline-flex max-w-full" onMouseEnter={show} onMouseLeave={scheduleHide} onFocus={show} onBlur={hide}>
+    <span ref={root} className={cn("inline-flex max-w-full", wrapperClassName)} onMouseEnter={show} onMouseLeave={scheduleHide} onFocus={show} onBlur={hide}>
       {cloneElement(children, { "aria-describedby": [children.props["aria-describedby"], id].filter(Boolean).join(" ") })}
     </span>
     {!position && <span id={id} role="tooltip" className="sr-only">{content}</span>}
