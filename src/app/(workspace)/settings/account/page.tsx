@@ -1,2 +1,2 @@
-import ProfileForm from "@/components/settings/profile-form";
-export default function Page(){return <ProfileForm />;}
+import SettingsSectionPage from "@/components/settings/settings-section-page";
+export default function Page(){return <SettingsSectionPage sectionId="account" />;}

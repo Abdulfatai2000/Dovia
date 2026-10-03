@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { CalendarDays, ChartNoAxesColumnIncreasing, CircleAlert, CircleCheckBig, SquareCheckBig } from "lucide-react";
+import { CalendarDays, ChartNoAxesColumnIncreasing, CircleAlert, CircleCheckBig } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Select } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
@@ -28,26 +28,46 @@ export default function ReportsPage() {
   if (error || !data) return <div className="space-y-6"><PageHeader title="Productivity Reports" /><ErrorState description={error || "Unable to build the demo report."} /></div>;
 
   const rate = data.followUpRate;
-  return <div className="space-y-8">
-    <PageHeader eyebrow="Insights" title="Productivity Reports"
-      description="Understand how meetings turn into action and where follow-up needs attention."
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Reports" title="Productivity Reports"
+      description="Get insights into your meetings, tasks, and follow-up progress."
       actions={<Select label="Date range" hideLabel wrapperClassName="w-52" value={range}
         onChange={event => setRange(event.target.value as ReportRange)} options={options} />} />
-    <p className="text-xs text-text-muted">Frontend demo · Every figure is calculated in this browser from your current meetings and tasks.</p>
+    <p className="text-xs text-text-muted">Selected period · {data.start} to {data.end} · Every figure is calculated in this browser.</p>
 
     {data.hasData ? <>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <ReportStatCard label="Meetings Held" value={data.held.length} icon={<CalendarDays aria-hidden="true" />}
-          hint={`${data.meetings.length} scheduled or captured in this period`} />
-        <ReportStatCard label="Tasks Created" value={data.tasks.length} icon={<SquareCheckBig aria-hidden="true" />} tone="info"
-          hint="From confirmed meetings and manual demo tasks" />
+          hint={`Selected period · ${data.meetings.length} scheduled or captured`} />
         <ReportStatCard label="Tasks Completed" value={data.stats.completed} icon={<CircleCheckBig aria-hidden="true" />} tone="success"
-          hint={`${data.completedInRange.length} completed during this period`} />
+          hint={`Selected period · ${data.completedInRange.length} completed in range`} />
         <ReportStatCard label="Overdue Tasks" value={data.stats.overdue} icon={<CircleAlert aria-hidden="true" />} tone="danger"
-          hint="Open tasks past their due date" />
-        <ReportStatCard label="Follow-Up Completion Rate" value={`${rate.percent}%`} icon={<ChartNoAxesColumnIncreasing aria-hidden="true" />}
-          tone={rate.percent >= 75 ? "success" : "warning"}
+          hint={`Selected period · ${data.stats.overdue} currently overdue`} />
+        <ReportStatCard label="Follow-up Completion Rate" value={`${rate.percent}%`} icon={<ChartNoAxesColumnIncreasing aria-hidden="true" />}
+          tone={rate.total ? (rate.percent >= 75 ? "success" : "warning") : "default"}
           hint={rate.total ? `${rate.completed} of ${rate.total} follow-up tasks completed` : "No meeting-generated tasks in this period"} />
+      </div>
+
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <Card className="p-[var(--card-padding)]">
+          <ProductivityChart buckets={data.buckets} title="Meeting Output" description="Number of meetings held over time."
+            grouping={`Weekly grouping · ${data.buckets.length} week${data.buckets.length === 1 ? "" : "s"}`} />
+        </Card>
+        <Card className="p-[var(--card-padding)]">
+          <div className="space-y-1">
+            <h2 className="dovia-card-title">Task Status</h2>
+            <p className="text-sm text-text-secondary">Distribution of tasks from meetings.</p>
+          </div>
+          <div className="mt-4">
+            <TaskStatusChart buckets={data.distribution.buckets} total={data.distribution.total} />
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <MeetingFollowUp items={data.followUp.slice(0, 5)} />
+        <TeamWorkload entries={data.workload} />
+        <ReportInsights insights={data.insights} />
       </div>
 
       <Card className="p-[var(--card-padding)]">
@@ -59,18 +79,6 @@ export default function ReportsPage() {
             : "None of the meetings in this period produced action items yet."}
         </p>
       </Card>
-
-      <div className="grid items-start gap-6 xl:grid-cols-2">
-        <Card className="p-[var(--card-padding)]"><ProductivityChart buckets={data.buckets} /></Card>
-        <Card className="p-[var(--card-padding)]">
-          <h2 className="dovia-card-title mb-4">Task Status Distribution</h2>
-          <TaskStatusChart buckets={data.distribution.buckets} total={data.distribution.total} />
-        </Card>
-      </div>
-
-      <MeetingFollowUp items={data.followUp} />
-      <TeamWorkload entries={data.workload} />
-      <ReportInsights insights={data.insights} />
     </> : <EmptyState title="No report data yet"
       description="Complete meetings and action items will appear here." />}
   </div>;

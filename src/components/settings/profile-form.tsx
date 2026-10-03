@@ -2,9 +2,7 @@
 
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { ImagePlus, Trash2 } from "lucide-react";
-import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Avatar } from "@/components/ui/avatar";
@@ -15,6 +13,7 @@ import { useSettings } from "@/hooks/use-settings";
 import { timezones, updateProfileSettings } from "@/services/settings.service";
 import type { ProfileSettings } from "@/types/settings";
 
+/** Content only. The surrounding card chrome comes from the settings dashboard/section route. */
 export default function ProfileForm() {
   const { data, loading, error } = useSettings();
   const [draft, setDraft] = useState<ProfileSettings | null>(null);
@@ -46,48 +45,36 @@ export default function ProfileForm() {
     setPhoto(null);
     if (fileInput.current) fileInput.current.value = "";
   }
-
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try { updateProfileSettings(profile); setDraft(null); setFailure(""); setSaved(true); }
     catch (cause) { setSaved(false); setFailure(cause instanceof Error ? cause.message : "Unable to save your account settings."); }
   };
 
-  return <div className="min-w-0 space-y-6">
-    <PageHeader title="Account" description="Your profile details as they appear across the Dovia workspace." />
-    <form onSubmit={submit} noValidate className="min-w-0 space-y-6">
-      <Card className="space-y-5 p-[var(--card-padding)]">
-        <div className="space-y-1">
-          <h2 className="dovia-card-title">Profile photo</h2>
-          <p className="text-sm text-text-secondary">Preview only. Images are not uploaded, and nothing is stored in this browser.</p>
+  return <>
+    <form onSubmit={submit} noValidate className="min-w-0 space-y-5">
+      <div className="flex flex-wrap items-center gap-4">
+        <Avatar name={profile.name} src={photo ?? undefined} size="xl" alt={profile.name} />
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={() => fileInput.current?.click()}>
+            <ImagePlus aria-hidden="true" />Change Photo
+          </Button>
+          {photo && <Button variant="ghost" size="sm" onClick={removePhoto}><Trash2 aria-hidden="true" />Remove</Button>}
+          <input ref={fileInput} type="file" accept="image/*" className="sr-only" aria-label="Choose a profile photo to preview" onChange={choosePhoto} />
         </div>
-        <div className="flex flex-wrap items-center gap-4">
-          <Avatar name={profile.name} src={photo ?? undefined} size="xl" alt={profile.name} />
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => fileInput.current?.click()}>
-              <ImagePlus aria-hidden="true" />{photo ? "Choose another image" : "Choose image"}
-            </Button>
-            {photo && <Button variant="ghost" size="sm" onClick={removePhoto}>
-              <Trash2 aria-hidden="true" />Remove
-            </Button>}
-            <input ref={fileInput} type="file" accept="image/*" className="sr-only" aria-label="Choose a profile photo to preview"
-              onChange={choosePhoto} />
-          </div>
-        </div>
-      </Card>
+      </div>
+      <p className="text-xs text-text-muted">Photo preview only. Images are not uploaded, and nothing is stored in this browser.</p>
 
-      <Card className="p-[var(--card-padding)]">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Input label="Full Name" hideLabel={false} required autoComplete="name" value={profile.name}
-            onChange={event => change("name", event.target.value)} />
-          <Input label="Email Address" hideLabel={false} required type="email" autoComplete="email" value={profile.email}
-            onChange={event => change("email", event.target.value)} />
-          <Input label="Job Title" hideLabel={false} value={profile.jobTitle} autoComplete="organization-title"
-            onChange={event => change("jobTitle", event.target.value)} />
-          <Select label="Timezone" hideLabel={false} value={profile.timezone}
-            onChange={event => change("timezone", event.target.value)} options={timezones.map(zone => ({ value: zone, label: zone }))} />
-        </div>
-      </Card>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input label="Full Name" hideLabel={false} required autoComplete="name" value={profile.name}
+          onChange={event => change("name", event.target.value)} />
+        <Input label="Email Address" hideLabel={false} required type="email" autoComplete="email" value={profile.email}
+          onChange={event => change("email", event.target.value)} />
+        <Input label="Job Title" hideLabel={false} value={profile.jobTitle} autoComplete="organization-title"
+          onChange={event => change("jobTitle", event.target.value)} />
+        <Select label="Time Zone" hideLabel={false} value={profile.timezone}
+          onChange={event => change("timezone", event.target.value)} options={timezones.map(zone => ({ value: zone, label: zone }))} />
+      </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit">Save changes</Button>
@@ -101,5 +88,5 @@ export default function ProfileForm() {
     {failure && <div className="fixed right-4 bottom-4 left-4 z-[var(--z-toast)] sm:left-auto">
       <Toast variant="error" title="Account settings were not saved." description={failure} onDismiss={() => setFailure("")} />
     </div>}
-  </div>;
+  </>;
 }

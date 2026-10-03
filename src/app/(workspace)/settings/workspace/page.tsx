@@ -1,2 +1,2 @@
-import WorkspaceForm from "@/components/settings/workspace-form";
-export default function Page(){return <WorkspaceForm />;}
+import SettingsSectionPage from "@/components/settings/settings-section-page";
+export default function Page(){return <SettingsSectionPage sectionId="workspace" />;}

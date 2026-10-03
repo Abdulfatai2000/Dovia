@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { SectionHeader } from "@/components/ui/section-header";
 import type { DemoUser } from "@/data/mock/users";
 
 export interface WorkloadEntry { member: DemoUser; stats: { open: number; completed: number; overdue: number; total: number }; }
@@ -10,30 +9,31 @@ export interface WorkloadEntry { member: DemoUser; stats: { open: number; comple
  * Workload distribution only. There is deliberately no score, rank, or ordering by output.
  */
 export function TeamWorkload({ entries }: { entries: WorkloadEntry[] }) {
-  return <section className="min-w-0 space-y-4">
-    <SectionHeader title="Team Workload" description="Where open commitments currently sit. This is a distribution view, not a performance ranking." />
-    <Card className="divide-y divide-border px-[var(--card-padding)]">
-      <div className="hidden grid-cols-[minmax(0,1fr)_6rem_6rem_6rem] gap-4 py-3 text-xs font-medium text-text-muted sm:grid">
-        <span>Member</span><span className="text-right">Open</span><span className="text-right">Completed</span><span className="text-right">Overdue</span>
-      </div>
-      {entries.map(({ member, stats }) => <div key={member.id}
-        className="grid grid-cols-2 gap-x-4 gap-y-2 py-4 sm:grid-cols-[minmax(0,1fr)_6rem_6rem_6rem] sm:items-center">
-        <div className="col-span-2 flex min-w-0 items-center gap-3 sm:col-span-1">
-          <Avatar name={member.name} size="sm" />
-          <div className="min-w-0">
-            <Link href={`/team/${member.id}`} className="rounded-sm font-medium text-foreground hover:text-primary">{member.name}</Link>
-            <p className="truncate text-xs text-text-muted">{member.department}</p>
-          </div>
-        </div>
-        <p className="text-sm text-text-secondary sm:text-right"><span className="text-xs text-text-muted sm:hidden">Open </span><span className="tabular-nums">{stats.open}</span></p>
-        <p className="text-sm text-text-secondary sm:text-right"><span className="text-xs text-text-muted sm:hidden">Completed </span><span className="tabular-nums">{stats.completed}</span></p>
-        <p className="text-sm sm:text-right">
-          <span className="text-xs text-text-muted sm:hidden">Overdue </span>
-          <span className={stats.overdue > 0 ? "tabular-nums font-medium text-danger-foreground" : "tabular-nums text-text-secondary"}>
-            {stats.overdue}{stats.overdue > 0 && <span className="sr-only"> overdue</span>}
-          </span>
-        </p>
-      </div>)}
+  return <section className="flex h-full min-w-0 flex-col">
+    <Card className="flex h-full flex-col p-[var(--card-padding)]">
+      <h2 className="dovia-card-title">Team Workload</h2>
+      <p className="mt-1 mb-4 text-sm text-text-secondary">Where open commitments currently sit. This is a distribution view, not a performance ranking.</p>
+      <ul role="list" className="min-w-0 space-y-4">
+        {entries.map(({ member, stats }) => {
+          const percent = stats.total ? Math.round((stats.completed / stats.total) * 100) : 0;
+          return <li key={member.id} className="min-w-0">
+            <div className="flex items-center gap-3">
+              <Avatar name={member.name} size="sm" />
+              <div className="min-w-0 flex-1">
+                <Link href={`/team/${member.id}`} className="block truncate rounded-sm text-sm font-medium text-foreground hover:text-primary">{member.name}</Link>
+                <p className="text-xs text-text-muted">{stats.open} open{stats.overdue > 0 ? ` · ${stats.overdue} overdue` : ""}</p>
+              </div>
+              <span className="shrink-0 text-xs tabular-nums text-text-secondary">
+                <span className="font-medium text-foreground">{stats.completed} / {stats.total}</span>
+              </span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-pill bg-border">
+              <div className="h-full rounded-pill bg-primary transition-[width] duration-200" style={{ width: `${percent}%` }} />
+            </div>
+            <span className="sr-only">{member.name}: {stats.completed} of {stats.total} tasks completed, {percent} percent.</span>
+          </li>;
+        })}
+      </ul>
     </Card>
   </section>;
 }

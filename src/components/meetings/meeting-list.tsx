@@ -10,8 +10,13 @@ import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
 import { ButtonLink } from "@/components/ui/button-link";
 import { EmptyState } from "@/components/ui/empty-state";
+import { statusPresentation } from "@/components/ui/status-badge";
+import { formatDate } from "@/lib/meeting-format";
+import type { MeetingStatus } from "@/types/meeting";
 import MeetingCard from "./meeting-card";
 import { MeetingLoading, MeetingNotFound } from "./meeting-state";
+
+const meetingStatuses: MeetingStatus[] = ["DRAFT", "SCHEDULED", "IN_PROGRESS", "PROCESSING", "REVIEW", "COMPLETED", "CANCELLED"];
 
 export default function MeetingList() {
   const { meetings, loading, error } = useMeetings();
@@ -32,11 +37,11 @@ export default function MeetingList() {
     {filtered.length ? <div className="grid gap-5 xl:grid-cols-2">{filtered.map(m => <MeetingCard key={m.id} meeting={m} />)}</div> :
       <EmptyState icon={<CalendarDays />} title="No meetings found" description="Try changing your filters or create a new meeting." action={<ButtonLink href="/meetings/new">Create Meeting</ButtonLink>} />}</>;
   return <div className="space-y-6">
-    <PageHeader title="Meetings" description="Plan meetings, keep context together, and follow every decision through." actions={<ButtonLink href="/meetings/new"><Plus aria-hidden="true" />New Meeting</ButtonLink>} />
-    <p className="text-xs text-text-muted">Demo calendar · October 5, 2026 · Created meetings are stored only in this browser.</p>
+<PageHeader title="Meetings" description="Plan, review, and follow up on every meeting in one place." actions={<ButtonLink href="/meetings/new"><Plus aria-hidden="true" />New Meeting</ButtonLink>} />
+    <p className="text-xs text-text-muted">Demo calendar · {formatDate(DEMO_TODAY)} · Created meetings are stored only in this browser.</p>
     <div className="grid items-end gap-4 md:grid-cols-2 xl:grid-cols-4">
       <SearchInput label="Search meetings" placeholder="Search meetings..." value={search} onChange={e => setSearch(e.target.value)} />
-      <Select label="Status" value={status} onChange={e => setStatus(e.target.value)} options={[{value:"",label:"All statuses"}, ...["DRAFT","SCHEDULED","IN_PROGRESS","PROCESSING","REVIEW","COMPLETED","CANCELLED"].map(value => ({value,label:value.replaceAll("_"," ").toLowerCase()}))]} />
+      <Select label="Status" value={status} onChange={e => setStatus(e.target.value)} options={[{value:"",label:"All statuses"}, ...meetingStatuses.map(value => ({value,label:statusPresentation[value].label}))]} />
       <Select label="Meeting type" value={type} onChange={e => setType(e.target.value)} options={[{value:"",label:"All types"}, ...meetingTypes.map(value => ({value,label:value}))]} />
       <Select label="Team / Project" value={team} onChange={e => setTeam(e.target.value)} options={[{value:"",label:"All teams"}, ...teams.map(value => ({value,label:value}))]} />
     </div>

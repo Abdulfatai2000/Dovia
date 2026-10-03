@@ -1,2 +1,2 @@
-import MeetingDefaultsForm from "@/components/settings/meeting-defaults-form";
-export default function Page(){return <MeetingDefaultsForm />;}
+import SettingsSectionPage from "@/components/settings/settings-section-page";
+export default function Page(){return <SettingsSectionPage sectionId="meeting-defaults" />;}

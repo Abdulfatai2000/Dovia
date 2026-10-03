@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,5 +37,18 @@ export function IntegrationCard({ name, description, monogram, status, statusTon
       <Button variant="outline" size="sm" onClick={onAction}>{actionLabel}</Button>
     </div>
   </Card>;
+}
+
+/** Compact row variant used inside the all-in-one settings dashboard. */
+export function IntegrationRow({ name, description, monogram, onAction }: Pick<IntegrationCardProps, "name" | "description" | "monogram" | "onAction">) {
+  return <div className="flex flex-wrap items-center gap-3 py-4">
+    <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface-soft text-sm font-semibold text-text-secondary">{monogram}</span>
+    <div className="min-w-0 flex-1">
+      <p className="text-sm font-medium text-foreground">{name}</p>
+      <p className="mt-0.5 text-xs text-text-secondary">{description}</p>
+    </div>
+    <Badge variant="info">Coming Soon</Badge>
+    <Button variant="outline" size="sm" onClick={onAction}>Connect</Button>
+  </div>;
 }
 export default IntegrationCard;

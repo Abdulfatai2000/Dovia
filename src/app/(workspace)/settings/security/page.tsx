@@ -1,2 +1,2 @@
-import SecuritySettings from "@/components/settings/security-settings";
-export default function Page(){return <SecuritySettings />;}
+import SettingsSectionPage from "@/components/settings/settings-section-page";
+export default function Page(){return <SettingsSectionPage sectionId="security" />;}
