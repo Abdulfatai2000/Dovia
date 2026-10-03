@@ -22,7 +22,7 @@ export function getNotifications():DemoNotification[]{
  for(const meeting of meetings){
    const href=`/meetings/${meeting.id}`;
    if(meeting.status==="SCHEDULED"&&meeting.date===DEMO_TODAY)add("MEETING_REMINDER",meeting.id,"Meeting reminder",`${meeting.title} · ${meeting.startTime??"Time not set"} on the demo calendar.`,`${meeting.date}T08:00:00Z`,href,undefined,meeting.id);
-   if(meeting.id.startsWith("demo-"))add("MEETING_CREATED",meeting.id,"Meeting created for demo",meeting.title,meeting.createdAt||`${meeting.date}T08:00:00Z`,href,undefined,meeting.id);
+   if(meeting.id.startsWith("demo-"))add("MEETING_CREATED",meeting.id,"Meeting created for demo",meeting.title,`${meeting.date}T08:00:00Z`,href,undefined,meeting.id);
    if(meeting.status==="REVIEW")add("MEETING_SUMMARY_READY",meeting.id,"Mock meeting summary ready",`${meeting.title} · Review the illustrative draft before confirming.`,`${meeting.date}T12:00:00Z`,href+"/ai-review",undefined,meeting.id);
  }
  for(const outcome of outcomes){const meeting=meetings.find(m=>m.id===outcome.meetingId);if(meeting)add("MEETING_CONFIRMED",meeting.id,"Meeting outcome confirmed",`${meeting.title} · View follow-up action items.`,outcome.confirmedAt||`${meeting.date}T12:00:00Z`,`/meetings/${meeting.id}/follow-up`,undefined,meeting.id);}

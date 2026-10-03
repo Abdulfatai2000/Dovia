@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Toast } from "@/components/ui/toast";
 import IntegrationCard from "./integration-card";
 

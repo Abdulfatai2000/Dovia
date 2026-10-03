@@ -44,14 +44,14 @@ function volumeBuckets(start: string, end: string, held: { date: string }[]) {
 }
 
 function distribution(tasks: Task[]) {
-  const completed = tasks.filter(task => task.status === "COMPLETED");
   const overdue = tasks.filter(isTaskOverdue);
-  const buckets = distributionOrder.map((status, index) => {
-    const count = tasks.filter(task => task.status === status).length;
-    return { key: distributionLabels[index], status, count };
-  });
-  buckets.push({ key: "Overdue", status: "OVERDUE" as const, count: overdue.length });
-  return { buckets, total: tasks.length, overdue: overdue.length, completed: completed.length };
+  const buckets: { key: string; status: string; count: number }[] = distributionOrder.map((status, index) => ({
+    key: distributionLabels[index],
+    status,
+    count: tasks.filter(task => task.status === status).length,
+  }));
+  buckets.push({ key: "Overdue", status: "OVERDUE", count: overdue.length });
+  return { buckets, total: tasks.length, overdue: overdue.length, completed: tasks.filter(task => task.status === "COMPLETED").length };
 }
 
 /** The heaviest department by open commitments. Distribution only, never a ranking. */

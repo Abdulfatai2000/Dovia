@@ -25,12 +25,11 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
   const searchField = useRef<HTMLInputElement>(null);
   const searchTrigger = useRef<HTMLButtonElement>(null);
   const searchArea = useRef<HTMLDivElement>(null);
-  const { notifications, unread } = useNotifications();
+  const { unread } = useNotifications();
 
   // One notification source: the same service state the /notifications page mutates.
   const load = useCallback(() => getNotifications().slice(0, 5), []);
   const { data: previews } = useDemoQuery(load);
-  const { unread } = useNotifications();
   const user = getCurrentUser();
 
   useEffect(() => { if (mobileSearch) searchField.current?.focus(); }, [mobileSearch]);

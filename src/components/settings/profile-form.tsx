@@ -24,13 +24,13 @@ export default function ProfileForm() {
   const [photo, setPhoto] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const profile = draft ?? data?.profile ?? null;
+  const profile = draft ?? data?.profile;
 
-  if (loading || !profile) return <LoadingState label="Loading account settings…" />;
   if (error) return <ErrorState description={error} />;
+  if (loading || !profile) return <LoadingState label="Loading account settings…" />;
 
   const change = <K extends keyof ProfileSettings>(key: K, value: ProfileSettings[K]) =>
-    setDraft(current => ({ ...(current ?? profile), [key]: value }));
+    setDraft(previous => ({ ...(previous ?? profile), [key]: value }));
 
   function choosePhoto(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -47,11 +47,11 @@ export default function ProfileForm() {
     if (fileInput.current) fileInput.current.value = "";
   }
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try { updateProfileSettings(profile); setDraft(null); setFailure(""); setSaved(true); }
     catch (cause) { setSaved(false); setFailure(cause instanceof Error ? cause.message : "Unable to save your account settings."); }
-  }
+  };
 
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Account" description="Your profile details as they appear across the Dovia workspace." />

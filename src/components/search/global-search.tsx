@@ -41,7 +41,9 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
   const flat: SearchResult[] = (data?.groups ?? []).flatMap(group => group.results);
   const trimmed = value.trim();
 
-  useEffect(() => { setActive(0); }, [trimmed]);
+  // Reset the highlight when the query changes, adjusting state during render instead of in an effect.
+  const [lastQuery, setLastQuery] = useState(trimmed);
+  if (lastQuery !== trimmed) { setLastQuery(trimmed); setActive(0); }
 
   // Keep the highlighted row in view during keyboard navigation.
   useEffect(() => {

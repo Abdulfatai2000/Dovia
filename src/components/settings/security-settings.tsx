@@ -5,7 +5,6 @@ import { Laptop, ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/auth/password-input";
 import { Badge } from "@/components/ui/badge";
 import { Toast } from "@/components/ui/toast";

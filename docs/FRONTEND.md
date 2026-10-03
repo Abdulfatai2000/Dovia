@@ -195,7 +195,9 @@ Prepared as a build-ready execution document.
 | /calendar | Calendar | Protected | Meetings + deadlines |
 | /team | Team | Role-aware | Members, invitations, workload snapshot |
 | /reports | Reports | Manager/Admin | Execution metrics and trends |
+| /notifications | Notification Center | Protected | All updates, categories, read state, deep links |
 | /settings | Settings | Protected | Account/workspace/notifications/integrations/security |
+| /settings/meeting-defaults | Meeting Defaults | Protected | Default duration, type, platform, reminder, review behaviour |
 
 
 ## 3.1 Layout hierarchy
