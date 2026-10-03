@@ -1,15 +1,5 @@
-export interface NotificationPreview {
-  id: string;
-  kind: "assignment" | "meeting" | "overdue";
-  title: string;
-  description: string;
-  timeLabel: string;
-  href: string;
-}
-
-/** Static shell previews only; relative times and unread state are illustrative. */
-export const notificationPreviews: readonly NotificationPreview[] = [
-  { id: "assignment", kind: "assignment", title: "Task assigned to you", description: "Finish dashboard UI", timeLabel: "2m ago", href: "/tasks" },
-  { id: "meeting", kind: "meeting", title: "Meeting starts soon", description: "Product Strategy Sync begins in 10 minutes", timeLabel: "8m ago", href: "/meetings" },
-  { id: "overdue", kind: "overdue", title: "Task overdue", description: "Prepare launch brief", timeLabel: "1h ago", href: "/tasks" },
+﻿import type { DemoNotification } from "@/types/notification";
+export const seedNotifications:Omit<DemoNotification,"read">[]=[
+ {id:"mention-product",type:"MENTION",category:"Mentions",title:"Mentioned in a meeting discussion",description:"Demo mention: Sarah asked for your input on Product Strategy Sync.",timestamp:"2026-10-05T08:00:00Z",meetingId:"meeting-product-strategy",href:"/meetings/meeting-product-strategy"},
+ {id:"system-demo",type:"SYSTEM",category:"System",title:"Welcome to the Dovia demo",description:"Updates are generated from local demo records. No push notifications or emails are sent.",timestamp:"2026-10-01T08:00:00Z",href:"/settings"},
 ];
