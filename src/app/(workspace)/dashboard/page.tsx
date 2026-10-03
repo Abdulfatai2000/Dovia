@@ -1,9 +1,2 @@
-import { PageHeader } from "@/components/ui/page-header";
-
-export default function Page() {
-  return (
-    <div className="space-y-3">
-      <PageHeader title="Dovia Dashboard" description="This page will be implemented in a later phase." />
-    </div>
-  );
-}
+﻿import Dashboard from "@/components/dashboard/dashboard";
+export default function Page() { return <Dashboard />; }

@@ -1,11 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
-
+﻿import MeetingContentPage from "@/components/meetings/meeting-content-page";
 export default async function Page({ params }: { params: Promise<{ meetingId: string }> }) {
   const { meetingId } = await params;
-  return (
-    <div className="space-y-3">
-      <PageHeader title="Dovia Meeting content" description="This page will be implemented in a later phase." />
-      <p>meetingId: {meetingId}</p>
-    </div>
-  );
+  return <MeetingContentPage meetingId={meetingId} />;
 }

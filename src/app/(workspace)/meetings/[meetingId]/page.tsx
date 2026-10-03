@@ -1,11 +1,6 @@
-import { PageHeader } from "@/components/ui/page-header";
-
-export default async function Page({ params }: { params: Promise<{ meetingId: string }> }) {
+﻿import MeetingWorkspace from "@/components/meetings/meeting-workspace";
+export default async function Page({ params, searchParams }: { params: Promise<{ meetingId: string }>; searchParams: Promise<{ created?: string }> }) {
   const { meetingId } = await params;
-  return (
-    <div className="space-y-3">
-      <PageHeader title="Dovia Meeting" description="This page will be implemented in a later phase." />
-      <p>meetingId: {meetingId}</p>
-    </div>
-  );
+  const { created } = await searchParams;
+  return <MeetingWorkspace key={meetingId} meetingId={meetingId} created={created === "1"} />;
 }
