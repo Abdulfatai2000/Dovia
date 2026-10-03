@@ -99,7 +99,7 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
       items={[{value:"paste",label:"Paste Notes",content:mode === "paste" ? textInput(false) : null}, {value:"upload",label:"Upload File",content:mode === "upload" ? fileInput : null}, {value:"manual",label:"Type Manually",content:mode === "manual" ? textInput(true) : null}]} />
       {error && <p role="alert" className="mt-4 text-sm text-danger-foreground">{error}</p>}
       <div className="mt-6 flex flex-wrap gap-3 border-t border-border pt-5"><Button variant="gradient" loading={continuing} loadingText="Opening review preview…" onClick={() => save(true)}><Sparkles aria-hidden="true" />Generate Meeting Summary</Button><Button variant="outline" onClick={() => save(false)}>Save demo draft</Button></div>
-      <p className="mt-3 text-xs text-text-muted">Next: AI Review placeholder. No AI generation runs in this demo.</p>
+      <p className="mt-3 text-xs text-text-muted">Next: review an illustrative mock AI draft. No AI generation runs in this demo.</p>
     </Card>
     <Card className="space-y-4 border-ai/20 bg-ai-soft p-5"><SectionHeader title="What Dovia will identify" />
       <ul className="grid list-inside list-disc gap-2 text-sm text-text-secondary sm:grid-cols-2">{["Meeting summary","Key decisions","Action items","Suggested owners","Suggested deadlines","Open questions","Risks and blockers"].map(item => <li key={item}>{item}</li>)}</ul>
@@ -109,3 +109,4 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
     {notice && <div className="fixed inset-x-4 bottom-4 z-[var(--z-toast)] sm:left-auto"><Toast {...notice} onDismiss={() => setNotice(undefined)} /></div>}
   </div>;
 }
+

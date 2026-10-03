@@ -1,5 +1,6 @@
 ﻿import { seedMeetings } from "@/data/mock/meetings";
 import type { CreateMeetingInput, Meeting, MeetingContent } from "@/types/meeting";
+import { getConfirmedOutcomes } from "./meeting-outcome.service";
 
 const MEETINGS_KEY = "dovia_demo_meetings";
 const CONTENT_KEY = "dovia_demo_meeting_content_";
@@ -32,7 +33,10 @@ function demoMeetings(): Meeting[] {
     throw new Error("Unable to read demo meetings. Check browser storage or clear the Dovia demo data and try again.");
   }
 }
-export function getMeetings(): Meeting[] { return [...demoMeetings(), ...seedMeetings]; }
+export function getMeetings(): Meeting[] {
+  const completed = new Set(getConfirmedOutcomes().map(outcome => outcome.meetingId));
+  return [...demoMeetings(), ...seedMeetings].map(meeting => completed.has(meeting.id) ? { ...meeting, status: "COMPLETED" } : meeting);
+}
 export function getMeeting(id: string): Meeting | undefined { return getMeetings().find(meeting => meeting.id === id); }
 export function createMeeting(input: CreateMeetingInput): Meeting {
   const meeting: Meeting = { ...input, id: `demo-${crypto.randomUUID()}`, status: "SCHEDULED" };

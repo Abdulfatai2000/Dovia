@@ -2,7 +2,7 @@ DOVIA
 
 Frontend Implementation Handbook
 
-> Current implementation — Phases 4–6 (frontend-first): Dashboard, Meetings, Create Meeting, the pre-meeting workspace, and meeting content capture are implemented with typed fixtures and browser-only demo persistence. Phase 3 auth remains intact. The workflow continues to the unchanged AI Review placeholder; no backend/API or AI functionality is connected. See [MEETING_WORKFLOW_FRONTEND.md](./MEETING_WORKFLOW_FRONTEND.md). This current phase sequence supersedes the historical plan below.
+> Current implementation — Master Phase 1: editable mock AI Review, explicit human confirmation, completed meeting records, and Landing/Features/Pricing/About pages are implemented. Confirmation uses browser-only demo storage and stable derived task IDs; Groq and all backend services remain disconnected. Existing dashboard, preparation, content capture, auth, and workspace shell are preserved. See [AI_REVIEW_FRONTEND.md](./AI_REVIEW_FRONTEND.md) and [MARKETING_UI.md](./MARKETING_UI.md). This current sequence supersedes historical phase numbering below.
 
 Comprehensive phased build plan for every Dovia user-facing experience
 

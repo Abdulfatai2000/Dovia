@@ -1,11 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
-
+﻿import MeetingReview from "@/components/ai/meeting-review";
 export default async function Page({ params }: { params: Promise<{ meetingId: string }> }) {
   const { meetingId } = await params;
-  return (
-    <div className="space-y-3">
-      <PageHeader title="Dovia Meeting ai review" description="This page will be implemented in a later phase." />
-      <p>meetingId: {meetingId}</p>
-    </div>
-  );
+  return <MeetingReview key={meetingId} meetingId={meetingId} />;
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getMeetings } from "@/services/meeting.service";
+import { OUTCOMES_CHANGED } from "@/services/meeting-outcome.service";
 import type { Meeting } from "@/types/meeting";
 
 export function useMeetings() {
@@ -20,7 +21,8 @@ export function useMeetings() {
     };
     load();
     window.addEventListener("storage", load);
-    return () => { active = false; window.removeEventListener("storage", load); };
+    window.addEventListener(OUTCOMES_CHANGED, load);
+    return () => { active = false; window.removeEventListener("storage", load); window.removeEventListener(OUTCOMES_CHANGED, load); };
   }, []);
   return { meetings, loading, error };
 }

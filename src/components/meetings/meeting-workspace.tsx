@@ -13,6 +13,7 @@ import MeetingAgenda from "./meeting-agenda";
 import MeetingParticipants from "./meeting-participants";
 import MeetingFiles from "./meeting-files";
 import MeetingCarryOver from "./meeting-carry-over";
+import CompletedMeeting from "./completed-meeting";
 import { MeetingLoading, MeetingNotFound } from "./meeting-state";
 
 export default function MeetingWorkspace({ meetingId, created = false }: { meetingId: string; created?: boolean }) {
@@ -23,6 +24,7 @@ export default function MeetingWorkspace({ meetingId, created = false }: { meeti
   const meeting = meetings.find(m => m.id === meetingId);
   if (loading) return <MeetingLoading />;
   if (error || !meeting) return <MeetingNotFound error={error} />;
+  if (meeting.status === "COMPLETED") return <CompletedMeeting key={meeting.id} meeting={meeting} />;
   const agenda = <MeetingAgenda agenda={meeting.agenda} />;
   const participants = <MeetingParticipants participants={meeting.participants} />;
   const files = <MeetingFiles files={meeting.files} />;
