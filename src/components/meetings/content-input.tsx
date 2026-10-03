@@ -61,7 +61,7 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
   }
   function drop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
-    if (event.dataTransfer.files.length !== 1) { setError("Choose one file at a time."); return; }
+    if (event.dataTransfer.files.length !== 1) { setFile(undefined); setError("Choose one file at a time."); return; }
     chooseFile(event.dataTransfer.files[0]);
   }
   function save(continueToReview: boolean) {

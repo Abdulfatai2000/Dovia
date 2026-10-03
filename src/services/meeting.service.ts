@@ -12,10 +12,14 @@ function isMeeting(value: unknown): value is Meeting {
     typeof m.startTime === "string" && /^\d{2}:\d{2}$/.test(m.startTime) &&
     typeof m.duration === "number" && typeof m.meetingType === "string" &&
     typeof m.team === "string" && typeof m.platform === "string" &&
+    (m.description === undefined || typeof m.description === "string") &&
+    (m.tags === undefined || (Array.isArray(m.tags) && m.tags.every(tag => typeof tag === "string"))) &&
+    (m.meetingUrl === undefined || typeof m.meetingUrl === "string") &&
+    (m.previousMeetingTitle === undefined || typeof m.previousMeetingTitle === "string") &&
     ["DRAFT", "SCHEDULED", "IN_PROGRESS", "PROCESSING", "REVIEW", "COMPLETED", "CANCELLED"].includes(String(m.status)) &&
     Array.isArray(m.participants) && m.participants.every(p => p && typeof p.userId === "string") &&
-    Array.isArray(m.agenda) && m.agenda.every(a => a && typeof a.id === "string" && typeof a.title === "string") &&
-    Array.isArray(m.files) && m.files.every(f => f && typeof f.name === "string" && typeof f.type === "string") &&
+    Array.isArray(m.agenda) && m.agenda.every(a => a && typeof a.id === "string" && typeof a.title === "string" && (a.time === undefined || typeof a.time === "string")) &&
+    Array.isArray(m.files) && m.files.every(f => f && typeof f.id === "string" && typeof f.name === "string" && typeof f.type === "string") &&
     Array.isArray(m.carryOver) && m.carryOver.length === 0;
 }
 function demoMeetings(): Meeting[] {

@@ -2,7 +2,7 @@ DOVIA
 
 Frontend Implementation Handbook
 
-> Current implementation note — Phase 2 (frontend-first): the shared Workspace Shell & Navigation is implemented. The server workspace layout wraps a client shell with a responsive navy sidebar, sticky topbar, mobile drawer, segment-aware navigation, mock notification/profile previews, and explicit breadcrumbs. All workspace pages remain placeholders. No authentication, fetching, or backend functionality is connected. See [WORKSPACE_SHELL.md](./WORKSPACE_SHELL.md) for architecture and behavior. This current sequence takes precedence over the historical phase numbering below: Phase 0 scaffold, Phase 1 design system, Phase 2 workspace shell, then Phase 3 Landing Page & Authentication UI. Existing Phase 1 primitives are reused; no Radix/shadcn or other framework was added for this phase.
+> Current implementation — Phases 4–6 (frontend-first): Dashboard, Meetings, Create Meeting, the pre-meeting workspace, and meeting content capture are implemented with typed fixtures and browser-only demo persistence. Phase 3 auth remains intact. The workflow continues to the unchanged AI Review placeholder; no backend/API or AI functionality is connected. See [MEETING_WORKFLOW_FRONTEND.md](./MEETING_WORKFLOW_FRONTEND.md). This current phase sequence supersedes the historical plan below.
 
 Comprehensive phased build plan for every Dovia user-facing experience
 
