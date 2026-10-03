@@ -1,4 +1,5 @@
 ﻿import { seedMeetings } from "@/data/mock/meetings";
+import { readStored, writeStored } from "@/lib/demo-store";
 import type { CreateMeetingInput, Meeting, MeetingContent } from "@/types/meeting";
 import { getConfirmedOutcomes } from "./meeting-outcome.service";
 
@@ -26,11 +27,13 @@ function isMeeting(value: unknown): value is Meeting {
 function demoMeetings(): Meeting[] {
   if (typeof window === "undefined") return [];
   try {
-    const data: unknown = JSON.parse(localStorage.getItem(MEETINGS_KEY) ?? "[]");
+    const data: unknown = JSON.parse(readStored(MEETINGS_KEY) ?? "[]");
     if (!Array.isArray(data) || !data.every(isMeeting)) throw new Error("Invalid demo data");
     return data;
-  } catch {
-    throw new Error("Unable to read demo meetings. Check browser storage or clear the Dovia demo data and try again.");
+  } catch (cause) {
+    throw new Error(cause instanceof Error && cause.message.startsWith("Unable to read")
+      ? cause.message
+      : "Unable to read demo meetings. Check browser storage or clear the Dovia demo data and try again.");
   }
 }
 export function getMeetings(): Meeting[] {
@@ -40,17 +43,15 @@ export function getMeetings(): Meeting[] {
 export function getMeeting(id: string): Meeting | undefined { return getMeetings().find(meeting => meeting.id === id); }
 export function createMeeting(input: CreateMeetingInput): Meeting {
   const meeting: Meeting = { ...input, id: `demo-${crypto.randomUUID()}`, status: "SCHEDULED" };
-  try { localStorage.setItem(MEETINGS_KEY, JSON.stringify([meeting, ...demoMeetings()])); }
-  catch { throw new Error("The demo meeting could not be saved in this browser. Allow browser storage and try again."); }
+  writeStored(MEETINGS_KEY, JSON.stringify([meeting, ...demoMeetings()]));
   return meeting;
 }
 export function saveMeetingContent(id: string, content: MeetingContent) {
-  try { localStorage.setItem(CONTENT_KEY + id, JSON.stringify(content)); }
-  catch { throw new Error("Content could not be saved in this browser. Keep a copy of your notes and try again."); }
+  writeStored(CONTENT_KEY + id, JSON.stringify(content));
 }
 export function getMeetingContent(id: string): MeetingContent | null {
   try {
-    const value: unknown = JSON.parse(localStorage.getItem(CONTENT_KEY + id) ?? "null");
+    const value: unknown = JSON.parse(readStored(CONTENT_KEY + id) ?? "null");
     if (value === null) return null;
     if (!value || typeof value !== "object") throw new Error();
     const content = value as Record<string, unknown>;
@@ -60,5 +61,9 @@ export function getMeetingContent(id: string): MeetingContent | null {
       if (typeof file.id !== "string" || typeof file.name !== "string" || typeof file.type !== "string" || typeof file.size !== "number") throw new Error();
     }
     return value as MeetingContent;
-  } catch { throw new Error("Saved demo content could not be read. You can enter fresh notes below."); }
+  } catch (cause) {
+    throw new Error(cause instanceof Error && cause.message.startsWith("Unable to read")
+      ? cause.message
+      : "Saved demo content could not be read. You can enter fresh notes below.");
+  }
 }

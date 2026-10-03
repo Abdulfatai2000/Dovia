@@ -2,6 +2,7 @@
 import type { Task } from "@/types/task";
 import { sampleCompletedAnalysis } from "@/data/mock/meeting-analysis";
 import { users } from "@/data/mock/users";
+import { readStored, writeStored } from "@/lib/demo-store";
 
 const KEY = "dovia_demo_meeting_outcomes";
 export const OUTCOMES_CHANGED = "dovia-demo-outcomes-changed";
@@ -26,7 +27,7 @@ function isAnalysis(value: unknown): value is MeetingAnalysis {
 export function getConfirmedOutcomes(): MeetingAnalysis[] {
   if (typeof window === "undefined") return [sampleCompletedAnalysis];
   try {
-    const stored: unknown = JSON.parse(localStorage.getItem(KEY) ?? "[]");
+    const stored: unknown = JSON.parse(readStored(KEY) ?? "[]");
     if (!Array.isArray(stored) || !stored.every(isAnalysis)) throw new Error();
     const outcomes = new Map<string, MeetingAnalysis>([[sampleCompletedAnalysis.meetingId, sampleCompletedAnalysis]]);
     stored.forEach(outcome => outcomes.set(outcome.meetingId, outcome));
@@ -54,11 +55,9 @@ export function confirmMeetingOutcome(analysis: MeetingAnalysis): MeetingAnalysi
   const error = validateOutcome(analysis);
   if (error) throw new Error(error);
   const confirmed: MeetingAnalysis = { ...analysis, status: "CONFIRMED", confirmedAt: new Date().toISOString(), confirmedBy: "user-abdulfatai" };
-  const outcomes = getConfirmedOutcomes().filter(outcome => outcome.meetingId !== analysis.meetingId);
-  try {
-    // One atomic write is the source of truth for completed status, outcome, and derived tasks.
-    localStorage.setItem(KEY, JSON.stringify([...outcomes, confirmed]));
-  } catch { throw new Error("The outcome could not be saved in this browser. Your edits are still here; allow storage and try again."); }
+const outcomes = getConfirmedOutcomes().filter(outcome => outcome.meetingId !== analysis.meetingId);
+  // One atomic write is the source of truth for completed status, outcome, and derived tasks.
+  writeStored(KEY, JSON.stringify([...outcomes, confirmed]));
   window.dispatchEvent(new Event(OUTCOMES_CHANGED));
   return confirmed;
 }

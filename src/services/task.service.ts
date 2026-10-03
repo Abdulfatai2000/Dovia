@@ -1,5 +1,6 @@
 ﻿import { tasks as seedTasks } from "@/data/mock/tasks";
 import { users } from "@/data/mock/users";
+import { readStored, writeStored } from "@/lib/demo-store";
 import { getConfirmedDemoTasks } from "./meeting-outcome.service";
 import { getMeeting } from "./meeting.service";
 import { CURRENT_USER_ID, summarizeTasks, taskPriorities, taskStatuses, taskStatusLabel } from "@/lib/task-utils";
@@ -25,7 +26,7 @@ function validChanges(value:unknown): value is TaskChanges {
 function read(): Store {
   if (typeof window === "undefined") return {manual:[],updates:{},activity:[]};
   try {
-    const value:unknown = JSON.parse(localStorage.getItem(KEY) ?? '{"manual":[],"updates":{},"activity":[]}');
+    const value:unknown = JSON.parse(readStored(KEY) ?? '{"manual":[],"updates":{},"activity":[]}');
     if (!object(value) || !Array.isArray(value.manual) || !object(value.updates) || !Array.isArray(value.activity)) throw new Error();
     for (const task of value.manual) {
       if (!object(task) || typeof task.id !== "string" || !task.id.startsWith("manual-") || typeof task.title !== "string" || !taskPriorities.some(p=>p===task.priority) || !taskStatuses.some(s=>s===task.status)) throw new Error();
@@ -38,8 +39,7 @@ function read(): Store {
   } catch { throw new Error("Unable to read demo tasks. Check browser storage before continuing."); }
 }
 function write(store:Store) {
-  try { localStorage.setItem(KEY,JSON.stringify(store)); }
-  catch { throw new Error("The task could not be saved in this browser. Your input is still available; allow browser storage and try again."); }
+  writeStored(KEY, JSON.stringify(store));
   window.dispatchEvent(new Event(TASKS_CHANGED));
 }
 function bases(store:Store) { return [...seedTasks,...getConfirmedDemoTasks(),...store.manual]; }

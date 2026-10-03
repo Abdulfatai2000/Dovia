@@ -75,6 +75,7 @@ Meeting
 | `/settings` | Settings overview |
 | `/settings/account` | Account profile |
 | `/settings/notifications` | Notification preferences |
+| `/settings/meeting-defaults` | Default duration, type, platform, reminder, and review behaviour |
 | `/settings/integrations` | Connected tools |
 | `/settings/security` | Password, sessions, 2FA surfaces |
 | `/settings/workspace` | Workspace preferences |
