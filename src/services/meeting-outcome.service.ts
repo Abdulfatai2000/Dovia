@@ -65,7 +65,9 @@ export function confirmMeetingOutcome(analysis: MeetingAnalysis): MeetingAnalysi
 export function getConfirmedDemoTasks(): Task[] {
   return getConfirmedOutcomes().flatMap(outcome => outcome.actionItems.map(item => ({
     id: `confirmed:${outcome.meetingId}:${item.id}`, meetingId: outcome.meetingId,
-    title: item.title, assigneeId: item.assigneeId, dueDate: item.suggestedDeadline,
+    title: item.title, description: item.description, assigneeId: item.assigneeId, dueDate: item.suggestedDeadline,
+    completedAt: item.status === "COMPLETED" ? outcome.confirmedAt : undefined,
     priority: item.priority ?? "MEDIUM", status: item.status ?? "NOT_STARTED",
   })));
 }
+

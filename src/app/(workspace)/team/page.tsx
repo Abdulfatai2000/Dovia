@@ -1,9 +1,2 @@
-import { PageHeader } from "@/components/ui/page-header";
-
-export default function Page() {
-  return (
-    <div className="space-y-3">
-      <PageHeader title="Dovia Team" description="This page will be implemented in a later phase." />
-    </div>
-  );
-}
+﻿import TeamPage from "@/components/team/team-page";
+export default function Page(){return <TeamPage />;}

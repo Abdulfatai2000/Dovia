@@ -2,7 +2,7 @@ DOVIA
 
 Frontend Implementation Handbook
 
-> Current implementation — Master Phase 1: editable mock AI Review, explicit human confirmation, completed meeting records, and Landing/Features/Pricing/About pages are implemented. Confirmation uses browser-only demo storage and stable derived task IDs; Groq and all backend services remain disconnected. Existing dashboard, preparation, content capture, auth, and workspace shell are preserved. See [AI_REVIEW_FRONTEND.md](./AI_REVIEW_FRONTEND.md) and [MARKETING_UI.md](./MARKETING_UI.md). This current sequence supersedes historical phase numbering below.
+> Current implementation — Master Phase 2: My Tasks, task detail, meeting follow-up, Calendar, Team, and member detail are implemented using the shared seed/confirmed-action task service plus browser-only updates. Dashboard task data uses the same source. Existing marketing, auth, AI Review, and meeting layouts are retained. No backend or integrations are connected. See [EXECUTION_WORKFLOW_FRONTEND.md](./EXECUTION_WORKFLOW_FRONTEND.md), [AI_REVIEW_FRONTEND.md](./AI_REVIEW_FRONTEND.md), and [MARKETING_UI.md](./MARKETING_UI.md). This sequence supersedes the historical phase numbering below.
 
 Comprehensive phased build plan for every Dovia user-facing experience
 
