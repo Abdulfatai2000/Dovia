@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,8 @@ export default function MeetingDefaultsForm() {
   const [draft, setDraft] = useState<MeetingDefaults | null>(null);
   const [feedback, setFeedback] = useState<{ variant: "success" | "error"; title: string; description: string } | null>(null);
 
-  if (loading || !data) return <LoadingState label="Loading meeting defaults…" />;
   if (error) return <ErrorState description={error} />;
+  if (loading || !data) return <LoadingState label="Loading meeting defaultsâ€¦" />;
 
   const current = draft ?? data.meetingDefaults;
   const dirty = JSON.stringify(current) !== JSON.stringify(data.meetingDefaults);

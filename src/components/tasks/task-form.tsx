@@ -2,7 +2,7 @@
 import { useState, useRef, type FormEvent } from "react";
 import type { Task, TaskInput } from "@/types/task";
 import type { Meeting } from "@/types/meeting";
-import { users } from "@/data/mock/users";
+import { getTeamMembers } from "@/services/team.service";
 import { CURRENT_USER_ID, taskPriorities, taskStatuses, taskStatusLabel } from "@/lib/task-utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,7 +18,7 @@ export default function TaskForm({ task, meetings, onSave, onCancel }: {task?:Ta
   function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();const next:Record<string,string>={};
     if(!value.title.trim())next.title="Enter a task title.";
-    if(!users.some(user=>user.id===value.assigneeId))next.assigneeId="Choose an owner.";
+    if(!getTeamMembers().some(user=>user.id===value.assigneeId))next.assigneeId="Choose an owner.";
     if(!taskPriorities.includes(value.priority))next.priority="Choose a priority.";
     if(!taskStatuses.includes(value.status))next.status="Choose a status.";
     setErrors(next);
@@ -30,7 +30,7 @@ export default function TaskForm({ task, meetings, onSave, onCancel }: {task?:Ta
     <Input name="title" label="Task title" required value={value.title} error={errors.title} onChange={e=>patch({title:e.target.value})} />
     <Textarea label="Description (optional)" value={value.description} onChange={e=>patch({description:e.target.value})} />
     {!task&&<Select label="Source meeting (optional)" value={value.meetingId} onChange={e=>patch({meetingId:e.target.value})} options={[{value:"",label:"No source meeting"},...meetings.map(m=>({value:m.id,label:m.title}))]} />}
-    <div className="grid gap-4 sm:grid-cols-2"><Select name="assigneeId" label="Assignee" required value={value.assigneeId} error={errors.assigneeId} onChange={e=>patch({assigneeId:e.target.value})} options={[{value:"",label:"Choose owner"},...users.map(user=>({value:user.id,label:user.name}))]} />
+    <div className="grid gap-4 sm:grid-cols-2"><Select name="assigneeId" label="Assignee" required value={value.assigneeId} error={errors.assigneeId} onChange={e=>patch({assigneeId:e.target.value})} options={[{value:"",label:"Choose owner"},...getTeamMembers().map(user=>({value:user.id,label:user.name}))]} />
       <Input name="dueDate" label="Due date (optional)" type="date" value={value.dueDate} onChange={e=>patch({dueDate:e.target.value})} />
       <Select name="priority" label="Priority" required value={value.priority} error={errors.priority} onChange={e=>patch({priority:e.target.value as TaskInput["priority"]})} options={taskPriorities.map(v=>({value:v,label:taskStatusLabel(v)}))} />
       <Select name="status" label="Status" required value={value.status} error={errors.status} onChange={e=>patch({status:e.target.value as TaskInput["status"]})} options={taskStatuses.map(v=>({value:v,label:taskStatusLabel(v)}))} /></div>

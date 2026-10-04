@@ -20,7 +20,7 @@ export function ProductivityChart({ buckets, title = "Meetings held per week", d
       {grouping && <span className="rounded-pill bg-surface-soft px-3 py-1 text-xs font-medium text-text-secondary">{grouping}</span>}
     </figcaption>
     <p className="mt-3 text-sm text-text-secondary">{summary}</p>
-    <ul className="mt-4 flex min-w-0 items-end gap-2 overflow-x-auto pb-1" role="list">
+    <ul className="relative mt-4 flex min-w-0 items-end gap-2 overflow-x-auto pb-1" role="list" tabIndex={0} aria-label="Weekly meeting output; scroll to see all weeks">
       {buckets.map(bucket => {
         const height = bucket.count === 0 ? 4 : Math.max(12, Math.round(bucket.count / max * 100));
         return <li key={bucket.range} className="flex min-w-16 flex-1 flex-col items-center gap-2">

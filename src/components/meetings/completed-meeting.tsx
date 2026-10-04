@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Share2, MoreHorizontal } from "lucide-react";
 import type { Meeting } from "@/types/meeting";
 import { useMeetingAnalysis } from "@/hooks/use-meeting-analysis";
-import { getUser } from "@/data/mock/users";
+import { getUser } from "@/services/team.service";
 import { formatDate, formatTime } from "@/lib/meeting-format";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -47,3 +47,4 @@ export default function CompletedMeeting({ meeting }: { meeting: Meeting }) {
     {share && <div className="fixed inset-x-4 bottom-4 z-[var(--z-toast)] sm:left-auto"><Toast variant="info" title="Sharing will be connected in a later phase." description="No link was published and no one was notified." onDismiss={() => setShare(false)} /></div>}
   </div>;
 }
+

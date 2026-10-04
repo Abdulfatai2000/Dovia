@@ -16,6 +16,8 @@ export default function ResetDemoData() {
   function reset() {
     try {
       resetDemoData();
+      // Remount forms too, so unsaved drafts and session-only photos cannot survive reset.
+      window.location.reload();
       setConfirming(false);
       setFeedback({ variant: "success", title: "Dovia demo data reset.", description: "Meetings, tasks, notifications, and settings are back to their defaults." });
     } catch (cause) {

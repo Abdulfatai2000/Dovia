@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useTasks } from "@/hooks/use-tasks";
 import { useMeetings } from "@/hooks/use-meetings";
 import { updateTask } from "@/services/task.service";
-import { getUser } from "@/data/mock/users";
+import { getUser } from "@/services/team.service";
 import { formatDate } from "@/lib/meeting-format";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -31,5 +31,6 @@ export default function TaskDetail({taskId}:{taskId:string}) {
     {saved&&<div className="fixed inset-x-4 bottom-4 z-[var(--z-toast)] sm:left-auto"><Toast variant="success" title="Task updated." description="Saved in this browser only." onDismiss={()=>setSaved(false)} /></div>}{actions.feedback}
   </div>;
 }
+
 
 

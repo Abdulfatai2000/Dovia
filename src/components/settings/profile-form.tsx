@@ -35,6 +35,7 @@ export default function ProfileForm() {
     const file = event.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) { setFailure("Choose an image file to preview."); return; }
+    if (file.size > 2 * 1024 * 1024) { setFailure("Choose an image smaller than 2 MB."); return; }
     setFailure("");
     const reader = new FileReader();
     reader.onload = () => setPhoto(typeof reader.result === "string" ? reader.result : null);

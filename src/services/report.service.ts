@@ -17,6 +17,7 @@ export const distributionLabels = ["Completed", "In Progress", "Not Started", "B
 export function reportWindow(range: ReportRange) {
   const end = range === "Previous Month" ? shiftDay(DEMO_TODAY.slice(0, 7) + "-01", -1) : DEMO_TODAY;
   const start = range === "Last 7 Days" ? shiftDay(end, -6)
+    : range === "Last 30 Days" ? shiftDay(end, -29)
     : range === "Last 90 Days" ? shiftDay(end, -89)
     : range === "This Month" ? end.slice(0, 7) + "-01"
     : dateKey(new Date(`${end.slice(0, 7)}-01T12:00:00Z`));
@@ -48,7 +49,7 @@ function distribution(tasks: Task[]) {
   const buckets: { key: string; status: string; count: number }[] = distributionOrder.map((status, index) => ({
     key: distributionLabels[index],
     status,
-    count: tasks.filter(task => task.status === status).length,
+    count: tasks.filter(task => task.status === status && !isTaskOverdue(task)).length,
   }));
   buckets.push({ key: "Overdue", status: "OVERDUE", count: overdue.length });
   return { buckets, total: tasks.length, overdue: overdue.length, completed: tasks.filter(task => task.status === "COMPLETED").length };

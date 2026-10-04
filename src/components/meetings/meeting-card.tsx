@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Dropdown } from "@/components/ui/dropdown";
 import { ButtonLink } from "@/components/ui/button-link";
-import { getUser } from "@/data/mock/users";
+import { getUser } from "@/services/team.service";
 import { formatDate, formatTime } from "@/lib/meeting-format";
 
 export default function MeetingCard({ meeting }: { meeting: Meeting }) {
@@ -33,3 +33,4 @@ export default function MeetingCard({ meeting }: { meeting: Meeting }) {
     </div>
   </Card>;
 }
+

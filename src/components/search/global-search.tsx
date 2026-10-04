@@ -36,7 +36,7 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
   const listRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const load = useCallback(() => (value.trim() ? searchWorkspace(value) : null), [value]);
-  const { data, loading } = useDemoQuery(load);
+  const { data, loading, error } = useDemoQuery(load);
 
   const flat: SearchResult[] = (data?.groups ?? []).flatMap(group => group.results);
   const trimmed = value.trim();
@@ -50,17 +50,6 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
     listRef.current?.querySelector<HTMLElement>(`[data-index="${active}"]`)?.scrollIntoView({ block: "nearest" });
   }, [active]);
 
-  useEffect(() => {
-    const onShortcut = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        inputRef?.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", onShortcut);
-    return () => window.removeEventListener("keydown", onShortcut);
-  }, [inputRef]);
-
   function open(result: SearchResult) {
     router.push(result.href);
     onClose();
@@ -71,28 +60,28 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
     if (!flat.length) return;
     if (event.key === "ArrowDown") { event.preventDefault(); setActive(index => (index + 1) % flat.length); return; }
     if (event.key === "ArrowUp") { event.preventDefault(); setActive(index => (index - 1 + flat.length) % flat.length); return; }
-    if (event.key === "Home") { event.preventDefault(); setActive(0); return; }
-    if (event.key === "End") { event.preventDefault(); setActive(flat.length - 1); return; }
-    if (event.key === "Enter") { event.preventDefault(); open(flat[active]); }
+    if (event.key === "Enter") { event.preventDefault(); const result = flat[Math.min(active, flat.length - 1)]; if (result) open(result); }
   }
 
   let cursor = -1;
-  return <div className={cn("min-w-0", floating && "relative", className)}>
+  return <div className={cn("min-w-0", floating && "relative", className)}
+    onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) onChange(""); }}>
     <SearchInput ref={inputRef} label="Search workspace" placeholder={placeholder}
       value={value} autoComplete="off" role="combobox" aria-autocomplete="list"
-      aria-controls={`${id}-results`} aria-expanded={Boolean(trimmed)} aria-activedescendant={flat.length ? `${id}-option-${active}` : undefined}
+      aria-controls={trimmed ? `${id}-results` : undefined} aria-expanded={Boolean(trimmed)} aria-activedescendant={flat.length ? `${id}-option-${Math.min(active, flat.length - 1)}` : undefined}
       onChange={event => onChange(event.target.value)} onKeyDown={onKeyDown} />
-    {trimmed && <div id={`${id}-results`}
+    {trimmed && <div
       className={cn("mt-2 overflow-y-auto rounded-md border border-border bg-surface shadow-lg",
         floating ? "absolute inset-x-0 top-full z-[var(--z-dropdown)] mt-2 max-h-[min(28rem,60dvh)]" : "max-h-[min(28rem,60dvh)]")}>
       {loading && !data && <p role="status" className="flex items-center gap-2 px-4 py-3 text-sm text-text-muted">
         <LoaderCircle aria-hidden="true" className="dovia-spinner size-4" />Searching demo workspace…
       </p>}
-      {!loading && !flat.length && <div className="space-y-1 px-4 py-5 text-center">
+      {error && <p role="alert" className="px-4 py-3 text-sm text-danger-foreground">{error}</p>}
+      {!loading && !error && !flat.length && <div className="space-y-1 px-4 py-5 text-center">
         <p className="text-sm font-medium text-foreground">No results for &quot;{trimmed}&quot;</p>
         <p className="text-sm text-text-secondary">Try searching meetings, tasks, people, or decisions.</p>
       </div>}
-      {flat.length > 0 && <div ref={listRef} role="listbox" aria-label="Search results" className="p-1.5">
+      <div id={`${id}-results`} ref={listRef} role="listbox" aria-label="Search results" className="p-1.5">
         {data?.groups.map(group => {
           const Icon = groupIcons[group.group];
           return <div key={group.group} className="mb-1 last:mb-0">
@@ -100,7 +89,7 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
             {group.results.map(result => {
               cursor += 1;
               const index = cursor;
-              const selected = index === active;
+              const selected = index === Math.min(active, flat.length - 1);
               return <button key={result.id} type="button" role="option" id={`${id}-option-${index}`}
                 data-index={index} aria-selected={selected} tabIndex={-1}
                 onMouseEnter={() => setActive(index)} onClick={() => open(result)}
@@ -115,11 +104,11 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
             })}
           </div>;
         })}
-        <p className="border-t border-border px-3 py-2 text-xs text-text-muted">
+      </div>
+        <p className="border-t border-border px-3 py-2 text-xs text-text-muted" role="status">
           <Search aria-hidden="true" className="mr-1 inline size-3" />
           {flat.length} result{flat.length === 1 ? "" : "s"} · Use arrow keys and Enter to open · Esc to close
         </p>
-      </div>}
     </div>}
   </div>;
 }

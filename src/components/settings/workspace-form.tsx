@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,8 @@ export default function WorkspaceForm() {
   const [draft, setDraft] = useState<WorkspaceSettings | null>(null);
   const [feedback, setFeedback] = useState<{ variant: "success" | "error"; title: string; description: string } | null>(null);
 
-  if (loading || !data) return <LoadingState label="Loading workspace settings…" />;
   if (error) return <ErrorState description={error} />;
+  if (loading || !data) return <LoadingState label="Loading workspace settingsâ€¦" />;
 
   const current = draft ?? data.workspace;
   const dirty = JSON.stringify(current) !== JSON.stringify(data.workspace);

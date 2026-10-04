@@ -7,7 +7,7 @@ import { Dropdown } from "@/components/ui/dropdown";
 import { ButtonLink } from "@/components/ui/button-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getUser } from "@/data/mock/users";
+import { getUser } from "@/services/team.service";
 import { formatDate, formatTime } from "@/lib/meeting-format";
 export default function UpcomingMeetings({ meetings, loading = false }: { meetings: Meeting[]; loading?: boolean }) {
   if (loading) return <div role="status"><span className="sr-only">Loading meetings</span><Skeleton className="h-72" /></div>;
@@ -23,3 +23,4 @@ export default function UpcomingMeetings({ meetings, loading = false }: { meetin
     </li>;
   })}</ul></Card>;
 }
+

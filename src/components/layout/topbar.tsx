@@ -23,6 +23,8 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
   const [mobileSearch, setMobileSearch] = useState(false);
   const [signOutNotice, setSignOutNotice] = useState(false);
   const searchField = useRef<HTMLInputElement>(null);
+  const mobileSearchField = useRef<HTMLInputElement>(null);
+  const mobileSearchArea = useRef<HTMLDivElement>(null);
   const searchTrigger = useRef<HTMLButtonElement>(null);
   const searchArea = useRef<HTMLDivElement>(null);
   const { unread } = useNotifications();
@@ -30,19 +32,25 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
   // One notification source: the same service state the /notifications page mutates.
   const load = useCallback(() => getNotifications().slice(0, 5), []);
   const { data: previews } = useDemoQuery(load);
-  const user = getCurrentUser();
+  const { data: user } = useDemoQuery(getCurrentUser);
 
-  useEffect(() => { if (mobileSearch) searchField.current?.focus(); }, [mobileSearch]);
+  useEffect(() => { if (mobileSearch) mobileSearchField.current?.focus(); }, [mobileSearch]);
   useEffect(() => {
     const onShortcut = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); setMobileSearch(true); }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        if (window.matchMedia("(min-width: 768px)").matches) searchField.current?.focus();
+        else { setMobileSearch(true); mobileSearchField.current?.focus(); }
+      }
     };
     window.addEventListener("keydown", onShortcut);
     return () => window.removeEventListener("keydown", onShortcut);
   }, []);
   useEffect(() => {
     if (!query.trim()) return;
-    const onPointerDown = (event: PointerEvent) => { if (!searchArea.current?.contains(event.target as Node)) setQuery(""); };
+    const onPointerDown = (event: PointerEvent) => {
+      if (!searchArea.current?.contains(event.target as Node) && !mobileSearchArea.current?.contains(event.target as Node)) setQuery("");
+    };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [query]);
@@ -53,7 +61,7 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
     id: item.id, label: item.title, description: item.description,
     meta: `${item.read ? "Read" : "Unread"} · ${timeLabel(item.timestamp)}`, href: item.href ?? "/notifications",
   }));
-  if (notificationItems.length) notificationItems.push({ id: "all", label: "View all notifications", href: "/notifications", icon: <ArrowRight />, separatorBefore: true });
+  notificationItems.push({ id: "all", label: "View all notifications", href: "/notifications", icon: <ArrowRight />, separatorBefore: true });
 
   const profileItems: DropdownItem[] = [
     { id: "account", label: "Profile / Account", href: "/settings/account", icon: <UserRound /> },
@@ -87,11 +95,11 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
             </span>} items={notificationItems} />
           <div className="hidden h-7 w-px bg-border sm:block" aria-hidden="true" />
           <Dropdown label="Open profile menu" variant="ghost" triggerClassName="gap-2 px-1.5 [&>svg]:hidden lg:[&>svg]:block"
-            trigger={<><Avatar name={user.name} size="sm" /><span className="hidden text-left lg:block"><span className="block text-sm font-medium text-foreground">{user.name}</span><span className="block text-xs font-normal text-text-muted">{user.role}</span></span></>} items={profileItems} />
+            trigger={<><Avatar name={user?.name ?? "Dovia member"} size="sm" /><span className="hidden text-left lg:block"><span className="block text-sm font-medium text-foreground">{user?.name ?? "Dovia member"}</span><span className="block text-xs font-normal text-text-muted">{user?.role ?? "Demo workspace"}</span></span></>} items={profileItems} />
         </div>
       </div>
-      {mobileSearch && <div id="mobile-workspace-search" className="border-t border-border p-4 md:hidden">
-        <GlobalSearch value={query} onChange={setQuery} onClose={closeSearch} inputRef={searchField} placeholder={searchPlaceholder} floating />
+      {mobileSearch && <div ref={mobileSearchArea} id="mobile-workspace-search" className="border-t border-border p-4 md:hidden">
+        <GlobalSearch value={query} onChange={setQuery} onClose={closeSearch} inputRef={mobileSearchField} placeholder={searchPlaceholder} floating />
         <div className="mt-3 flex justify-end">
           <IconButton aria-label="Close search" onClick={closeSearch}><X aria-hidden="true" /></IconButton>
         </div>

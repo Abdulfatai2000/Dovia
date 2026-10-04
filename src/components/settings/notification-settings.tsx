@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -26,8 +26,8 @@ export default function NotificationSettings() {
   const [draft, setDraft] = useState<NotificationPreferences | null>(null);
   const [feedback, setFeedback] = useState<{ variant: "success" | "error"; title: string; description: string } | null>(null);
 
-  if (loading || !data) return <LoadingState label="Loading notification preferences…" />;
   if (error) return <ErrorState description={error} />;
+  if (loading || !data) return <LoadingState label="Loading notification preferencesâ€¦" />;
 
   const current = draft ?? data.notifications;
   const dirty = JSON.stringify(current) !== JSON.stringify(data.notifications);

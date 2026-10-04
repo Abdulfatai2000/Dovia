@@ -1,6 +1,6 @@
 ﻿import Link from "next/link";
 import type { Activity } from "@/data/mock/activities";
-import { getUser } from "@/data/mock/users";
+import { getUser } from "@/services/team.service";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -13,3 +13,4 @@ export default function ActivityFeed({ activities, loading = false }: { activiti
     <div className="min-w-0 text-sm"><p><span className="font-medium">{getUser(activity.actorId)?.name}</span> <span className="text-text-secondary">{activity.action}</span> <Link href={activity.href}>{activity.entity}</Link></p><p className="mt-1 text-xs text-text-muted">{activity.time} · Demo activity</p></div>
   </li>)}</ul></Card>;
 }
+

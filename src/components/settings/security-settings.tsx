@@ -19,11 +19,12 @@ export default function SecuritySettings() {
     const next = String(form.get("newPassword") ?? "");
     const confirm = String(form.get("confirmPassword") ?? "");
     if (!current || !next || !confirm) { setMismatch("Complete all three password fields."); return; }
+    if (next.length < 8) { setMismatch("Use at least 8 characters for the new password."); return; }
     if (next !== confirm) { setMismatch("New password and confirm password do not match."); return; }
     setMismatch("");
     setFeedback({
       title: "Password changes will be connected during backend authentication.",
-      description: "No credentials were read, changed, or stored by this demo.",
+      description: "Checked in this form only. No credentials were changed, sent, or persisted.",
     });
     event.currentTarget.reset();
   };

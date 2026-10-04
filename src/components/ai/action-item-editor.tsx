@@ -1,7 +1,7 @@
 ﻿"use client";
 import { Plus, Trash2 } from "lucide-react";
 import type { MeetingActionItem } from "@/types/ai";
-import { users } from "@/data/mock/users";
+import { getTeamMembers } from "@/services/team.service";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,7 @@ export default function ActionItemEditor({ items, onChange }: { items: MeetingAc
       <TableBody>{items.map((item,index) => <TableRow key={item.id}>
         <TableCell className="min-w-64"><Input label={`Task ${index+1}`} hideLabel required value={item.title} onChange={e => update(item.id,{title:e.target.value})} /></TableCell>
         <TableCell className="min-w-52"><Select label={`Assignee for task ${index+1}`} hideLabel required value={item.assigneeId ?? ""} onChange={e => update(item.id,{assigneeId:e.target.value})}
-          options={[{value:"",label:"Choose reviewed owner"},...users.map(user => ({value:user.id,label:user.name}))]} helperText={item.suggestedAssigneeName ? `Suggested: ${item.suggestedAssigneeName}` : "Select a workspace member."} /></TableCell>
+          options={[{value:"",label:"Choose reviewed owner"},...getTeamMembers().map(user => ({value:user.id,label:user.name}))]} helperText={item.suggestedAssigneeName ? `Suggested: ${item.suggestedAssigneeName}` : "Select a workspace member."} /></TableCell>
         <TableCell className="min-w-44"><Input type="date" label={`Deadline for task ${index+1}`} hideLabel required value={item.suggestedDeadline ?? ""} onChange={e => update(item.id,{suggestedDeadline:e.target.value})} /></TableCell>
         <TableCell className="min-w-36"><Select label={`Priority for task ${index+1}`} hideLabel value={item.priority ?? "MEDIUM"} onChange={e => update(item.id,{priority:e.target.value as MeetingActionItem["priority"]})} options={["LOW","MEDIUM","HIGH","URGENT"].map(value => ({value,label:value.charAt(0)+value.slice(1).toLowerCase()}))} /></TableCell>
         <TableCell className="min-w-44"><Select label={`Status for task ${index+1}`} hideLabel value={item.status ?? "NOT_STARTED"} onChange={e => update(item.id,{status:e.target.value as MeetingActionItem["status"]})} options={(["NOT_STARTED","IN_PROGRESS","BLOCKED","COMPLETED","OVERDUE"] as const).map(value => ({value,label:statusPresentation[value].label}))} /></TableCell>

@@ -14,14 +14,18 @@ import { activities } from "@/data/mock/activities";
 import { DEMO_TODAY } from "@/data/mock/meetings";
 import { formatDate } from "@/lib/meeting-format";
 import { useMeetings } from "@/hooks/use-meetings";
+import { useDemoQuery } from "@/hooks/use-demo-query";
+import { getCurrentUser } from "@/services/team.service";
+import TaskActivityFeed from "@/components/tasks/task-activity-feed";
 
 export default function Dashboard() {
   const { meetings, loading, error } = useMeetings();
   const taskState = useTasks();
+  const { data: currentUser } = useDemoQuery(getCurrentUser);
   const tasks = taskState.tasks.filter(task => task.assigneeId === CURRENT_USER_ID);
   const upcoming = meetings.filter(m => ["SCHEDULED", "IN_PROGRESS"].includes(m.status) && m.date >= DEMO_TODAY).sort((a,b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
   return <div className="space-y-8">
-<PageHeader eyebrow="Overview" title="Good to see you, Abdulfatai 👋" description="Here's what's happening across your meetings and follow-up work."
+<PageHeader eyebrow="Overview" title={`Good to see you${currentUser ? `, ${currentUser.name}` : ""} 👋`} description="Here's what's happening across your meetings and follow-up work."
       actions={<ButtonLink href="/meetings/new"><Plus aria-hidden="true" />New Meeting</ButtonLink>} />
     <p className="text-xs text-text-muted">Demo workspace · Sample calendar: {formatDate(DEMO_TODAY)} · All times are local.</p>
     {(error || taskState.error) && <p role="alert" className="text-sm text-danger-foreground">{error || taskState.error}</p>}
@@ -35,7 +39,9 @@ export default function Dashboard() {
       <section className="min-w-0 space-y-5"><SectionHeader title="Upcoming Meetings" action={<ButtonLink href="/meetings" variant="ghost" size="sm">View all</ButtonLink>} /><UpcomingMeetings meetings={upcoming.slice(0,4)} loading={loading} /></section>
       <section className="min-w-0 space-y-5"><SectionHeader title="My Tasks" action={<ButtonLink href="/tasks" variant="ghost" size="sm">View all</ButtonLink>} /><TaskPreview tasks={tasks.slice(0,5)} loading={taskState.loading} /></section>
     </div>
-    <section className="space-y-5"><SectionHeader title="Recent Activity" description="A snapshot of your team's demo activity." /><ActivityFeed activities={activities} /></section>
+    <section className="space-y-5"><SectionHeader title="Recent Activity" description="Task changes saved in this browser." /><TaskActivityFeed tasks={taskState.tasks} activity={taskState.activity} />
+      <details><summary className="cursor-pointer text-sm text-text-muted">Sample workspace activity</summary><ActivityFeed activities={activities} /></details>
+    </section>
   </div>;
 }
 
