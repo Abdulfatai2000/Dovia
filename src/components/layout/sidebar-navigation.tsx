@@ -14,8 +14,8 @@ export function SidebarNavigation({ mobile = false, collapsed = false, onNavigat
         const active = isNavigationActive(pathname, item.href);
         const Icon = item.icon;
         const link = <Link href={item.href} onNavigate={onNavigate} aria-label={item.label} aria-current={active ? "page" : undefined}
-          className={cn("sidebar-link group flex min-h-11 w-full items-center gap-3 rounded-default px-3 py-2.5 text-sm font-medium transition-colors duration-200 hover:no-underline focus-visible:outline-sidebar-text", active ? "dovia-gradient text-on-brand hover:text-on-brand" : "text-sidebar-text hover:bg-sidebar-hover hover:text-on-brand")}>
-          <Icon aria-hidden="true" className={cn("size-5 shrink-0", active ? "text-on-brand" : "text-sidebar-muted group-hover:text-sidebar-text")} />
+          className={cn("sidebar-link group flex min-h-11 w-full items-center gap-3 rounded-default px-3 py-2.5 text-sm font-medium hover:no-underline focus-visible:outline-sidebar-text", active ? "dovia-nav-active text-on-brand hover:text-on-brand" : "text-sidebar-text hover:bg-sidebar-hover hover:text-on-brand")}>
+          <Icon aria-hidden="true" className={cn("size-5 shrink-0 transition-colors duration-200", active ? "text-on-brand" : "text-sidebar-muted group-hover:text-sidebar-text")} />
           <span className={cn("truncate", !mobile && "sidebar-label")}>{item.label}</span>
           {active && <span aria-hidden="true" className={cn("ml-auto size-1.5 shrink-0 rounded-pill bg-on-brand", !mobile && "sidebar-label")} />}
         </Link>;

@@ -1,54 +1,110 @@
 @import "tailwindcss";
 
+/* ============================================================
+   DOVIA VISUAL SYSTEM V2 — AURORA UI
+   Semantic tokens drive light and dark from one set of names,
+   so components never hardcode a colour or a dark: variant.
+   ============================================================ */
+
 :root {
   color-scheme: light;
-  --background: #F8FAFF;
+
+  --background: #F7F8FF;
+  --background-alt: #F4F6FF;
   --surface: #FFFFFF;
-  --surface-soft: #F5F7FF;
-  --surface-hover: #F1F4FF;
-  --sidebar: #0B1437;
-  --sidebar-secondary: #151F4D;
-  --sidebar-hover: #1B285C;
-  --sidebar-text: #DCE3FF;
-  --sidebar-muted: #96A1C8;
-  --primary: #4057F4;
-  --primary-hover: #3449DF;
-  --primary-active: #2D3FC9;
-  --secondary: #7C3AED;
-  --secondary-hover: #6D28D9;
-  --foreground: #0B102A;
+  --surface-elevated: #FCFCFF;
+  --surface-soft: #F3F5FF;
+  --surface-hover: #EDF1FF;
+  --surface-glass: rgb(255 255 255 / 72%);
+
+  --foreground: #11142D;
   --text-secondary: #475467;
-  --text-muted: #667085;
-  --text-subtle: #98A2B3;
-  --text-disabled: #B7BDC9;
-  --border: #E7EAF3;
-  --border-strong: #D8DDEA;
-  --border-focus: #4057F4;
-  --success: #12B76A;
-  --success-soft: #ECFDF3;
-  --warning: #F79009;
-  --warning-soft: #FFFAEB;
-  --danger: #F04438;
-  --danger-soft: #FEF3F2;
-  --info: #2E90FA;
-  --info-soft: #EFF8FF;
-  --priority-low: #12B76A;
-  --priority-medium: #F79009;
-  --priority-high: #F04438;
-  --priority-urgent: #D92D20;
-  --ai: #7C3AED;
-  --ai-soft: #F4F0FF;
-  /* Accessible companions for text and solid buttons. */
-  --success-foreground: #067647;
-  --success-hover: #085D3A;
-  --warning-foreground: #93370D;
-  --danger-foreground: #B42318;
-  --danger-hover: #912018;
-  --info-foreground: #175CD3;
+  --text-muted: #727A96;
+  --text-subtle: #9AA1BC;
+  --text-disabled: #C2C7D8;
+
+  --border: #E5E8F5;
+  --border-strong: #D7DCF0;
+  --control-border: #8A94B2;
+
+  --primary: #4F6BFF;
+  --primary-hover: #4058EA;
+  --primary-active: #3546C9;
+  --secondary: #8B5CF6;
+  --secondary-hover: #7C3AED;
   --on-brand: #FFFFFF;
-  --control-border: #667085;
-  --overlay: rgb(11 20 55 / 45%);
-  --gradient-primary: linear-gradient(135deg, #4057F4 0%, #7C3AED 100%);
+
+  --accent-blue: #4F6BFF;
+  --accent-violet: #8B5CF6;
+  --accent-cyan: #06B6D4;
+  --accent-pink: #EC4899;
+  --accent-emerald: #10B981;
+  --accent-orange: #F59E0B;
+  --accent-red: #EF4444;
+
+  --blue-soft: #EBEFFF;
+  --blue-foreground: #3A4FE0;
+  --violet-soft: #F1EBFF;
+  --violet-foreground: #6D28D9;
+  --cyan-soft: #E4F8FC;
+  --cyan-foreground: #0E7490;
+  --pink-soft: #FDEBF4;
+  --pink-foreground: #BE1E6E;
+  --emerald-soft: #E6F9F1;
+  --emerald-foreground: #047857;
+  --orange-soft: #FEF3E2;
+  --orange-foreground: #B45309;
+  --red-soft: #FDECEC;
+  --red-foreground: #B42318;
+
+  --success: #10B981;
+  --success-soft: var(--emerald-soft);
+  --success-foreground: #047857;
+  --success-hover: #065F46;
+  --warning: #F59E0B;
+  --warning-soft: var(--orange-soft);
+  --warning-foreground: #B45309;
+  --danger: #EF4444;
+  --danger-soft: var(--red-soft);
+  --danger-foreground: #B42318;
+  --danger-hover: #991B1B;
+  --info: #06B6D4;
+  --info-soft: var(--cyan-soft);
+  --info-foreground: #0E7490;
+  --ai: #8B5CF6;
+  --ai-soft: var(--violet-soft);
+  --ai-foreground: #6D28D9;
+
+  --priority-low: #10B981;
+  --priority-medium: #F59E0B;
+  --priority-high: #EF4444;
+  --priority-urgent: #EC4899;
+
+  --sidebar: #070B1B;
+  --sidebar-secondary: #11183A;
+  --sidebar-hover: #1A2249;
+  --sidebar-text: #E6EAFF;
+  --sidebar-muted: #9AA3C7;
+
+  --gradient-primary: linear-gradient(135deg, #4F6BFF 0%, #8B5CF6 50%, #EC4899 100%);
+  --gradient-ai: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  --gradient-cyan-blue: linear-gradient(135deg, #06B6D4 0%, #4F6BFF 100%);
+  --gradient-success: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
+  --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+  --gradient-sidebar: linear-gradient(180deg, #070B1B 0%, #11183A 100%);
+
+  --shadow-xs: 0 1px 2px rgb(17 20 45 / 5%);
+  --shadow-sm: 0 1px 2px rgb(17 20 45 / 6%), 0 1px 3px rgb(17 20 45 / 4%);
+  --shadow-default: 0 2px 8px rgb(17 20 45 / 7%), 0 8px 24px rgb(79 107 255 / 5%);
+  --shadow-lg: 0 8px 28px rgb(17 20 45 / 10%), 0 16px 48px rgb(79 107 255 / 8%);
+  --shadow-glow: 0 8px 24px rgb(79 107 255 / 22%);
+  --shadow-glow-ai: 0 8px 26px rgb(139 92 246 / 20%);
+
+  --aurora-blue: rgb(79 107 255 / 30%);
+  --aurora-violet: rgb(139 92 246 / 26%);
+  --aurora-cyan: rgb(6 182 212 / 22%);
+  --aurora-pink: rgb(236 72 153 / 18%);
+
   --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   --font-display-size: clamp(3rem, 5vw, 4rem);
   --font-page-size: clamp(2.25rem, 4vw, 2.75rem);
@@ -71,7 +127,16 @@
   --page-padding: var(--space-4);
   --card-padding: var(--space-4);
   --section-gap: var(--space-6);
-  --motion-duration: 180ms;
+  --radius-sm: 6px;
+  --radius-default: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 280ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --sidebar-expanded-width: 248px;
   --sidebar-collapsed-width: 76px;
   --topbar-height: 68px;
@@ -80,11 +145,85 @@
   --z-tooltip: 40;
   --z-toast: 50;
   --z-skip: 60;
+  --accent: var(--accent-blue);
+  --accent-2: var(--accent-violet);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: #070A17;
+  --background-alt: #0B1020;
+  --surface: #101527;
+  --surface-elevated: #151B32;
+  --surface-soft: #141A2E;
+  --surface-hover: #1B2242;
+  --surface-glass: rgb(16 21 39 / 72%);
+
+  --foreground: #F8FAFF;
+  --text-secondary: #CBD3EA;
+  --text-muted: #98A2C6;
+  --text-subtle: #737DA3;
+  --text-disabled: #4A5375;
+
+  --border: #242C4D;
+  --border-strong: #303A61;
+  --control-border: #3A4468;
+
+  --primary: #6380FF;
+  --primary-hover: #7A93FF;
+  --primary-active: #5468E0;
+  --secondary: #A678FF;
+  --secondary-hover: #B78CFF;
+
+  --accent-blue: #6380FF;
+  --accent-violet: #A678FF;
+  --accent-cyan: #22D3EE;
+  --accent-pink: #F472B6;
+  --accent-emerald: #34D399;
+  --accent-orange: #FBBF24;
+  --accent-red: #FB7185;
+
+  --blue-soft: rgb(99 128 255 / 16%);
+  --blue-foreground: #A5B4FF;
+  --violet-soft: rgb(166 120 255 / 16%);
+  --violet-foreground: #C4A5FF;
+  --cyan-soft: rgb(34 211 238 / 14%);
+  --cyan-foreground: #67E8F9;
+  --pink-soft: rgb(244 114 182 / 14%);
+  --pink-foreground: #F9A8D4;
+  --emerald-soft: rgb(52 211 153 / 14%);
+  --emerald-foreground: #6EE7B7;
+  --orange-soft: rgb(251 191 36 / 14%);
+  --orange-foreground: #FCD34D;
+  --red-soft: rgb(251 113 133 / 14%);
+  --red-foreground: #FDA4AF;
+
+  --success-hover: #059669;
+  --danger-hover: #E11D48;
+
+  --sidebar: #0A0F22;
+  --sidebar-secondary: #131A38;
+  --sidebar-hover: #1C2450;
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 45%), 0 2px 6px rgb(0 0 0 / 30%);
+  --shadow-default: 0 4px 12px rgb(0 0 0 / 45%), 0 12px 32px rgb(99 128 255 / 8%);
+  --shadow-lg: 0 10px 32px rgb(0 0 0 / 55%), 0 20px 56px rgb(99 128 255 / 12%);
+  --shadow-glow: 0 8px 26px rgb(99 128 255 / 32%);
+  --shadow-glow-ai: 0 8px 28px rgb(166 120 255 / 30%);
+
+  --aurora-blue: rgb(99 128 255 / 40%);
+  --aurora-violet: rgb(166 120 255 / 34%);
+  --aurora-cyan: rgb(34 211 238 / 24%);
+  --aurora-pink: rgb(244 114 182 / 24%);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
   --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
   --color-surface-soft: var(--surface-soft);
   --color-surface-hover: var(--surface-hover);
   --color-foreground: var(--foreground);
@@ -99,8 +238,29 @@
   --color-secondary-hover: var(--secondary-hover);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
-  --color-border-focus: var(--border-focus);
+  --color-border-focus: var(--primary);
   --color-control-border: var(--control-border);
+  --color-blue: var(--accent-blue);
+  --color-blue-soft: var(--blue-soft);
+  --color-blue-foreground: var(--blue-foreground);
+  --color-violet: var(--accent-violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-violet-foreground: var(--violet-foreground);
+  --color-cyan: var(--accent-cyan);
+  --color-cyan-soft: var(--cyan-soft);
+  --color-cyan-foreground: var(--cyan-foreground);
+  --color-pink: var(--accent-pink);
+  --color-pink-soft: var(--pink-soft);
+  --color-pink-foreground: var(--pink-foreground);
+  --color-emerald: var(--accent-emerald);
+  --color-emerald-soft: var(--emerald-soft);
+  --color-emerald-foreground: var(--emerald-foreground);
+  --color-orange: var(--accent-orange);
+  --color-orange-soft: var(--orange-soft);
+  --color-orange-foreground: var(--orange-foreground);
+  --color-red: var(--accent-red);
+  --color-red-soft: var(--red-soft);
+  --color-red-foreground: var(--red-foreground);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-success-foreground: var(--success-foreground);
@@ -117,6 +277,7 @@
   --color-info-foreground: var(--info-foreground);
   --color-ai: var(--ai);
   --color-ai-soft: var(--ai-soft);
+  --color-ai-foreground: var(--ai-foreground);
   --color-on-brand: var(--on-brand);
   --color-sidebar: var(--sidebar);
   --color-sidebar-secondary: var(--sidebar-secondary);
@@ -129,18 +290,6 @@
   --color-priority-urgent: var(--priority-urgent);
 }
 
-@layer base {
-  html { min-height: 100%; -webkit-text-size-adjust: 100%; }
-  body { margin: 0; min-height: 100vh; background: var(--background); color: var(--foreground); font-family: var(--font-sans); font-size: var(--font-body-size); line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-  :where(button, input, textarea, select) { font: inherit; }
-  :where(button, a, input, textarea, select, summary, [tabindex]):focus-visible { outline: 2px solid var(--border-focus); outline-offset: 3px; }
-  :where(a) { color: var(--primary); text-underline-offset: 3px; }
-  :where(a:hover) { color: var(--primary-hover); text-decoration: underline; }
-  :where(button:enabled, select:enabled) { cursor: pointer; }
-  :where(button:disabled, input:disabled, textarea:disabled, select:disabled) { cursor: not-allowed; }
-  ::selection { background: var(--ai-soft); color: var(--foreground); }
-}
-
 @theme static {
   --radius-sm: 6px;
   --radius-default: 8px;
@@ -148,9 +297,54 @@
   --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-pill: 9999px;
-  --shadow-sm: 0 1px 2px rgb(16 24 40 / 5%);
-  --shadow-default: 0 2px 8px rgb(16 24 40 / 6%);
-  --shadow-lg: 0 8px 24px rgb(16 24 40 / 8%);
+  --shadow-xs: 0 1px 2px rgb(17 20 45 / 5%);
+  --shadow-sm: 0 1px 2px rgb(17 20 45 / 6%);
+  --shadow-default: 0 2px 8px rgb(17 20 45 / 7%);
+  --shadow-lg: 0 8px 24px rgb(17 20 45 / 10%);
+}
+
+@layer base {
+  html { min-height: 100%; -webkit-text-size-adjust: 100%; }
+  body {
+    position: relative;
+    isolation: isolate;
+    margin: 0;
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--font-body-size);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Aurora field. Fixed, blurred, never interactive, and behind all content. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(48rem 32rem at 8% -8%, var(--aurora-blue), transparent 65%),
+      radial-gradient(40rem 30rem at 96% 2%, var(--aurora-violet), transparent 62%),
+      radial-gradient(42rem 28rem at 78% 96%, var(--aurora-cyan), transparent 64%),
+      radial-gradient(34rem 26rem at 4% 88%, var(--aurora-pink), transparent 66%);
+    filter: blur(28px);
+  }
+  :where(button, input, textarea, select) { font: inherit; }
+  :where(button, a, input, textarea, select, summary, [tabindex]):focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+  :where(a) { color: var(--primary); text-underline-offset: 3px; }
+  :where(a:hover) { color: var(--primary-hover); text-decoration: underline; }
+  :where(button:enabled, select:enabled) { cursor: pointer; }
+  :where(button:disabled, input:disabled, textarea:disabled, select:disabled) { cursor: not-allowed; }
+  ::selection { background: var(--violet-soft); color: var(--foreground); }
+  /* Application scrollbars, tuned per theme without hiding native behaviour. */
+  * { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border: 2px solid transparent; border-radius: 9999px; background-clip: content-box; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--control-border); background-clip: content-box; }
 }
 
 @layer components {
@@ -158,25 +352,238 @@
   .dovia-page-title { font-size: var(--font-page-size); line-height: 1.2; font-weight: 600; letter-spacing: -0.03em; }
   .dovia-section-title { font-size: var(--font-section-size); line-height: 1.3; font-weight: 600; letter-spacing: -0.02em; }
   .dovia-card-title { font-size: var(--font-card-size); line-height: 1.4; font-weight: 600; }
-  .dovia-page { width: 100%; min-width: 0; padding: var(--page-padding); }
-  .dovia-control { width: 100%; min-width: 0; min-height: 2.75rem; border: 1px solid var(--control-border); border-radius: var(--radius-default); background: var(--surface); padding: 0.625rem 0.75rem; font-size: var(--font-small-size); color: var(--foreground); transition: border-color var(--motion-duration), background-color var(--motion-duration); }
+  .dovia-page { position: relative; width: 100%; min-width: 0; padding: var(--page-padding); }
+  .dovia-control {
+    width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-default);
+    background: var(--surface-elevated);
+    padding: 0.625rem 0.75rem;
+    font-size: var(--font-small-size);
+    color: var(--foreground);
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast), background-color var(--motion-fast);
+  }
   .dovia-control::placeholder { color: var(--text-muted); }
-  .dovia-control:hover:not(:disabled) { border-color: var(--text-secondary); }
-  .dovia-control:focus { border-color: var(--border-focus); }
+  .dovia-control:hover:not(:disabled) { border-color: var(--accent-violet); }
+  .dovia-control:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--blue-soft), 0 0 0 1px var(--primary);
+  }
+  .dovia-control:focus { border-color: var(--primary); }
   .dovia-control[aria-invalid="true"] { border-color: var(--danger-foreground); }
   .dovia-control:disabled { background: var(--surface-soft); color: var(--text-muted); border-color: var(--border-strong); }
+
   .dovia-gradient { background-image: var(--gradient-primary); }
-  .dovia-modal { margin: auto; max-height: calc(100dvh - 2rem); width: calc(100% - 2rem); overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); color: var(--foreground); padding: var(--card-padding); box-shadow: var(--shadow-lg); }
-  .dovia-modal::backdrop { background: var(--overlay); }
+  .dovia-gradient-ai { background-image: var(--gradient-ai); }
+  .dovia-gradient-cyan { background-image: var(--gradient-cyan-blue); }
+  .dovia-gradient-success { background-image: var(--gradient-success); }
+  .dovia-gradient-warm { background-image: var(--gradient-warm); }
+  .dovia-gradient-sidebar { background-image: var(--gradient-sidebar); }
+  .dovia-gradient-text {
+    background-image: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .dovia-modal {
+    margin: auto;
+    max-height: calc(100dvh - 2rem);
+    width: calc(100% - 2rem);
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    color: var(--foreground);
+    padding: var(--card-padding);
+    box-shadow: var(--shadow-lg);
+  }
+  .dovia-modal::backdrop { background: var(--overlay, rgb(7 10 23 / 55%)); backdrop-filter: blur(4px); }
+  .dovia-modal[open] { animation: dovia-pop var(--motion-slow) var(--motion-ease) both; }
   .dovia-drawer { margin: 0; width: min(88vw, 320px); max-width: 320px; height: 100dvh; max-height: 100dvh; border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+  .dovia-drawer[open] { animation: dovia-drawer-in var(--motion-slow) var(--motion-ease) both; }
+
+  /* Sidebar keeps its dark identity in both themes, lit by two soft aurora corners. */
+  .workspace-sidebar {
+    position: relative;
+    isolation: isolate;
+    background-image: var(--gradient-sidebar);
+  }
+  .workspace-sidebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(20rem 14rem at 50% -6%, rgb(99 128 255 / 26%), transparent 70%),
+      radial-gradient(18rem 14rem at 50% 106%, rgb(236 72 153 / 18%), transparent 72%),
+      radial-gradient(16rem 12rem at 100% 60%, rgb(139 92 246 / 14%), transparent 74%);
+  }
+  .sidebar-link { position: relative; transition: transform var(--motion-base) var(--motion-ease), background-color var(--motion-base), color var(--motion-base); }
+  .sidebar-link:hover:not(.dovia-nav-active) { transform: translateX(2px); }
+
+  /* Workspace chrome stays stable across navigation; only page content animates. */
+  .dovia-page > * { animation: dovia-enter var(--motion-slow) var(--motion-ease) both; }
+  .dovia-page > *:nth-child(1) { animation-delay: 0ms; }
+  .dovia-page > *:nth-child(2) { animation-delay: 45ms; }
+  .dovia-page > *:nth-child(3) { animation-delay: 90ms; }
+  .dovia-page > *:nth-child(4) { animation-delay: 135ms; }
+  .dovia-page > *:nth-child(n + 5) { animation-delay: 170ms; }
+
   .workspace-shell { display: grid; grid-template-columns: minmax(0, 1fr); }
   .sidebar-collapsed-only { display: none; }
   .dovia-spinner { animation: dovia-spin 1s linear infinite; }
   .dovia-skeleton { animation: dovia-pulse 1.8s ease-in-out infinite; }
+  .dovia-shimmer {
+    background-image: linear-gradient(100deg, transparent 20%, var(--surface-hover) 42%, transparent 64%);
+    background-size: 240% 100%;
+    animation: dovia-shimmer 1.6s linear infinite;
+  }
+
+  /* Glass surfaces are reserved for chrome and floating overlays. */
+  .dovia-glass {
+    background: var(--surface-glass);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+  }
+
+  /* Entrance motion for page content. The shell itself never animates. */
+  .dovia-enter { animation: dovia-enter var(--motion-slow) var(--motion-ease) both; }
+  .dovia-enter-2 { animation: dovia-enter var(--motion-slow) var(--motion-ease) 60ms both; }
+  .dovia-enter-3 { animation: dovia-enter var(--motion-slow) var(--motion-ease) 120ms both; }
+  .dovia-enter-4 { animation: dovia-enter var(--motion-slow) var(--motion-ease) 180ms both; }
+  .dovia-stagger > * { animation: dovia-enter 380ms var(--motion-ease) both; }
+  .dovia-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .dovia-stagger > *:nth-child(2) { animation-delay: 55ms; }
+  .dovia-stagger > *:nth-child(3) { animation-delay: 110ms; }
+  .dovia-stagger > *:nth-child(4) { animation-delay: 165ms; }
+  .dovia-stagger > *:nth-child(5) { animation-delay: 220ms; }
+  .dovia-stagger > *:nth-child(6) { animation-delay: 275ms; }
+  .dovia-stagger > *:nth-child(n + 7) { animation-delay: 320ms; }
+
+  .dovia-lift { transition: transform var(--motion-base) var(--motion-ease), box-shadow var(--motion-base), border-color var(--motion-base); }
+  .dovia-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+
+  .dovia-orb { animation: dovia-drift 18s ease-in-out infinite; }
+  .dovia-pop { animation: dovia-pop var(--motion-slow) var(--motion-ease) both; }
+
+  /* Progress and chart bars grow into place once, never on a loop. */
+  .dovia-progress-fill { animation: dovia-fill 700ms var(--motion-ease) both; }
+  .dovia-grow-y { transform-origin: bottom; animation: dovia-grow 620ms var(--motion-ease) both; }
+  .dovia-donut-segment { animation: dovia-donut 700ms var(--motion-ease) both; }
+  @keyframes dovia-donut {
+    from { opacity: 0; stroke-dasharray: 0 1000; }
+    to { opacity: 1; }
+  }
+
+  /* One-shot light sweep across gradient CTAs on hover. */
+  .dovia-sheen { position: relative; overflow: hidden; isolation: isolate; }
+  .dovia-sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent 18%, rgb(255 255 255 / 38%) 50%, transparent 82%);
+    transform: translateX(-100%);
+    transition: transform 700ms var(--motion-ease);
+  }
+  .dovia-sheen:hover::after, .dovia-sheen:focus-visible::after { transform: translateX(100%); }
+
+  /* Highlight that slides between sidebar items. */
+  .dovia-nav-active { position: relative; }
+  .dovia-nav-active::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgb(255 255 255 / 26%), rgb(255 255 255 / 8%));
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 16%);
+    animation: dovia-nav-in var(--motion-slow) var(--motion-ease) both;
+  }
+  .dovia-nav-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    pointer-events: none;
+    border-radius: 9999px;
+    background: var(--gradient-cyan-blue);
+    box-shadow: 0 0 12px rgb(6 182 212 / 70%);
+    animation: dovia-bar-in var(--motion-slow) var(--motion-ease) both;
+  }
+}
+
+/* Section accents. One attribute per page area keeps colour out of components. */
+[data-accent="dashboard"] { --accent: var(--accent-blue); --accent-2: var(--accent-violet); }
+[data-accent="meetings"] { --accent: var(--accent-violet); --accent-2: var(--accent-blue); }
+[data-accent="ai-review"] { --accent: var(--accent-pink); --accent-2: var(--accent-violet); }
+[data-accent="tasks"] { --accent: var(--accent-cyan); --accent-2: var(--accent-blue); }
+[data-accent="follow-up"] { --accent: var(--accent-emerald); --accent-2: var(--accent-blue); }
+[data-accent="calendar"] { --accent: var(--accent-violet); --accent-2: var(--accent-blue); }
+[data-accent="team"] { --accent: var(--accent-cyan); --accent-2: var(--accent-emerald); }
+[data-accent="reports"] { --accent: var(--accent-orange); --accent-2: var(--accent-violet); }
+[data-accent="notifications"] { --accent: var(--accent-blue); --accent-2: var(--accent-pink); }
+[data-accent="settings"] { --accent: var(--accent-violet); --accent-2: var(--accent-cyan); }
+[data-accent="auth"] { --accent: var(--accent-violet); --accent-2: var(--accent-cyan); }
+[data-accent="marketing"] { --accent: var(--accent-blue); --accent-2: var(--accent-pink); }
+
+.dovia-accent-text { color: var(--accent); }
+.dovia-accent-soft { background-color: color-mix(in srgb, var(--accent) 12%, transparent); }
+.dovia-accent-border { border-color: color-mix(in srgb, var(--accent) 38%, var(--border)); }
+.dovia-accent-gradient { background-image: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+.dovia-accent-tint {
+  background-image:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent-2) 8%, transparent));
+}
+
+/* Theme change crossfade. Only mounted while the theme is switching. */
+.theme-transition body,
+.theme-transition body *,
+.theme-transition body *::before,
+.theme-transition body *::after {
+  transition: background-color 200ms var(--motion-ease), border-color 200ms var(--motion-ease), color 200ms var(--motion-ease), box-shadow 200ms var(--motion-ease), fill 200ms var(--motion-ease) !important;
+  transition-delay: 0ms !important;
 }
 
 @keyframes dovia-spin { to { transform: rotate(360deg); } }
 @keyframes dovia-pulse { 50% { opacity: 0.5; } }
+@keyframes dovia-shimmer { from { background-position: 160% 0; } to { background-position: -60% 0; } }
+@keyframes dovia-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dovia-pop {
+  from { opacity: 0; transform: scale(0.97) translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dovia-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(2%, -3%, 0) scale(1.06); }
+  66% { transform: translate3d(-2%, 2%, 0) scale(0.97); }
+}
+@keyframes dovia-drawer-in {
+  from { opacity: 0; transform: translateX(-14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dovia-nav-in {
+  from { opacity: 0; transform: scaleX(0.72); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dovia-bar-in {
+  from { opacity: 0; transform: scaleY(0.3); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dovia-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes dovia-fill { from { width: 0; } }
+@keyframes dovia-fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
 @media (min-width: 768px) { :root { --page-padding: var(--space-6); --card-padding: var(--space-6); } }
 @media (min-width: 1024px) { :root { --page-padding: var(--space-8); --section-gap: var(--space-8); } }
 @media (min-width: 768px) {
@@ -194,6 +601,22 @@
   .workspace-shell[data-sidebar="auto"] .sidebar-collapsed-only { display: block; }
   .workspace-shell[data-sidebar="auto"] .workspace-sidebar .sidebar-link { justify-content: center; }
 }
+
+/* Reduced motion: keep meaning, drop movement. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  body::before { filter: blur(20px); }
+  .dovia-shimmer { animation: none; background-image: none; }
+  .dovia-skeleton { animation: none; opacity: 0.7; }
+  .dovia-orb { animation: none; }
+  .dovia-grow-y, .dovia-progress-fill, .dovia-donut-segment { animation: none; }
+  .dovia-sheen::after { display: none; }
+  .dovia-lift:hover { transform: none; }
+  .dovia-nav-active::before, .dovia-nav-active::after { animation: none; }
+  .theme-transition body, .theme-transition body * { transition: none !important; }
 }

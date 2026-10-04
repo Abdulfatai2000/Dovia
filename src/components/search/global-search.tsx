@@ -71,7 +71,7 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
       aria-controls={trimmed ? `${id}-results` : undefined} aria-expanded={Boolean(trimmed)} aria-activedescendant={flat.length ? `${id}-option-${Math.min(active, flat.length - 1)}` : undefined}
       onChange={event => onChange(event.target.value)} onKeyDown={onKeyDown} />
     {trimmed && <div
-      className={cn("mt-2 overflow-y-auto rounded-md border border-border bg-surface shadow-lg",
+      className={cn("dovia-glass dovia-pop mt-2 overflow-y-auto rounded-md border border-border-strong bg-surface shadow-lg",
         floating ? "absolute inset-x-0 top-full z-[var(--z-dropdown)] mt-2 max-h-[min(28rem,60dvh)]" : "max-h-[min(28rem,60dvh)]")}>
       {loading && !data && <p role="status" className="flex items-center gap-2 px-4 py-3 text-sm text-text-muted">
         <LoaderCircle aria-hidden="true" className="dovia-spinner size-4" />Searching demo workspace…
@@ -93,8 +93,8 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
               return <button key={result.id} type="button" role="option" id={`${id}-option-${index}`}
                 data-index={index} aria-selected={selected} tabIndex={-1}
                 onMouseEnter={() => setActive(index)} onClick={() => open(result)}
-                className={cn("flex w-full items-start gap-3 rounded-sm px-3 py-2.5 text-left transition-colors duration-200",
-                  selected ? "bg-surface-hover text-foreground" : "text-text-secondary hover:bg-surface-soft")}>
+                className={cn("flex w-full items-start gap-3 rounded-sm px-3 py-2.5 text-left transition-[transform,background-color] duration-150",
+                  selected ? "bg-surface-hover text-foreground" : "text-text-secondary hover:translate-x-0.5 hover:bg-surface-soft")}>
                 <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-primary" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{result.title}</span>

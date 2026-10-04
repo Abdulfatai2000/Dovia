@@ -1,7 +1,7 @@
 ﻿"use client";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RotateCcw, Check, Sparkles } from "lucide-react";
+import { CircleCheck, RotateCcw, Check, Sparkles } from "lucide-react";
 import { useMeetings } from "@/hooks/use-meetings";
 import { useMeetingAnalysis } from "@/hooks/use-meeting-analysis";
 import { confirmMeetingOutcome, validateOutcome } from "@/services/meeting-outcome.service";
@@ -53,11 +53,14 @@ export default function MeetingReview({ meetingId }: { meetingId: string }) {
   const patch = (value: Partial<typeof analysis>) => setAnalysis({...analysis,...value});
   return <div className="space-y-6">
     <PageHeader title={meeting.title} eyebrow="Review workspace" breadcrumbs={<ButtonLink href={`/meetings/${meetingId}`} variant="ghost" size="sm">← Back to Meeting</ButtonLink>}
-      actions={<><Button variant="outline" onClick={() => setNotice(true)}><RotateCcw aria-hidden="true" />Regenerate</Button><Button onClick={requestConfirmation}><Check aria-hidden="true" />Confirm Meeting Outcome</Button></>} />
-    <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary"><Badge variant="ai"><Sparkles aria-hidden="true" />AI Meeting Summary</Badge><span>{meeting.platform} · {formatDate(meeting.date)} · {meeting.duration} min · {meeting.participants.length} participants</span></div>
-    <Card className="space-y-2 border-ai/20 bg-ai-soft p-5"><h2 className="text-base font-semibold">AI-generated meeting outcomes are drafts.</h2><p className="text-sm leading-relaxed">Dovia has organized this meeting into a draft summary, decisions, action items, open questions, and risks. Review and edit everything before confirming the meeting outcome.</p>
-      <p className="text-sm text-text-secondary">This is an illustrative mock result, not an analysis of your notes. Groq is not connected. Edits stay on this screen until you confirm; confirmation saves only in this browser.</p>
-      {analysis.status === "CONFIRMED" && <p className="text-sm font-medium">Editing a confirmed demo outcome. Confirm again to replace it without duplicating tasks.</p>}
+      actions={<><Button variant="outline" onClick={() => setNotice(true)}><RotateCcw aria-hidden="true" />Regenerate</Button><Button variant="gradient" onClick={requestConfirmation}><Check aria-hidden="true" />Confirm Meeting Outcome</Button></>} />
+<div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary"><Badge variant="ai"><Sparkles aria-hidden="true" />AI Meeting Summary</Badge><span>{meeting.platform} · {formatDate(meeting.date)} · {meeting.duration} min · {meeting.participants.length} participants</span></div>
+    <Card className="dovia-glass relative overflow-hidden border-ai/25 bg-gradient-to-br from-ai-soft via-surface/80 to-pink-soft/70 p-5 shadow-glow-ai">
+      <span aria-hidden="true" className="dovia-orb dovia-gradient-ai pointer-events-none absolute -top-16 -right-10 size-56 rounded-pill opacity-25 blur-3xl" />
+      <h2 className="relative flex items-center gap-2 text-base font-semibold"><span aria-hidden="true" className="dovia-gradient-ai flex size-8 items-center justify-center rounded-default text-on-brand shadow-sm"><Sparkles className="size-4" /></span>AI-generated meeting outcomes are drafts.</h2>
+      <p className="relative mt-3 text-sm leading-relaxed">Dovia has organized this meeting into a draft summary, decisions, action items, open questions, and risks. Review and edit everything before confirming the meeting outcome.</p>
+      <p className="relative mt-2 text-sm text-text-secondary">This is an illustrative mock result, not an analysis of your notes. Groq is not connected. Edits stay on this screen until you confirm; confirmation saves only in this browser.</p>
+      {analysis.status === "CONFIRMED" && <p className="relative mt-2 flex items-center gap-2 text-sm font-medium text-emerald-foreground"><CircleCheck aria-hidden="true" className="size-4 shrink-0" />Editing a confirmed demo outcome. Confirm again to replace it without duplicating tasks.</p>}
     </Card>
     {error && <p ref={errorRef} tabIndex={-1} role="alert" className="rounded-md bg-danger-soft p-4 text-sm text-danger-foreground">{error}</p>}
     <Tabs label="Review meeting outcome" value={tab} onValueChange={setTab} items={[

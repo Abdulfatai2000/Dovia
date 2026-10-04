@@ -3,11 +3,11 @@ export interface TaskStatusChartProps { buckets: StatusBucket[]; total: number; 
 
 /** Distinct fill per bucket, always paired with a text label, count, and percentage. */
 const fills: Record<string, string> = {
-  COMPLETED: "var(--color-success-foreground)",
+  COMPLETED: "var(--color-emerald)",
   IN_PROGRESS: "var(--color-primary)",
   NOT_STARTED: "var(--color-text-muted)",
-  BLOCKED: "var(--color-danger-foreground)",
-  OVERDUE: "var(--color-warning-foreground)",
+  BLOCKED: "var(--color-orange)",
+  OVERDUE: "var(--color-red)",
 };
 
 /** Dependency-free donut. The data table below it is the accessible source of truth. */
@@ -24,12 +24,12 @@ export function TaskStatusChart({ buckets, total }: TaskStatusChartProps) {
 
   return <div className="grid items-center gap-6 sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)]">
     <div className="relative mx-auto size-40 shrink-0">
-      <svg viewBox="0 0 140 140" className="size-full -rotate-90" role="img"
+      <svg viewBox="0 0 140 140" className="dovia-donut size-full -rotate-90" role="img"
         aria-label={`Task status distribution: ${buckets.map(bucket => `${bucket.key} ${bucket.count}, ${percent(bucket.count)} percent`).join("; ")}.`}>
         <circle cx="70" cy="70" r={radius} fill="none" stroke="var(--color-border)" strokeWidth="16" />
-        {segments.map(({ bucket, length, offset }) => <circle key={bucket.status} cx="70" cy="70" r={radius} fill="none"
+        {segments.map(({ bucket, length, offset }, index) => <circle key={bucket.status} cx="70" cy="70" r={radius} fill="none"
           stroke={fills[bucket.status] ?? "var(--color-primary)"} strokeWidth="16" strokeDasharray={`${length} ${circumference - length}`}
-          strokeDashoffset={-offset} />)}
+          strokeDashoffset={-offset} style={{ animationDelay: `${index * 90}ms` }} className="dovia-donut-segment" />)}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-2xl font-semibold text-foreground">{total}</span>

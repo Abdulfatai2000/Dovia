@@ -9,20 +9,21 @@ import { SidebarNavigation } from "./sidebar-navigation";
 
 export interface SidebarProps { collapsed: boolean; onCollapse: () => void; onExpand: () => void; }
 export function Sidebar({ collapsed, onCollapse, onExpand }: SidebarProps) {
-  return <aside id="workspace-sidebar" aria-label="Dovia sidebar" className="workspace-sidebar sticky top-0 hidden h-dvh min-h-0 flex-col bg-sidebar text-sidebar-text md:flex">
+  return <aside id="workspace-sidebar" aria-label="Dovia sidebar" className="workspace-sidebar sticky top-0 hidden h-dvh min-h-0 flex-col text-sidebar-text md:flex">
     <div className="flex h-[var(--topbar-height)] shrink-0 items-center px-4"><Brand /></div>
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pt-6 pb-4">
       <p className="sidebar-label mb-3 px-3 text-[11px] font-medium tracking-widest text-sidebar-muted uppercase">Workspace</p>
       <SidebarNavigation collapsed={collapsed} />
 
-      <div className="sidebar-expanded-only mt-6 rounded-lg border border-sidebar-hover bg-sidebar-secondary p-4">
-        <span aria-hidden="true" className="dovia-gradient mb-3 flex size-9 items-center justify-center rounded-default text-on-brand">
+      <div className="sidebar-expanded-only relative mt-6 overflow-hidden rounded-lg border border-sidebar-hover bg-sidebar-secondary/70 p-4 backdrop-blur-sm">
+        <span aria-hidden="true" className="dovia-orb dovia-gradient pointer-events-none absolute -top-10 -right-10 size-28 rounded-pill opacity-45 blur-2xl" />
+        <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-default bg-white/10 text-on-brand">
           <CalendarCheck className="size-4" />
         </span>
-        <p className="text-sm font-semibold text-sidebar-text">Turn meetings into action</p>
-        <p className="mt-1.5 text-xs leading-relaxed text-sidebar-muted">Keep decisions, owners, deadlines, and follow-up work in one place.</p>
+        <p className="relative text-sm font-semibold text-sidebar-text">Turn meetings into action</p>
+        <p className="relative mt-1.5 text-xs leading-relaxed text-sidebar-muted">Keep decisions, owners, deadlines, and follow-up work in one place.</p>
         <Link href="/features"
-          className="mt-3 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-default bg-sidebar-hover px-3 py-1.5 text-xs font-semibold text-sidebar-text transition-colors duration-200 hover:bg-primary hover:text-on-brand hover:no-underline">
+          className="relative mt-3 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-default bg-white/10 px-3 py-1.5 text-xs font-semibold text-sidebar-text backdrop-blur-sm transition-[background-color,transform,box-shadow] duration-200 hover:-translate-y-px hover:bg-white/20 hover:no-underline">
           Explore Dovia
         </Link>
       </div>

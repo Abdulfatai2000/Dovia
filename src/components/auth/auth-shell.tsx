@@ -4,7 +4,7 @@ import { AuthVisualPanel } from "./auth-visual-panel";
 
 export function AuthShell({ children }: { children: ReactNode }) {
   return (
-    <main className="min-h-dvh bg-background lg:grid lg:grid-cols-[minmax(0,1.38fr)_minmax(0,1fr)]">
+    <main data-accent="auth" className="min-h-dvh bg-background lg:grid lg:grid-cols-[minmax(0,1.38fr)_minmax(0,1fr)]">
       <AuthVisualPanel />
       <div className="flex min-w-0 items-center justify-center px-4 py-10 sm:px-8 sm:py-14 lg:px-8 xl:px-10">
         <div className="w-full max-w-[30rem] space-y-6">

@@ -8,6 +8,7 @@ import { Dropdown, type DropdownItem } from "@/components/ui/dropdown";
 import { IconButton } from "@/components/ui/icon-button";
 import { Toast } from "@/components/ui/toast";
 import { GlobalSearch } from "@/components/search/global-search";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useDemoQuery } from "@/hooks/use-demo-query";
 import { getNotifications } from "@/services/notification.service";
@@ -72,7 +73,7 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
   ];
 
   return <>
-    <header className="sticky top-0 z-[var(--z-chrome)] border-b border-border bg-surface">
+    <header className="dovia-glass sticky top-0 z-[var(--z-chrome)] border-b border-border">
       <div className="flex h-[var(--topbar-height)] min-w-0 items-center gap-2 px-4 md:gap-4 md:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-1 md:hidden">
           <IconButton aria-label="Open navigation" aria-haspopup="dialog" aria-controls="mobile-navigation" aria-expanded={navigationOpen} onClick={onOpenNavigation}><Menu aria-hidden="true" /></IconButton>
@@ -91,8 +92,9 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
             </div>}
             trigger={<span className="relative">
               <Bell aria-hidden="true" />
-              {unread > 0 && <span aria-hidden="true" className="absolute -top-1 -right-0.5 size-2 rounded-pill border-2 border-surface bg-danger" />}
+              {unread > 0 && <span aria-hidden="true" className="absolute -top-1 -right-0.5 size-2 rounded-pill border-2 border-surface bg-danger shadow-[0_0_8px_rgb(239_68_68/70%)]" />}
             </span>} items={notificationItems} />
+          <ThemeToggle />
           <div className="hidden h-7 w-px bg-border sm:block" aria-hidden="true" />
           <Dropdown label="Open profile menu" variant="ghost" triggerClassName="gap-2 px-1.5 [&>svg]:hidden lg:[&>svg]:block"
             trigger={<><Avatar name={user?.name ?? "Dovia member"} size="sm" /><span className="hidden text-left lg:block"><span className="block text-sm font-medium text-foreground">{user?.name ?? "Dovia member"}</span><span className="block text-xs font-normal text-text-muted">{user?.role ?? "Demo workspace"}</span></span></>} items={profileItems} />

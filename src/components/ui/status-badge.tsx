@@ -15,7 +15,8 @@ export const statusPresentation: Record<Status, { label: string; variant: BadgeV
   OVERDUE: { label: "Overdue", variant: "danger" },
 };
 export interface StatusBadgeProps extends Omit<BadgeProps, "children" | "variant"> { status: Status; }
-export function StatusBadge({ status, ...props }: StatusBadgeProps) {
+export function StatusBadge({ status, className, ...props }: StatusBadgeProps) {
   const presentation = statusPresentation[status];
-  return <Badge {...props} variant={presentation.variant}>{presentation.label}</Badge>;
+  return <Badge {...props} variant={presentation.variant} className={className}>{presentation.label}</Badge>;
 }
+export default StatusBadge;

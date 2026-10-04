@@ -5,8 +5,10 @@ export interface ProgressProps extends Omit<ComponentPropsWithRef<"div">, "child
   value: number;
   max?: number;
   label?: string;
+  /** Solid accent instead of the default emerald→cyan fill. */
+  tone?: "accent" | "success";
 }
-export function Progress({ value, max = 100, label = "Progress", className, ...props }: ProgressProps) {
+export function Progress({ value, max = 100, label = "Progress", tone = "success", className, ...props }: ProgressProps) {
   const safeMax = Number.isFinite(max) && max > 0 ? max : 100;
   const safeValue = Number.isFinite(value) ? Math.min(safeMax, Math.max(0, value)) : 0;
   const percent = Math.round(safeValue / safeMax * 100);
@@ -15,7 +17,8 @@ export function Progress({ value, max = 100, label = "Progress", className, ...p
       <div className="flex flex-wrap justify-between gap-2 text-sm"><span className="text-text-secondary">{label}</span><span className="font-medium">{percent}% complete</span></div>
       <div {...props} role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={safeMax} aria-valuenow={safeValue} aria-valuetext={percent + "% complete"}
         className="h-2 overflow-hidden rounded-pill bg-border">
-        <div className="h-full rounded-pill bg-primary transition-[width] duration-200" style={{ width: percent + "%" }} />
+        <div className={cn("dovia-progress-fill h-full rounded-pill", tone === "accent" ? "dovia-accent-gradient" : "dovia-gradient-success")}
+          style={{ width: percent + "%" }} />
       </div>
     </div>
   );

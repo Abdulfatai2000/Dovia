@@ -17,7 +17,7 @@ export function ProductivityChart({ buckets, title = "Meetings held per week", d
         <h2 className="dovia-card-title">{title}</h2>
         {description && <p className="text-sm text-text-secondary">{description}</p>}
       </div>
-      {grouping && <span className="rounded-pill bg-surface-soft px-3 py-1 text-xs font-medium text-text-secondary">{grouping}</span>}
+      {grouping && <span className="rounded-pill bg-violet-soft px-3 py-1 text-xs font-medium text-violet-foreground ring-1 ring-violet/20 ring-inset">{grouping}</span>}
     </figcaption>
     <p className="mt-3 text-sm text-text-secondary">{summary}</p>
     <ul className="relative mt-4 flex min-w-0 items-end gap-2 overflow-x-auto pb-1" role="list" tabIndex={0} aria-label="Weekly meeting output; scroll to see all weeks">
@@ -26,7 +26,7 @@ export function ProductivityChart({ buckets, title = "Meetings held per week", d
         return <li key={bucket.range} className="flex min-w-16 flex-1 flex-col items-center gap-2">
           <span className="text-sm font-medium text-foreground">{bucket.count}</span>
           <span aria-hidden="true" className="flex h-28 w-full items-end rounded-default bg-surface-soft">
-            <span className="w-full rounded-default bg-primary transition-[height] duration-200" style={{ height: `${height}%` }} />
+            <span className="dovia-accent-gradient dovia-grow-y w-full rounded-default transition-[height] duration-200" style={{ height: `${height}%` }} />
           </span>
           <span className="text-center text-xs text-text-muted">{bucket.label}</span>
           <span className="sr-only">{bucket.range}: {bucket.count} meetings held</span>

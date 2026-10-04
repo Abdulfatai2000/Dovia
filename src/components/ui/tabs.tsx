@@ -36,8 +36,10 @@ export function Tabs({ items, label, value, defaultValue, onValueChange, classNa
           select(items[next].value);
           buttons.current[next]?.focus();
         }}
-        className={cn("min-h-11 shrink-0 rounded-default border-b-2 px-4 py-2 text-sm font-medium transition-colors duration-200 disabled:cursor-not-allowed disabled:text-text-subtle", active === item.value ? "border-primary bg-surface-hover text-primary" : "border-transparent text-text-secondary hover:bg-surface-soft")}>
+        className={cn("relative min-h-11 shrink-0 rounded-default px-4 py-2 text-sm font-medium transition-[color,background-color] duration-200 disabled:cursor-not-allowed disabled:text-text-subtle",
+            active === item.value ? "bg-surface-hover text-primary" : "text-text-secondary hover:bg-surface-soft hover:text-foreground")}>
         {item.label}
+        {active === item.value && <span aria-hidden="true" className="dovia-accent-gradient absolute inset-x-2 -bottom-px h-0.5 rounded-pill" />}
       </button>)}
     </div>
     {items.map((item, index) => <div key={item.value} role="tabpanel" id={id + "-panel-" + index}

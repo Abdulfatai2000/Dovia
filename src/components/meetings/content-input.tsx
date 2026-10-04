@@ -139,18 +139,19 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
           const Icon = item.icon;
           const active = mode === item.value;
           return <label key={item.value}
-            className={cn("flex cursor-pointer flex-col gap-3 rounded-lg border-b-4 bg-surface p-5 transition-colors duration-200",
-              active ? "border-primary bg-surface-hover" : "border-border hover:bg-surface-soft")}>
+            className={cn("group relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-lg border bg-surface p-5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out",
+              active ? "dovia-accent-border -translate-y-0.5 border-blue bg-gradient-to-br from-blue/12 via-violet/8 to-pink/8 shadow-glow" : "border-border hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-elevated hover:shadow-sm")}>
             <input type="radio" name="content-mode" value={item.value} checked={active}
               onChange={() => { setMode(item.value); setError(""); }}
               className="sr-only" />
-            <span aria-hidden="true" className={cn("flex size-10 items-center justify-center rounded-default", active ? "bg-primary text-on-brand" : "bg-surface-soft text-primary")}>
+            <span aria-hidden="true" className={cn("flex size-10 items-center justify-center rounded-default transition-transform duration-200", active ? "dovia-gradient text-on-brand shadow-sm" : "bg-surface-soft text-primary group-hover:scale-105")}>
               <Icon className="size-5" />
             </span>
             <span className="block">
               <span className={cn("block text-base font-semibold", active ? "text-primary" : "text-foreground")}>{item.label}</span>
               <span className="mt-1 block text-sm text-text-secondary">{item.description}</span>
             </span>
+            <span aria-hidden="true" className={cn("dovia-gradient absolute inset-x-0 bottom-0 h-1 origin-left transition-transform duration-200 ease-out", active ? "scale-x-100" : "scale-x-0")} />
           </label>;
         })}
       </div>
