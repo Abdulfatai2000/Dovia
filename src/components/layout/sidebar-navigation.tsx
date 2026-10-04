@@ -6,7 +6,7 @@ import { isNavigationActive, workspaceNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/ui/tooltip";
 
-export function SidebarNavigation({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
+export function SidebarNavigation({ mobile = false, collapsed = false, onNavigate }: { mobile?: boolean; collapsed?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
   return <nav aria-label={mobile ? "Mobile workspace" : "Workspace"} className="flex min-h-0 flex-1 flex-col gap-6">
     {(["primary", "footer"] as const).map(section => <ul key={section} className={cn("space-y-1.5", section === "footer" && "mt-auto border-t border-sidebar-hover pt-4")}>
@@ -19,7 +19,7 @@ export function SidebarNavigation({ mobile = false, onNavigate }: { mobile?: boo
           <span className={cn("truncate", !mobile && "sidebar-label")}>{item.label}</span>
           {active && <span aria-hidden="true" className={cn("ml-auto size-1.5 shrink-0 rounded-pill bg-on-brand", !mobile && "sidebar-label")} />}
         </Link>;
-        return <li key={item.href}>{mobile ? link : <Tooltip content={item.label} wrapperClassName="flex w-full">{link}</Tooltip>}</li>;
+        return <li key={item.href}>{collapsed ? <Tooltip content={item.label} wrapperClassName="flex w-full">{link}</Tooltip> : link}</li>;
       })}
     </ul>)}
   </nav>;
