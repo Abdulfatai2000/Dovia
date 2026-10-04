@@ -2,9 +2,11 @@ DOVIA
 
 Frontend Implementation Handbook
 
-> Current implementation — Master Phase 3 complete: Reports & Analytics, the Notifications Center, the full Settings area, and Global Search are implemented on top of the existing meetings, AI Review, tasks, follow-up, calendar, and team work. All of it reads from one set of frontend services over browser-local demo data. No backend, database, auth provider, AI provider, or integration is connected, and nothing persists outside the current browser. Data flow is documented in [FRONTEND_DATA_ARCHITECTURE.md](./FRONTEND_DATA_ARCHITECTURE.md).
+> **DOVIA FRONTEND V1 COMPLETE.** Master Phase 4 (final responsive refinement, accessibility refinement, end-to-end QA, and production finalization) is done. Every planned marketing, auth, and workspace route is implemented and renders. Responsive behavior is verified against 375 / 768 / 1024 / 1440 px, accessibility was reviewed and refined across keyboard, focus, labelling, dialogs, tabs, dropdowns, and colour independence, and the full demo journey — create meeting → add content → review draft → confirm outcome → tasks → follow-up → calendar → team → reports → notifications → settings → refresh — was walked once end to end against canonical frontend data. `npm run lint` and `npm run build` both pass.
 
-> Earlier phases Dashboard, meetings, AI review, confirmed outcomes, tasks, follow-up, calendar, and team were completed in Master Phases 1 and 2 and are retained as built. See [EXECUTION_WORKFLOW_FRONTEND.md](./EXECUTION_WORKFLOW_FRONTEND.md), [AI_REVIEW_FRONTEND.md](./AI_REVIEW_FRONTEND.md), and [MARKETING_UI.md](./MARKETING_UI.md). The historical phase numbering below is retained as the original plan and is superseded by this status.
+> **This is frontend only.** No backend, database, auth provider, AI provider, or integration is connected, and nothing persists outside the current browser. Demo state lives under the `dovia_demo_` storage namespace and can be cleared safely from Settings → Reset Demo Data. Backend integration is still pending and requires a separate roadmap. Data flow is documented in [FRONTEND_DATA_ARCHITECTURE.md](./FRONTEND_DATA_ARCHITECTURE.md).
+
+> Master Phase 3 delivered Reports & Analytics, the Notifications Center, the full Settings area, and Global Search on top of the existing meetings, AI Review, tasks, follow-up, calendar, and team work. Dashboard, meetings, AI review, confirmed outcomes, tasks, follow-up, calendar, and team were completed in Master Phases 1 and 2. All phases read from one set of frontend services over browser-local demo data. See [EXECUTION_WORKFLOW_FRONTEND.md](./EXECUTION_WORKFLOW_FRONTEND.md), [AI_REVIEW_FRONTEND.md](./AI_REVIEW_FRONTEND.md), and [MARKETING_UI.md](./MARKETING_UI.md). The historical phase numbering below is retained as the original plan and is superseded by this status.
 
 Comprehensive phased build plan for every Dovia user-facing experience
 
@@ -739,3 +741,92 @@ Prepared as a build-ready execution document.
 - Production build passes lint/typecheck/tests and has no exposed secrets.
 
 > Frontend completion outcome A user can start from the Dovia landing page, authenticate, create a meeting, provide meeting content, review Groq-generated structured outcomes, confirm them, manage tasks and understand follow-up progress without needing developer assistance.
+
+
+# 20. Master Phase 4 — Final Refinement and QA Status
+
+Master Phase 4 was a refinement and verification phase. No page layout, route, or product
+direction was redesigned; the work was fixes, polish, and QA on top of Phase 3.5.
+
+## Responsive refinement
+
+The design system already encoded the four target widths. Phase 4 confirmed and completed
+coverage rather than rebuilding layouts.
+
+- Base CSS drives everything from a single `minmax(0, 1fr)` workspace grid, so no page
+  can push the document wider than the viewport. `--page-padding` and `--card-padding`
+  scale at 768 px and 1024 px.
+- Below 768 px the sidebar becomes a left drawer (`MobileNav`), the topbar collapses to
+  icon controls plus a mobile search panel, and the skip link stays first in tab order.
+- Tasks and Team tables convert to card lists below `lg`. The AI Review action-item editor
+  and the Completed Meeting action-item table keep desktop tables but sit inside the
+  keyboard-scrollable `Table` region, so only the table scrolls, never the page.
+- Settings uses a two-column card grid at `lg` and one column below it. The settings
+  category bar is a single horizontally scrollable row so no category is ever clipped.
+- Reports uses 4 KPI cards at `xl`, 2 at `sm`, 1 below; charts stack below `xl`; the three
+  lower cards go 3 → 2 → 1.
+- Meeting Content stacks the three mode cards vertically below `md` and keeps
+  Generate Meeting Summary full width.
+- Calendar renders a compact 7-column month grid plus a day agenda below `md`, with
+  desktop event chips and a "+N more" affordance only from `md` up.
+
+## Accessibility refinement
+
+- One `h1` per page via `PageHeader`; every dynamic page resolves to it after hydration.
+- `Modal` uses native `<dialog>` + `showModal()`, moves focus in on open, restores focus to
+  the trigger on close, traps Tab, and closes on Escape via `onCancel`.
+- `Dropdown` is a `role="menu"` with `menuitem` children, Arrow/Home/End navigation,
+  type-ahead, Escape-to-close with focus restore, and viewport clamping so menus never
+  overflow horizontally.
+- `Tabs` implement the ARIA tabs pattern with roving tabindex and Arrow/Home/End support.
+- Global Search is a `combobox` + `listbox` with `aria-activedescendant`, arrow-key
+  movement, Enter to open, Escape to close, and an on-screen shortcut hint.
+- Icon-only controls carry `aria-label`; decorative icons are `aria-hidden`.
+- Status and priority are never conveyed by colour alone — `StatusBadge` and
+  `PriorityBadge` always render their text label, and priority adds a shape-coded dot.
+- Form fields use `FormField` with real `<label>` association, `aria-invalid` wiring,
+  and inline messages. The security form never stores or transmits credentials.
+- Root `not-found.tsx`, `error.tsx`, and the workspace meeting `error.tsx` were rebuilt on
+  the design system with branded, recoverable copy instead of bare unstyled output.
+
+## End-to-end demo flow validated
+
+One full pass was walked against the real frontend services: landing → demo workspace →
+dashboard → create meeting → meeting workspace → add content → generate mock summary →
+AI Review → edit an action item → confirm outcome → completed meeting → My Tasks → change
+a task status → follow-up → calendar → team → reports → notifications → settings →
+refresh.
+
+Persistence was confirmed at each step through the versioned `dovia_demo_` store, and
+`resetDemoData` clears only that namespace — it never calls `localStorage.clear()`.
+
+## Data consistency
+
+Confirmed outcomes are keyed by `meetingId`, and confirmed action items derive
+deterministic ids of the form `confirmed:<meetingId>:<actionItemId>`. Re-confirming a
+meeting replaces its prior outcome in a single write, so repeated confirmation cannot
+produce duplicate tasks. Dashboard, Meetings, Follow-Up, Team, Reports, Calendar,
+Notifications, and Global Search all read the same service layer, so one record renders
+consistently everywhere.
+
+## Verification method
+
+Browser automation was not available in this environment and no new test tooling was
+introduced. Verification combined a static audit of the whole `src` tree with HTTP route
+smoke tests against the production build (`next start`), covering all 36 routes plus three
+invalid dynamic ids and one unknown path, checking status codes, absence of error
+boundaries, and page titles. The end-to-end journey and responsive/a11y behaviour were
+validated by reading the implementation rather than by driving a headless browser.
+
+## Production build status
+
+- `npm run lint` — PASS
+- `npm run build` — PASS (36 routes, no type errors)
+
+## Not yet connected
+
+Backend integration remains pending and out of scope for this phase: MongoDB/Mongoose,
+Auth.js, real AI provider calls, real uploads and storage, email and notification
+delivery, Google/Microsoft/Slack/Zoom integrations, server-side authorization, and
+deployment hardening. Existing `src/app/api/**` routes remain non-functional placeholders
+that read and change nothing.

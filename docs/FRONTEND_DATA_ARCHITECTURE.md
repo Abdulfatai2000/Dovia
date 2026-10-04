@@ -2,7 +2,7 @@ DOVIA
 
 Frontend Data Architecture
 
-> Current implementation — Master Phase 3. This document describes how the Dovia frontend reads and writes data today. It is the reference for adding or changing any data-backed feature.
+> Current implementation — Master Phase 4 (Dovia Frontend V1 complete). This document describes how the Dovia frontend reads and writes data today. It is the reference for adding or changing any data-backed feature. The layer model, service contracts, and storage layout are unchanged by Phase 4, which was a refinement and QA pass; see [FRONTEND.md](./FRONTEND.md) section 20 for what changed.
 
 ## Scope and honest boundaries
 
