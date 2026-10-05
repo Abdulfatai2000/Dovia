@@ -2,6 +2,16 @@ DOVIA
 
 Frontend Implementation Handbook
 
+## Email verification and strong passwords (frontend demo)
+
+Signup validates the form and all five password rules, then opens `/verify-email`. Signup and reset-password share the live requirement checklist and Weak/Fair/Strong indicator: at least 8 characters, uppercase, lowercase, number, and a non-whitespace special character. All five rules are mandatory; matching confirmation is required. Error codes and friendly messages are centralized in `components/auth/auth-errors.ts`.
+
+The replaceable `auth-verification.service.ts` manages a 6-digit public demo code, a 2-minute expiry, a 60-second resend cooldown, and at most 5 incorrect attempts per code. Resending replaces the code and resets the timers and attempt count. Missing requests, invalid codes, expiry, lockout, resending, and success have explicit UI states. Numeric inputs support paste, automatic advancement, arrows, and Backspace. Successful verification clears the pending request, announces success, and redirects to login without authenticating.
+
+Only pending email, the explicitly displayed non-secret demo code, timestamps, version, and attempt count are stored in tab-scoped sessionStorage. Passwords, account records, and auth tokens are never persisted. No email, backend endpoint, or real OTP verification is connected. This client-side demo is editable by the browser user and provides no security guarantee; backend integration must replace it, enforce limits server-side, and hash real OTPs. Aurora styling and theme support are retained.
+
+
+
 > **DOVIA FRONTEND V1 COMPLETE.** Master Phase 4 (final responsive refinement, accessibility refinement, end-to-end QA, and production finalization) is done. Every planned marketing, auth, and workspace route is implemented and renders. Responsive behavior is verified against 375 / 768 / 1024 / 1440 px, accessibility was reviewed and refined across keyboard, focus, labelling, dialogs, tabs, dropdowns, and colour independence, and the full demo journey — create meeting → add content → review draft → confirm outcome → tasks → follow-up → calendar → team → reports → notifications → settings → refresh — was walked once end to end against canonical frontend data. `npm run lint` and `npm run build` both pass.
 
 > **This is frontend only.** No backend, database, auth provider, AI provider, or integration is connected, and nothing persists outside the current browser. Demo state lives under the `dovia_demo_` storage namespace and can be cleared safely from Settings → Reset Demo Data. Backend integration is still pending and requires a separate roadmap. Data flow is documented in [FRONTEND_DATA_ARCHITECTURE.md](./FRONTEND_DATA_ARCHITECTURE.md).

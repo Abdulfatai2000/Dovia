@@ -1,4 +1,23 @@
 export const MIN_PASSWORD_LENGTH = 8;
+import { authErrorMessages, type AuthErrorCode } from "./auth-errors";
+
+export const passwordRules = [
+  { code: "PASSWORD_TOO_SHORT", label: "At least 8 characters", test: (value: string) => value.length >= MIN_PASSWORD_LENGTH },
+  { code: "PASSWORD_NO_UPPERCASE", label: "One uppercase letter", test: (value: string) => /[A-Z]/.test(value) },
+  { code: "PASSWORD_NO_LOWERCASE", label: "One lowercase letter", test: (value: string) => /[a-z]/.test(value) },
+  { code: "PASSWORD_NO_NUMBER", label: "One number", test: (value: string) => /[0-9]/.test(value) },
+  { code: "PASSWORD_NO_SPECIAL_CHAR", label: "One special character", test: (value: string) => /[^A-Za-z0-9\s]/.test(value) },
+] as const;
+export function passwordErrorCodes(value: string): AuthErrorCode[] {
+  return passwordRules.filter(rule => !rule.test(value)).map(rule => rule.code);
+}
+export function passwordError(value: string) {
+  const code = passwordErrorCodes(value)[0];
+  return code ? authErrorMessages[code] : undefined;
+}
+export function emailErrorCode(value: string): AuthErrorCode | undefined {
+  return !value.trim() ? "EMAIL_REQUIRED" : !isValidEmail(value) ? "EMAIL_INVALID" : undefined;
+}
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -31,13 +50,12 @@ export function validateSignupForm(form: HTMLFormElement): FieldErrors {
   const password = String(data.get("password") ?? "");
   const confirmPassword = String(data.get("confirmPassword") ?? "");
   if (!fullName) errors.fullName = "Enter your full name.";
-  if (!email) errors.email = "Enter your work email address.";
-  else if (!isValidEmail(email)) errors.email = "Enter a valid work email address.";
-  if (password.length < MIN_PASSWORD_LENGTH) {
-    errors.password = `Use at least ${MIN_PASSWORD_LENGTH} characters for your password.`;
-  }
+  const emailCode = emailErrorCode(email);
+  if (emailCode) errors.email = authErrorMessages[emailCode];
+  const passwordMessage = passwordError(password);
+  if (passwordMessage) errors.password = passwordMessage;
   if (!confirmPassword) errors.confirmPassword = "Confirm your password.";
-  else if (confirmPassword !== password) errors.confirmPassword = "Your passwords do not match.";
+  else if (confirmPassword !== password) errors.confirmPassword = authErrorMessages.PASSWORD_MISMATCH;
   if (!data.has("terms")) errors.terms = "Agree to the terms to create an account.";
   return errors;
 }

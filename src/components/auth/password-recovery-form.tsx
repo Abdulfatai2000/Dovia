@@ -6,7 +6,8 @@ import { ArrowRight } from "lucide-react";
 import { AuthCard } from "./auth-card";
 import { AuthNotice, type AuthNoticeValue } from "./auth-notice";
 import { PasswordInput } from "./password-input";
-import { firstInvalidField, isValidEmail, MIN_PASSWORD_LENGTH, type FieldErrors } from "./auth-validation";
+import { firstInvalidField, isValidEmail, passwordError, type FieldErrors } from "./auth-validation";
+import { authErrorMessages } from "./auth-errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -27,12 +28,10 @@ export function PasswordRecoveryForm({ mode }: { mode: "forgot" | "reset" }) {
     } else {
       const password = String(data.get("password") ?? "");
       const confirmation = String(data.get("confirmPassword") ?? "");
-      if (!password) nextErrors.password = "Enter your new password.";
-      else if (password.length < MIN_PASSWORD_LENGTH) {
-        nextErrors.password = `Use at least ${MIN_PASSWORD_LENGTH} characters for your password.`;
-      }
+      const message = passwordError(password);
+      if (message) nextErrors.password = message;
       if (!confirmation) nextErrors.confirmPassword = "Confirm your new password.";
-      else if (confirmation !== password) nextErrors.confirmPassword = "Your passwords do not match.";
+      else if (confirmation !== password) nextErrors.confirmPassword = authErrorMessages.PASSWORD_MISMATCH;
     }
     return nextErrors;
   }
@@ -83,7 +82,7 @@ export function PasswordRecoveryForm({ mode }: { mode: "forgot" | "reset" }) {
           ) : (
             <>
               <PasswordInput id="password" name="password" label="New password" autoComplete="new-password"
-                placeholder="Enter a new password" helperText={`Use at least ${MIN_PASSWORD_LENGTH} characters.`}
+                placeholder="Enter a new password" showRequirements
                 error={errors.password} />
               <PasswordInput id="confirmPassword" name="confirmPassword" label="Confirm new password"
                 autoComplete="new-password" placeholder="Re-enter your new password" error={errors.confirmPassword} />

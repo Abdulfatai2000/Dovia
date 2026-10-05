@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { beginDemoVerification } from "@/services/auth-verification.service";
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { AuthCard } from "@/components/auth/auth-card";
@@ -8,12 +10,14 @@ import { AuthNotice, type AuthNoticeValue } from "@/components/auth/auth-notice"
 import { AuthShell } from "@/components/auth/auth-shell";
 import { AuthSocialButtons } from "@/components/auth/social-auth-buttons";
 import { PasswordInput } from "@/components/auth/password-input";
-import { firstInvalidField, MIN_PASSWORD_LENGTH, validateSignupForm, type FieldErrors } from "@/components/auth/auth-validation";
+import { firstInvalidField, validateSignupForm, type FieldErrors } from "@/components/auth/auth-validation";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -28,6 +32,7 @@ export default function SignupPage() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (saving) return;
     const nextErrors = validateSignupForm(event.currentTarget);
     setSubmitted(true);
     setErrors(nextErrors);
@@ -37,10 +42,13 @@ export default function SignupPage() {
       focusField(firstInvalid);
       return;
     }
-    setNotice({
-      title: "Account creation will be connected during backend development.",
-      description: "Your details validated successfully. No account was created.",
-    });
+    try {
+      beginDemoVerification(String(new FormData(event.currentTarget).get("email") ?? ""));
+      setSaving(true);
+      router.push("/verify-email");
+    } catch (cause) {
+      setNotice({ title: "Unable to start demo verification.", description: cause instanceof Error ? cause.message : "Please try again." });
+    }
   }
 
   return (
@@ -64,12 +72,12 @@ export default function SignupPage() {
           <Input id="company" name="company" label="Workspace / company name (optional)" autoComplete="organization"
             placeholder="Your team or company" />
           <PasswordInput id="password" name="password" label="Password" autoComplete="new-password"
-            placeholder="Create a password" helperText={`Use at least ${MIN_PASSWORD_LENGTH} characters.`} error={errors.password} />
+            placeholder="Create a password" showRequirements error={errors.password} />
           <PasswordInput id="confirmPassword" name="confirmPassword" label="Confirm password"
             autoComplete="new-password" placeholder="Re-enter your password" error={errors.confirmPassword} />
           <Checkbox id="terms" name="terms" label="I agree to the terms" required error={errors.terms} />
 
-          <Button type="submit" variant="gradient" className="w-full">Create account<ArrowRight aria-hidden="true" /></Button>
+          <Button type="submit" variant="gradient" className="w-full" loading={saving}>Create account<ArrowRight aria-hidden="true" /></Button>
         </form>
 
         <AuthSocialButtons
