@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState, type FormEvent } from "react";
+import { signIn } from "next-auth/react";
 import { ArrowRight } from "lucide-react";
 import { AuthCard } from "@/components/auth/auth-card";
 import { AuthNotice, type AuthNoticeValue } from "@/components/auth/auth-notice";
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [notice, setNotice] = useState<AuthNoticeValue | null>(null);
+  const [saving, setSaving] = useState(false);
 
   function focusField(name: string) {
     requestAnimationFrame(() => {
@@ -27,8 +29,9 @@ export default function LoginPage() {
     });
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (saving) return;
     const nextErrors = validateLoginForm(event.currentTarget);
     setSubmitted(true);
     setErrors(nextErrors);
@@ -38,10 +41,29 @@ export default function LoginPage() {
       focusField(firstInvalid);
       return;
     }
-    setNotice({
-      title: "Authentication will be connected during backend development.",
-      description: "Your details validated successfully. No session was created.",
-    });
+    const form = event.currentTarget;
+    const email = String(new FormData(form).get("email") ?? "");
+    const password = String(new FormData(form).get("password") ?? "");
+    try {
+      setSaving(true);
+      const result = await signIn("credentials", { email, password, redirect: false });
+      if (result?.error === "EMAIL_NOT_VERIFIED") {
+        setNotice({
+          title: "Your email hasn't been verified yet.",
+          description: <span>Verify Email — <Link className="font-medium underline" href="/verify-email?email={email}">/verify-email?email={email}</Link></span>,
+        });
+        return;
+      }
+      if (result?.error) {
+        setNotice({ title: "Invalid email or password.", description: "Please check your details and try again." });
+        return;
+      }
+      window.location.assign("/dashboard");
+    } catch {
+      setNotice({ title: "Sign in failed.", description: "Please try again." });
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -67,7 +89,7 @@ export default function LoginPage() {
             <Link href="/forgot-password" className="rounded-sm text-sm font-medium">Forgot password?</Link>
           </div>
 
-          <Button type="submit" variant="gradient" className="w-full">Sign in<ArrowRight aria-hidden="true" /></Button>
+          <Button type="submit" variant="gradient" className="w-full" loading={saving}>Sign in<ArrowRight aria-hidden="true" /></Button>
         </form>
 
         <AuthSocialButtons

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { beginDemoVerification } from "@/services/auth-verification.service";
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { AuthCard } from "@/components/auth/auth-card";
@@ -30,7 +29,7 @@ export default function SignupPage() {
     });
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
     const nextErrors = validateSignupForm(event.currentTarget);
@@ -42,12 +41,33 @@ export default function SignupPage() {
       focusField(firstInvalid);
       return;
     }
+
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const payload = {
+      name: String(data.get("fullName") ?? ""),
+      email: String(data.get("email") ?? ""),
+      password: String(data.get("password") ?? ""),
+      workspaceName: String(data.get("company") ?? ""),
+    };
+
     try {
-      beginDemoVerification(String(new FormData(event.currentTarget).get("email") ?? ""));
       setSaving(true);
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        setNotice({ title: "Unable to create your account.", description: result.error?.message || "Please try again." });
+        return;
+      }
       router.push("/verify-email");
-    } catch (cause) {
-      setNotice({ title: "Unable to start demo verification.", description: cause instanceof Error ? cause.message : "Please try again." });
+    } catch {
+      setNotice({ title: "Unable to create your account.", description: "Please try again." });
+    } finally {
+      setSaving(false);
     }
   }
 

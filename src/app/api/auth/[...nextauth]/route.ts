@@ -1,10 +1,6 @@
-// TODO: Implement this endpoint in a later phase. No data is read or changed.
-// TODO: Configure Auth.js; these placeholders do not authenticate users.
+import NextAuth from "next-auth";
+import { authOptions } from "@/auth";
 
-export function GET() {
-  return Response.json({ success: true, message: "Dovia API placeholder" });
-}
+const handler = NextAuth(authOptions);
 
-export function POST() {
-  return Response.json({ success: true, message: "Dovia API placeholder" });
-}
+export { handler as GET, handler as POST };

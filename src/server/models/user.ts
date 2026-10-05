@@ -1,26 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 import { UserStatus } from "@/server/constants";
-
-const SALT_LENGTH = 16;
-const KEY_LENGTH = 64;
-const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 } as const;
-
-function hashPassword(password: string): { hash: string; salt: string } {
-  const salt = crypto.randomBytes(SALT_LENGTH).toString("hex");
-  const derived = crypto.scryptSync(password, salt, KEY_LENGTH, SCRYPT_PARAMS);
-  return { hash: derived.toString("hex"), salt };
-}
-
-function verifyPassword(password: string, hash: string, salt: string): boolean {
-  try {
-    const derived = crypto.scryptSync(password, salt, KEY_LENGTH, SCRYPT_PARAMS);
-    return crypto.timingSafeEqual(Buffer.from(hash, "hex"), derived);
-  } catch {
-    return false;
-  }
-}
 
 const UserSchema = new Schema(
   {
@@ -28,7 +9,6 @@ const UserSchema = new Schema(
     email: { type: String, required: true, trim: true, lowercase: true },
     emailNormalized: { type: String, required: true, trim: true, lowercase: true, unique: true },
     passwordHash: { type: String, required: true, select: false },
-    passwordSalt: { type: String, required: true, select: false },
     emailVerifiedAt: { type: Date },
     avatarUrl: { type: String },
     jobTitle: { type: String, trim: true },
@@ -46,7 +26,6 @@ UserSchema.virtual("id").get(function () {
 
 function sanitizeUserDocument(doc: Record<string, unknown>) {
   delete doc.passwordHash;
-  delete doc.passwordSalt;
   return doc;
 }
 
@@ -61,16 +40,16 @@ UserSchema.set("toJSON", {
 UserSchema.set("toObject", { virtuals: true, versionKey: false });
 
 UserSchema.methods.comparePassword = function (candidate: string) {
-  return verifyPassword(candidate, this.passwordHash, this.passwordSalt);
+  return bcrypt.compare(candidate, this.passwordHash);
 };
 
-UserSchema.statics.hashPassword = hashPassword;
+UserSchema.statics.hashPassword = (password: string) => bcrypt.hash(password, 12);
 
 const User = (mongoose.models.User || mongoose.model("User", UserSchema)) as mongoose.Model<
   mongoose.InferSchemaType<typeof UserSchema>
 > & {
-  comparePassword(candidate: string): boolean;
-  hashPassword(password: string): { hash: string; salt: string };
+  comparePassword(candidate: string): Promise<boolean>;
+  hashPassword(password: string): Promise<string>;
 };
 
 export { User };

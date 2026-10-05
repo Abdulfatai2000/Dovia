@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
-// Next.js 16 proxy convention. No authentication enforcement in Phase 0.
-// TODO: Protect /dashboard, /meetings, /tasks, /calendar, /team, /reports,
-// /notifications, and /settings after Auth.js is configured.
-export function proxy() {
-  return NextResponse.next();
+export async function proxy() {
+  const session = await getServerSession(authOptions);
+  const isAuthed = !!session?.user;
+  const isVerified = (session?.user as { emailVerified?: boolean } | null)?.emailVerified === true;
+
+  return NextResponse.rewrite(
+    isAuthed && isVerified
+      ? "/dashboard"
+      : isAuthed
+        ? "/verify-email"
+        : "/login"
+  );
 }
 
 export const config = {
