@@ -759,4 +759,33 @@ Audio upload/live recording is not required for the text-first MVP. A later phas
 | Next.js Documentation | https://nextjs.org/docs |
 
 
-*Model names and capability support can change. For that reason, Dovia should configure GROQ_MODEL via environment and verify Structured Outputs support for the selected production model before deployment.*
+# 24. Phase 0 Completion Status
+
+## Phase 0 - Foundation
+
+Status: **COMPLETE**
+
+- [x] `mongoose` added to dependencies.
+- [x] Server-only environment validation created at `src/lib/env.server.ts`.
+- [x] Cached Mongoose connection helper at `src/lib/db/mongoose.ts`.
+- [x] Core models implemented at `src/server/models/`:
+  - [x] User
+  - [x] EmailVerification
+  - [x] Workspace
+  - [x] Membership
+  - [x] Team
+  - [x] Meeting
+  - [x] MeetingContent
+  - [x] MeetingAnalysis
+  - [x] Decision
+  - [x] Task
+  - [x] Notification
+  - [x] Activity
+- [x] Database health endpoint implemented at `GET /api/health/db`.
+- [x] OTP model foundation implemented with 2-minute expiry, 60-second resend cooldown, 5 attempts, TTL index.
+- [x] Shared backend constants/types created at `src/server/constants.ts`.
+- [x] .env.example updated with `MONGODB_URI` and `MONGODB_DB_NAME=dovia`.
+- [x] Verified real Atlas connection succeeded via health endpoint.
+
+> Frontend status: unchanged. Existing demo/mock service architecture remains active. No frontend migration to MongoDB has been performed.
+
