@@ -113,13 +113,13 @@ export function Dropdown({ trigger, label, items, disabled, align = "end", varia
           }
         }}>
         {items.map(item => {
-          const itemClass = cn("flex min-h-11 w-full items-start gap-3 rounded-sm px-3 py-2.5 text-left text-sm transition-colors duration-200 hover:bg-surface-hover hover:no-underline disabled:cursor-not-allowed disabled:text-text-subtle aria-disabled:cursor-not-allowed aria-disabled:text-text-subtle aria-selected:bg-surface-hover aria-selected:text-foreground [&_svg]:size-4 [&_svg]:shrink-0", item.destructive ? "text-danger-foreground hover:text-danger-foreground" : "text-text-secondary hover:text-foreground");
-          const body = <>{item.icon && <span aria-hidden="true" className="mt-0.5 shrink-0">{item.icon}</span>}<span className="min-w-0 flex-1"><span className="block font-medium">{item.label}</span>{item.description && <span className="mt-1 block text-xs leading-relaxed text-text-muted">{item.description}</span>}{item.meta && <span className="mt-1 block text-xs text-text-muted">{item.meta}</span>}</span>{item.selected && <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-primary" />}</>;
+          const itemClass = cn("flex min-h-11 w-full items-start gap-3 rounded-sm px-3 py-2.5 text-left text-sm transition-colors duration-200 hover:bg-surface-hover hover:no-underline disabled:cursor-not-allowed disabled:text-text-subtle aria-disabled:cursor-not-allowed aria-disabled:text-text-subtle aria-current:bg-surface-hover aria-current:text-foreground [&_svg]:size-4 [&_svg]:shrink-0", item.destructive ? "text-danger-foreground hover:text-danger-foreground" : "text-text-secondary hover:text-foreground");
+          const body = <>{item.icon && <span aria-hidden="true" className="mt-0.5 shrink-0">{item.icon}</span>}<span className="min-w-0 flex-1"><span className="block font-medium">{item.label}</span>{item.description && <span className="mt-1 block text-xs leading-relaxed text-text-muted">{item.description}</span>}{item.meta && <span className="mt-1 block text-xs text-text-muted">{item.meta}</span>}{item.selected && <span className="sr-only">Current selection</span>}</span>{item.selected && <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-primary" />}</>;
           return <div key={item.id} role="none">
             {item.separatorBefore && <div role="separator" className="my-1 border-t border-border" />}
-            {item.href !== undefined ? <Link href={item.href} role="menuitem" tabIndex={-1} aria-disabled={item.disabled || undefined} aria-selected={item.selected || undefined} data-label={item.label} className={itemClass}
+            {item.href !== undefined ? <Link href={item.href} role="menuitem" tabIndex={-1} aria-disabled={item.disabled || undefined} aria-current={item.selected ? "true" : undefined} data-label={item.label} className={itemClass}
               onClick={event => { if (item.disabled) event.preventDefault(); else close(true); }}>{body}</Link> :
-              <button type="button" role="menuitemradio" disabled={item.disabled} tabIndex={-1} aria-checked={item.selected || false} data-label={item.label} className={itemClass}
+              <button type="button" role="menuitem" disabled={item.disabled} tabIndex={-1} aria-current={item.selected ? "true" : undefined} data-label={item.label} className={itemClass}
                 onClick={() => { close(true); item.onSelect(); }}>{body}</button>}
           </div>;
         })}
