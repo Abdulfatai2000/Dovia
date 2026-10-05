@@ -25,7 +25,7 @@ export interface IntegrationCardProps {
 export function IntegrationCard({ name, description, monogram, status, statusTone = "neutral", actionLabel = "Connect", onAction, children, className }: IntegrationCardProps) {
   return <Card className={cn("flex h-full flex-col gap-4 p-[var(--card-padding)]", className)}>
     <div className="flex items-start gap-3">
-      <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface-soft text-sm font-semibold text-text-secondary">{monogram}</span>
+      <span aria-hidden="true" className="dovia-gradient-ai flex size-10 shrink-0 items-center justify-center rounded-md text-sm font-semibold text-on-brand shadow-glow-ai">{monogram}</span>
       <div className="min-w-0 flex-1">
         <h3 className="dovia-card-title">{name}</h3>
         <p className="mt-1 text-sm leading-relaxed text-text-secondary">{description}</p>
@@ -42,7 +42,7 @@ export function IntegrationCard({ name, description, monogram, status, statusTon
 /** Compact row variant used inside the all-in-one settings dashboard. */
 export function IntegrationRow({ name, description, monogram, onAction }: Pick<IntegrationCardProps, "name" | "description" | "monogram" | "onAction">) {
   return <div className="flex flex-wrap items-center gap-3 py-4">
-    <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border bg-surface-soft text-sm font-semibold text-text-secondary">{monogram}</span>
+    <span aria-hidden="true" className="dovia-gradient-ai flex size-10 shrink-0 items-center justify-center rounded-md text-sm font-semibold text-on-brand shadow-glow-ai">{monogram}</span>
     <div className="min-w-0 flex-1">
       <p className="text-sm font-medium text-foreground">{name}</p>
       <p className="mt-0.5 text-xs text-text-secondary">{description}</p>

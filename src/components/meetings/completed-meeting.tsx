@@ -1,6 +1,6 @@
 ﻿"use client";
 import { useState } from "react";
-import { Share2, MoreHorizontal } from "lucide-react";
+import { CircleCheck, Share2, MoreHorizontal } from "lucide-react";
 import type { Meeting } from "@/types/meeting";
 import { useMeetingAnalysis } from "@/hooks/use-meeting-analysis";
 import { getUser } from "@/services/team.service";
@@ -40,7 +40,7 @@ export default function CompletedMeeting({ meeting }: { meeting: Meeting }) {
     <aside className="min-w-0 space-y-5"><Card className="space-y-4 p-5"><SectionHeader title="Meeting Details" /><dl className="space-y-3 text-sm"><div><dt className="text-text-muted">When</dt><dd>{formatDate(meeting.date)} · {formatTime(meeting.startTime)}</dd></div><div><dt className="text-text-muted">Platform</dt><dd>{meeting.platform}</dd></div><div><dt className="text-text-muted">Organizer</dt><dd>{getUser(organizer?.userId ?? "")?.name ?? "Not specified"}</dd></div><div><dt className="text-text-muted">Record</dt><dd>{analysis.confirmedAt ? "Confirmed in this browser" : "Illustrative completed demo record"}</dd></div></dl></Card><MeetingParticipants participants={meeting.participants} /></aside></div>;
   return <div className="space-y-6"><PageHeader title={meeting.title} eyebrow="Meeting record" breadcrumbs={<ButtonLink href="/meetings" variant="ghost" size="sm">← Back to Meetings</ButtonLink>}
     actions={<><Button variant="outline" onClick={() => setShare(true)}><Share2 aria-hidden="true" />Share</Button><Dropdown label="More Actions" trigger={<MoreHorizontal aria-hidden="true" />} items={[{id:"review",label:"Review confirmed outcome",href:`/meetings/${meeting.id}/ai-review`},{id:"follow",label:"View Follow-up Progress",href:`/meetings/${meeting.id}/follow-up`}]} /></>} />
-    <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary"><StatusBadge status="COMPLETED" /><span>{formatDate(meeting.date)} · {formatTime(meeting.startTime)} · {meeting.platform} · {meeting.participants.length} attendees</span></div>
+    <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary"><span className="dovia-gradient-success inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1 text-xs font-medium text-on-brand shadow-sm"><CircleCheck aria-hidden="true" className="size-3.5" />Outcome confirmed</span><span>{formatDate(meeting.date)} · {formatTime(meeting.startTime)} · {meeting.platform} · {meeting.participants.length} attendees</span></div>
     <p className="text-xs text-text-muted">Demo record · Saved locally. No cloud sharing or backend task creation.</p>
     <Tabs label="Completed meeting" items={[{value:"summary",label:"Summary",content:summary},{value:"actions",label:"Action Items",content:actions},{value:"decisions",label:"Decisions",content:decisions},{value:"notes",label:"Notes",content:notes},{value:"files",label:"Files",content:<MeetingFiles files={meeting.files} />}]} />
     <ButtonLink href={`/meetings/${meeting.id}/follow-up`}>View Follow-up Progress</ButtonLink>

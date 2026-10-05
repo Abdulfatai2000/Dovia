@@ -28,7 +28,7 @@ export function TeamWorkload({ entries }: { entries: WorkloadEntry[] }) {
               </span>
             </div>
             <div className="mt-2 h-1.5 overflow-hidden rounded-pill bg-border">
-              <div className="h-full rounded-pill bg-primary transition-[width] duration-200" style={{ width: `${percent}%` }} />
+              <div className="dovia-progress-fill dovia-gradient-cyan h-full rounded-pill" style={{ width: `${percent}%` }} />
             </div>
             <span className="sr-only">{member.name}: {stats.completed} of {stats.total} tasks completed, {percent} percent.</span>
           </li>;

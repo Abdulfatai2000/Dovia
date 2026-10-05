@@ -119,7 +119,7 @@ export function Dropdown({ trigger, label, items, disabled, align = "end", varia
             {item.separatorBefore && <div role="separator" className="my-1 border-t border-border" />}
             {item.href !== undefined ? <Link href={item.href} role="menuitem" tabIndex={-1} aria-disabled={item.disabled || undefined} aria-selected={item.selected || undefined} data-label={item.label} className={itemClass}
               onClick={event => { if (item.disabled) event.preventDefault(); else close(true); }}>{body}</Link> :
-              <button type="button" role="menuitem" disabled={item.disabled} tabIndex={-1} aria-selected={item.selected || undefined} data-label={item.label} className={itemClass}
+              <button type="button" role="menuitemradio" disabled={item.disabled} tabIndex={-1} aria-checked={item.selected || false} data-label={item.label} className={itemClass}
                 onClick={() => { close(true); item.onSelect(); }}>{body}</button>}
           </div>;
         })}

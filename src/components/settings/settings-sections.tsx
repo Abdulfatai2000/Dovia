@@ -53,6 +53,16 @@ const sectionContent: Record<string, { title: string; description: string; Conte
   },
 };
 
+/** Per-section icon accent so Settings cards stay visually distinct without restyling each form. */
+const sectionAccents: Record<string, string> = {
+  account: "bg-blue-soft text-blue-foreground ring-blue/20",
+  notifications: "bg-pink-soft text-pink-foreground ring-pink/20",
+  "meeting-defaults": "bg-cyan-soft text-cyan-foreground ring-cyan/20",
+  integrations: "bg-violet-soft text-violet-foreground ring-violet/20",
+  security: "bg-indigo-soft text-indigo-foreground ring-indigo/20",
+  workspace: "bg-cyan-soft text-cyan-foreground ring-cyan/20",
+};
+
 export const settingsSections: SettingsSection[] = settingsNavItems.map(item => ({
   id: item.id, href: item.href, label: item.label, icon: item.icon, ...sectionContent[item.id],
 }));
@@ -67,7 +77,7 @@ export function SettingsSectionCard({ section }: { section: SettingsSection }) {
   const { Content } = section;
   return <Card className="flex h-full flex-col p-[var(--card-padding)]">
     <div className="flex items-start gap-3">
-      <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-default bg-surface-soft text-primary [&_svg]:size-4">
+      <span aria-hidden="true" className={`flex size-9 shrink-0 items-center justify-center rounded-default ring-1 ring-inset [&_svg]:size-4 ${sectionAccents[section.id] ?? "bg-surface-soft text-primary"}`}>
         <Icon />
       </span>
       <div className="min-w-0">

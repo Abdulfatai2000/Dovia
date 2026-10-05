@@ -56,6 +56,8 @@
   --orange-foreground: #B45309;
   --red-soft: #FDECEC;
   --red-foreground: #B42318;
+  --indigo-soft: #ECEDFF;
+  --indigo-foreground: #3F3DBC;
 
   --success: #10B981;
   --success-soft: var(--emerald-soft);
@@ -198,6 +200,8 @@
   --orange-foreground: #FCD34D;
   --red-soft: rgb(251 113 133 / 14%);
   --red-foreground: #FDA4AF;
+  --indigo-soft: rgb(129 140 248 / 16%);
+  --indigo-foreground: #A5B4FC;
 
   --success-hover: #059669;
   --danger-hover: #E11D48;
@@ -261,6 +265,9 @@
   --color-red: var(--accent-red);
   --color-red-soft: var(--red-soft);
   --color-red-foreground: var(--red-foreground);
+  --color-indigo: var(--accent-indigo);
+  --color-indigo-soft: var(--indigo-soft);
+  --color-indigo-foreground: var(--indigo-foreground);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-success-foreground: var(--success-foreground);

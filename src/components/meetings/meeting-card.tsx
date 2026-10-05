@@ -11,9 +11,9 @@ import { formatDate, formatTime } from "@/lib/meeting-format";
 
 export default function MeetingCard({ meeting }: { meeting: Meeting }) {
   const href = `/meetings/${meeting.id}`;
-  return <Card className="flex h-full flex-col gap-5 p-5">
+return <Card interactive className="flex h-full flex-col gap-5 p-5">
     <div className="flex items-start justify-between gap-2">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-ai-soft text-ai"><CalendarDays aria-hidden="true" className="size-5" /></span>
+      <span className="dovia-gradient flex size-10 shrink-0 items-center justify-center rounded-md text-on-brand shadow-sm"><CalendarDays aria-hidden="true" className="size-5" /></span>
       <StatusBadge status={meeting.status} />
       <Dropdown iconOnly variant="ghost" trigger={<MoreHorizontal />} label={`Actions for ${meeting.title}`}
         items={[{ id: "view", label: "View meeting", href }, { id: "content", label: "Add meeting content", href: href + "/content" }]} />

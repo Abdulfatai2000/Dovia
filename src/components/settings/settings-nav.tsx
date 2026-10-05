@@ -36,8 +36,8 @@ export function SettingsTabs() {
         const active = isActive(pathname, item.href);
         return <li key={item.id} className="shrink-0">
           <Link href={item.href} aria-current={active ? "page" : undefined}
-            className={cn("flex min-h-11 items-center gap-2 rounded-default px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200",
-              active ? "bg-surface-hover text-primary" : "text-text-secondary hover:bg-surface-soft hover:text-foreground hover:no-underline")}>
+            className={cn("flex min-h-11 items-center gap-2 rounded-default px-4 py-2 text-sm font-medium whitespace-nowrap transition-[color,background-color,box-shadow] duration-200",
+              active ? "dovia-accent-soft dovia-accent-text shadow-sm" : "text-text-secondary hover:bg-surface-soft hover:text-foreground hover:no-underline")}>
             <Icon aria-hidden="true" className="size-4 shrink-0" />
             {item.label}
           </Link>

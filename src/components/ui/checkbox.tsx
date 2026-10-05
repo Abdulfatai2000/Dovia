@@ -16,7 +16,7 @@ export function Checkbox({ id, label, helperText, error, className, disabled, "a
     <div className={cn("min-w-0", className)}>
       <label htmlFor={fieldId} className={cn("flex min-h-11 items-center gap-3 text-sm", disabled ? "cursor-not-allowed text-text-muted" : "cursor-pointer text-foreground")}>
         <input {...props} id={fieldId} type="checkbox" disabled={disabled} aria-invalid={error ? true : props["aria-invalid"]}
-          aria-describedby={fieldDescription(fieldId, helperText, error, describedBy)} className="size-4 shrink-0 accent-primary" />
+          aria-describedby={fieldDescription(fieldId, helperText, error, describedBy)} className="size-4 shrink-0 rounded-sm accent-primary transition-transform duration-150" />
         <span>{label}{props.required && <span aria-hidden="true" className="ml-1 text-danger-foreground">*</span>}</span>
       </label>
       {helperText && <p id={fieldId + "-help"} className="ml-7 text-sm text-text-muted">{helperText}</p>}

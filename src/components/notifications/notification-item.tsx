@@ -40,15 +40,18 @@ export interface NotificationItemProps {
 export function NotificationItem({ notification, onToggleRead }: NotificationItemProps) {
   const Icon = icons[notification.type];
   return <li className="min-w-0">
-    <Card className={cn("p-[var(--card-padding)]", !notification.read && "border-primary/40 bg-surface-hover")}>
+    <Card className={cn("transition-[background-color,border-color,box-shadow] duration-200", !notification.read && "border-pink/35 bg-gradient-to-r from-pink/8 via-surface to-blue/8 shadow-sm")}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="flex min-w-0 flex-1 items-start gap-3">
-          <span aria-hidden="true" className={cn("flex size-9 shrink-0 items-center justify-center rounded-default",
-            notification.read ? "bg-surface-soft text-text-muted" : "bg-ai-soft text-ai")}>
+          <span aria-hidden="true" className={cn("flex size-9 shrink-0 items-center justify-center rounded-default transition-transform duration-200",
+            notification.read ? "bg-surface-soft text-text-muted" : "bg-pink-soft text-pink-foreground ring-1 ring-pink/25 ring-inset")}>
             <Icon className="size-4" />
           </span>
           <div className="min-w-0 flex-1 space-y-1">
-            <p className="text-sm font-medium text-foreground">{notification.title}</p>
+            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+              {!notification.read && <span aria-hidden="true" className="size-2 shrink-0 rounded-pill bg-pink shadow-[0_0_8px_rgb(236_72_153/60%)]" />}
+              {notification.title}
+            </p>
             <p className="text-sm leading-relaxed text-text-secondary">{notification.description}</p>
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <Badge variant={notification.read ? "neutral" : "primary"}>{notification.read ? "Read" : "Unread"}</Badge>
