@@ -26,12 +26,12 @@ export function PasswordInput({ id, name, label, autoComplete = "new-password", 
       <Input id={id} name={name} label={label} type={visible ? "text" : "password"} autoComplete={autoComplete}
         placeholder={placeholder} helperText={helperText} error={error} required className="pr-12"
         onChange={event => { if (showRequirements) setPassword(event.target.value); }}
-        aria-describedby={showRequirements ? id + "-requirements" : undefined} />
+        aria-describedby={showRequirements && password.length > 0 ? id + "-requirements" : undefined} />
       <IconButton size="sm" className="absolute top-8 right-1" aria-label={`${action} ${label.toLowerCase()}`}
         aria-pressed={visible} aria-controls={id} onClick={() => setVisible(current => !current)}>
         {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
       </IconButton>
-      {showRequirements && <div className="mt-3"><PasswordRequirements password={password} id={id + "-requirements"} /></div>}
+      {showRequirements && password.length > 0 && <div className="mt-3"><PasswordRequirements password={password} id={id + "-requirements"} /></div>}
     </div>
   );
 }
