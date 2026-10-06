@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { ArrowRight } from "lucide-react";
@@ -16,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -50,7 +52,7 @@ export default function LoginPage() {
       if (result?.error === "EMAIL_NOT_VERIFIED") {
         setNotice({
           title: "Your email hasn't been verified yet.",
-          description: <span>Verify Email — <Link className="font-medium underline" href="/verify-email?email={email}">/verify-email?email={email}</Link></span>,
+          description: "Verify your email before signing in.",
         });
         return;
       }
@@ -58,7 +60,7 @@ export default function LoginPage() {
         setNotice({ title: "Invalid email or password.", description: "Please check your details and try again." });
         return;
       }
-      window.location.assign("/dashboard");
+      router.push("/dashboard");
     } catch {
       setNotice({ title: "Sign in failed.", description: "Please try again." });
     } finally {

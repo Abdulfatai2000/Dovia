@@ -7,12 +7,10 @@ import { AuthNotice, type AuthNoticeValue } from "./auth-notice";
 import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Input } from "@/components/ui/input";
-import { LoadingState } from "@/components/ui/loading-state";
 
 export function EmailVerificationForm() {
   const search = useSearchParams();
   const initialEmail = search.get("email") || "";
-  const [email, setEmail] = useState(initialEmail);
   const [digits, setDigits] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -40,7 +38,7 @@ export function EmailVerificationForm() {
       const res = await fetch("/api/auth/verify-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code }),
+        body: JSON.stringify({ email: initialEmail, code }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
@@ -57,13 +55,13 @@ export function EmailVerificationForm() {
   }
 
   async function resend() {
-    if (busy || resendIn > 0 || !email) return;
+    if (busy || resendIn > 0 || !initialEmail) return;
     setBusy(true);
     try {
       const res = await fetch("/api/auth/resend-verification", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: initialEmail }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) {

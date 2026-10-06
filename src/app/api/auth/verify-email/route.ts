@@ -4,7 +4,7 @@ import { User } from "@/server/models/user";
 import { EmailVerification } from "@/server/models/email-verification";
 import { Workspace } from "@/server/models/workspace";
 import { Membership } from "@/server/models/membership";
-import { MembershipRole } from "@/server/constants";
+import { MembershipStatus } from "@/server/constants";
 import { verifyOtp } from "@/lib/auth/otp";
 
 export async function POST(request: NextRequest) {
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     const workspace = await Workspace.findOne({ slug: baseSlug });
     const slug = workspace ? `${baseSlug}-${user._id.toString()}` : baseSlug;
     const newWorkspace = await Workspace.create({ name: workspaceName, slug, ownerId: user._id });
-    await Membership.create({ workspaceId: newWorkspace._id, userId: user._id, role: MembershipRole.OWNER, status: "ACTIVE" });
+    await Membership.create({ workspaceId: newWorkspace._id, userId: user._id, role: "OWNER", status: MembershipStatus.ACTIVE });
 
     return NextResponse.json({ success: true, data: { verified: true } }, { status: 200 });
   } catch (error) {

@@ -2,21 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { User } from "@/server/models/user";
 import { EmailVerification } from "@/server/models/email-verification";
-import { Workspace } from "@/server/models/workspace";
-import { Membership } from "@/server/models/membership";
-import { MembershipRole } from "@/server/constants";
 import { serverEnv } from "@/lib/env.server";
 import { hashOtp, generateOtp } from "@/lib/auth/otp";
-import { buildVerificationEmail, type VerificationEmailPayload } from "@/server/email/verification-email";
+import { buildVerificationEmail } from "@/server/email/verification-email";
 import { mailer, buildFrom } from "@/server/email/mailer";
-
-const PASSWORD_ERROR_CODES = [
-  "PASSWORD_TOO_SHORT",
-  "PASSWORD_NO_UPPERCASE",
-  "PASSWORD_NO_LOWERCASE",
-  "PASSWORD_NO_NUMBER",
-  "PASSWORD_NO_SPECIAL_CHAR",
-];
 
 function strongPasswordErrors(password: string) {
   const errors: string[] = [];
@@ -35,14 +24,13 @@ export async function POST(request: NextRequest) {
     const name = String(body.name ?? "").trim();
     const email = String(body.email ?? "").trim().toLowerCase();
     const password = String(body.password ?? "");
-    const workspaceName = body.workspaceName ? String(body.workspaceName).trim() : "";
 
     const passwordErrors = strongPasswordErrors(password);
     if (!name) return NextResponse.json({ success: false, error: { code: "VALIDATION_ERROR", message: "Name is required." } }, { status: 400 });
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ success: false, error: { code: "EMAIL_INVALID", message: "Enter a valid email address." } }, { status: 400 });
     if (passwordErrors.length) return NextResponse.json({ success: false, error: { code: "PASSWORD_TOO_WEAK", message: "Password does not meet security requirements.", details: passwordErrors } }, { status: 400 });
 
-    const existing = await User.findOne({ emailNormalized: email.toLowerCase() }).select("+passwordHash").lean();
+    const existing = await User.findOne({ emailNormalized: email }).select("+passwordHash");
     if (existing && existing.emailVerifiedAt) {
       return NextResponse.json({ success: false, error: { code: "EMAIL_ALREADY_REGISTERED", message: "An account already exists with this email address. Sign in instead." } }, { status: 409 });
     }

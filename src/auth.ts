@@ -1,11 +1,9 @@
 import { compare } from "bcryptjs";
-import { NextResponse } from "next/server";
-import type { NextAuthOptions, Session } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { User } from "@/server/models/user";
 import { Membership } from "@/server/models/membership";
-import { MembershipRole } from "@/server/constants";
 import { serverEnv } from "@/lib/env.server";
 
 export const authOptions: NextAuthOptions = {
@@ -52,14 +50,11 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user }) {
       if (user) {
         token.emailVerified = (user as { emailVerified?: boolean }).emailVerified ?? token.emailVerified;
         token.workspaceId = (user as { workspaceId?: string }).workspaceId;
         token.workspaceRole = (user as { workspaceRole?: string }).workspaceRole;
-      }
-      if (trigger === "update" && session) {
-        token = { ...token, ...session };
       }
       return token;
     },
