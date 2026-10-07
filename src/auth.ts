@@ -6,6 +6,34 @@ import { User } from "@/server/models/user";
 import { Membership } from "@/server/models/membership";
 import { serverEnv } from "@/lib/env.server";
 
+declare module "next-auth" {
+  interface User {
+    id: string;
+    emailVerified: boolean;
+    workspaceId?: string;
+    workspaceRole?: string;
+  }
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      emailVerified: boolean;
+      workspaceId?: string;
+      workspaceRole?: string;
+    };
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    emailVerified?: boolean;
+    workspaceId?: string;
+    workspaceRole?: string;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -23,7 +51,7 @@ export const authOptions: NextAuthOptions = {
         const user = await User.findOne({ emailNormalized: email }).select("+passwordHash");
         if (!user) return null;
         if (!user.emailVerifiedAt) {
-          return { id: user._id.toString(), email: user.email, name: user.name, emailVerified: false };
+          throw new Error("EMAIL_NOT_VERIFIED");
         }
         const valid = await compare(password, user.passwordHash);
         if (!valid) return null;
