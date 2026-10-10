@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     await verification.save();
 
     const firstName = String(user.name).split(" ")[0] || String(user.name);
-    const verifyUrl = `${process.env.APP_URL || "http://localhost:3000"}/verify-email`;
+    const verifyUrl = `${process.env.APP_URL || "http://localhost:3000"}/verify-email?${new URLSearchParams({ email: user.emailNormalized })}`;
     const { subject, plainText, html } = buildVerificationEmail({
       firstName,
       otp,

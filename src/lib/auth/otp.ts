@@ -15,9 +15,10 @@ export function hashOtp(email: string, otp: string): string {
 }
 
 export function verifyOtp(email: string, otp: string, storedHash: string): boolean {
+  if (!/^\d{6}$/.test(otp) || typeof storedHash !== "string" || !/^v1:[a-f0-9]{64}$/.test(storedHash)) return false;
   const expected = hashOtp(email, otp);
   try {
-    return crypto.timingSafeEqual(Buffer.from(expected, "hex"), Buffer.from(storedHash, "hex"));
+    return crypto.timingSafeEqual(Buffer.from(expected, "utf8"), Buffer.from(storedHash, "utf8"));
   } catch {
     return false;
   }

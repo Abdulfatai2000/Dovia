@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: { code: "EMAIL_ALREADY_VERIFIED", message: "This email is already verified." } }, { status: 400 });
     }
 
-    const verification = await EmailVerification.findOne({ emailNormalized: email, purpose: "EMAIL_VERIFICATION" });
+    const verification = await EmailVerification.findOne({ emailNormalized: email, purpose: "EMAIL_VERIFICATION" }).select("+otpHash");
     if (!verification) {
       return NextResponse.json({ success: false, error: { code: "VERIFICATION_REQUEST_NOT_FOUND", message: "Verification code expired or was not found. Request a new one." } }, { status: 404 });
     }

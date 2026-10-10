@@ -63,7 +63,8 @@ export default function SignupPage() {
         setNotice({ title: "Unable to create your account.", description: result.error?.message || "Please try again." });
         return;
       }
-      router.push("/verify-email");
+      const query = new URLSearchParams({ email: result.data.email });
+      router.push(`/verify-email?${query.toString()}`);
     } catch {
       setNotice({ title: "Unable to create your account.", description: "Please try again." });
     } finally {
