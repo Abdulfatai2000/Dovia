@@ -2,7 +2,7 @@
 
 import { Monitor, Moon, Palette, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Dropdown, type DropdownItem } from "@/components/ui/dropdown";
 
 export type ThemeMode = "light" | "dark" | "system";
@@ -25,10 +25,13 @@ export function themeButtonLabel(mode: ThemeMode, resolvedTheme?: string) {
   return `Theme: ${mode}`;
 }
 
+const subscribeToHydration = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export function ThemeToggle({ variant = "icon", className }: { variant?: "icon" | "inline"; className?: string }) {
   const { mode, resolvedTheme, setTheme } = useThemeMode();
-  const [mounted, setMounted] = useState(false);
-  if (!mounted) setMounted(true);
+  const mounted = useSyncExternalStore(subscribeToHydration, getClientSnapshot, getServerSnapshot);
   const items: DropdownItem[] = themeModes.map(entry => ({
     id: entry.value,
     label: entry.label,
@@ -39,7 +42,7 @@ export function ThemeToggle({ variant = "icon", className }: { variant?: "icon" 
   }));
   return <Dropdown
     className={className}
-    label={themeButtonLabel(mode, resolvedTheme)}
+    label={mounted ? themeButtonLabel(mode, resolvedTheme) : "Choose theme"}
     triggerDescription="Choose the Dovia colour theme"
     variant="ghost"
     iconOnly={variant === "icon"}
