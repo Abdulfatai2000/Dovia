@@ -10,7 +10,9 @@ import { Input } from "@/components/ui/input";
 
 export function EmailVerificationForm() {
   const search = useSearchParams();
-  const initialEmail = search.get("email") || "";
+  const [enteredEmail, setEnteredEmail] = useState("");
+  const emailFromLink = search.get("email") || "";
+  const initialEmail = (emailFromLink || enteredEmail).trim().toLowerCase();
   const [digits, setDigits] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -28,6 +30,10 @@ export function EmailVerificationForm() {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy || verified) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(initialEmail)) {
+      setError("Enter the email address you used to sign up.");
+      return;
+    }
     const code = digits.join("");
     if (!/^\d{6}$/.test(code)) {
       setError("Enter the 6-digit verification code.");
@@ -55,7 +61,11 @@ export function EmailVerificationForm() {
   }
 
   async function resend() {
-    if (busy || resendIn > 0 || !initialEmail) return;
+    if (busy || resendIn > 0) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(initialEmail)) {
+      setError("Enter the email address you used to sign up.");
+      return;
+    }
     setBusy(true);
     try {
       const res = await fetch("/api/auth/resend-verification", {
@@ -87,14 +97,13 @@ export function EmailVerificationForm() {
     </AuthCard>;
   }
 
-  if (!initialEmail) {
-    return <AuthCard title="Verify your email" description="We could not find a pending verification request.">
-      <ButtonLink href="/signup">Return to Sign Up</ButtonLink>
-    </AuthCard>;
-  }
-
-  return <><AuthCard title="Verify your email" description={`Enter the 6-digit verification code for ${initialEmail}.`}>
+  return <><AuthCard title="Verify your email" description={emailFromLink
+    ? `Enter the 6-digit verification code for ${initialEmail}.`
+    : "Enter your signup email address and the 6-digit code from your inbox."}>
     <form onSubmit={submit} noValidate className="space-y-4">
+      {!emailFromLink && <Input label="Email address" name="email" type="email" autoComplete="email"
+        required disabled={busy} value={enteredEmail} placeholder="you@company.com"
+        onChange={event => { setEnteredEmail(event.target.value); setError(""); }} />}
       <fieldset disabled={busy} aria-describedby="verification-error verification-timer" className="min-w-0 space-y-3">
         <legend className="mb-3 text-sm font-medium">Verification code</legend>
         <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
