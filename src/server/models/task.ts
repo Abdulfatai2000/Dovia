@@ -17,12 +17,14 @@ const TaskSchema = new Schema(
     blockedReason: { type: String, trim: true },
     completedAt: { type: Date },
     source: { type: String, enum: TaskSource, required: true, default: "MANUAL" },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true, collection: "tasks" }
 );
 
 TaskSchema.index({ workspaceId: 1, assigneeId: 1, status: 1 });
 TaskSchema.index({ workspaceId: 1, dueDate: 1 });
+TaskSchema.index({ workspaceId: 1, meetingId: 1 });
 TaskSchema.index({ assigneeId: 1, dueDate: 1 });
 
 const Task = (mongoose.models.Task || mongoose.model("Task", TaskSchema)) as mongoose.Model<

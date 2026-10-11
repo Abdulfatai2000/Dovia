@@ -18,6 +18,7 @@ const NotificationSchema = new Schema(
 
 NotificationSchema.index({ userId: 1, readAt: 1, createdAt: -1 });
 NotificationSchema.index({ workspaceId: 1, userId: 1, createdAt: -1 });
+NotificationSchema.index({ workspaceId: 1, userId: 1, readAt: 1 });
 
 const Notification = (mongoose.models.Notification || mongoose.model("Notification", NotificationSchema)) as mongoose.Model<
   mongoose.InferSchemaType<typeof NotificationSchema>

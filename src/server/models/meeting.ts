@@ -27,11 +27,13 @@ const MeetingSchema = new Schema(
     externalMeetingUrl: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     completedAt: { type: Date },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true, collection: "meetings" }
 );
 
 MeetingSchema.index({ workspaceId: 1, status: 1 });
+MeetingSchema.index({ workspaceId: 1, scheduledAt: 1 });
 MeetingSchema.index({ participantIds: 1, scheduledAt: 1 });
 MeetingSchema.index({ organizerId: 1, scheduledAt: 1 });
 MeetingSchema.index({ teamId: 1, scheduledAt: 1 });

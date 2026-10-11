@@ -4,7 +4,7 @@ export type MembershipRole = (typeof MembershipRole)[number];
 export const MembershipStatus = ["ACTIVE", "PENDING", "REVOKED"] as const;
 export type MembershipStatus = (typeof MembershipStatus)[number];
 
-export const MeetingStatus = ["DRAFT", "SCHEDULED", "IN_PROGRESS", "COMPLETED", "CANCELLED"] as const;
+export const MeetingStatus = ["DRAFT", "SCHEDULED", "IN_PROGRESS", "PROCESSING", "REVIEW", "COMPLETED", "CANCELLED"] as const;
 export type MeetingStatus = (typeof MeetingStatus)[number];
 
 export const MeetingPlatform = ["GOOGLE_MEET", "MICROSOFT_TEAMS", "ZOOM", "IN_PERSON", "OTHER"] as const;
@@ -49,6 +49,12 @@ export const MeetingContentType = ["PASTED_NOTES", "MANUAL_NOTES", "TRANSCRIPT",
 export type MeetingContentType = (typeof MeetingContentType)[number];
 
 export const ActivityType = [
+  "MEETING_CONTENT_ADDED",
+  "TASK_STATUS_CHANGED",
+  "TASK_ASSIGNEE_CHANGED",
+  "TASK_DUE_DATE_CHANGED",
+  "TASK_PRIORITY_CHANGED",
+  "TASK_BLOCKED",
   "MEETING_CREATED",
   "MEETING_UPDATED",
   "MEETING_COMPLETED",

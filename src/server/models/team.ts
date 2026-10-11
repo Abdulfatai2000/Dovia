@@ -7,6 +7,7 @@ const TeamSchema = new Schema(
     description: { type: String, trim: true },
     memberIds: [{ type: Schema.Types.ObjectId, ref: "User" }],
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true, collection: "teams" }
 );
