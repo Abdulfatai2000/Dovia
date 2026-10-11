@@ -1,9 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 
 import { MeetingPlatform, MeetingStatus, MeetingType } from "@/server/constants";
+import { IntegrationProvider } from "@/server/models/integration";
 
 const AgendaItemSchema = new Schema(
   { id: { type: String, required: true }, title: { type: String, required: true, trim: true }, time: { type: String } },
+  { _id: false }
+);
+
+const ExternalEventLinkSchema = new Schema(
+  {
+    provider: { type: String, enum: IntegrationProvider, required: true },
+    externalEventId: { type: String, required: true, trim: true },
+    externalCalendarId: { type: String, required: true, trim: true },
+  },
   { _id: false }
 );
 
@@ -25,6 +35,7 @@ const MeetingSchema = new Schema(
     agenda: [AgendaItemSchema],
     recurring: { type: Boolean, default: false },
     externalMeetingUrl: { type: String },
+    externalEventLink: ExternalEventLinkSchema,
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     completedAt: { type: Date },
     deletedAt: { type: Date, default: null },

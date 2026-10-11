@@ -17,6 +17,20 @@ const envSchema = z.object({
   SMTP_APP_PASSWORD: z.string().min(1, "SMTP_APP_PASSWORD is required"),
   EMAIL_FROM_NAME: z.string().min(1).default("Dovia"),
   EMAIL_FROM_ADDRESS: z.string().email().optional().or(z.literal("")),
+
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_WEBHOOK_SECRET: z.string().optional(),
+
+  MICROSOFT_CLIENT_ID: z.string().optional(),
+  MICROSOFT_CLIENT_SECRET: z.string().optional(),
+  MICROSOFT_TENANT_ID: z.string().optional(),
+  MICROSOFT_WEBHOOK_SECRET: z.string().optional(),
+
+  SLACK_CLIENT_ID: z.string().optional(),
+  SLACK_CLIENT_SECRET: z.string().optional(),
+  SLACK_SIGNING_SECRET: z.string().optional(),
+  SLACK_WEBHOOK_SECRET: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse({
@@ -36,6 +50,20 @@ const parsed = envSchema.safeParse({
   SMTP_APP_PASSWORD: process.env.SMTP_APP_PASSWORD,
   EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,
   EMAIL_FROM_ADDRESS: process.env.EMAIL_FROM_ADDRESS,
+
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  GOOGLE_WEBHOOK_SECRET: process.env.GOOGLE_WEBHOOK_SECRET,
+
+  MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
+  MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
+  MICROSOFT_TENANT_ID: process.env.MICROSOFT_TENANT_ID,
+  MICROSOFT_WEBHOOK_SECRET: process.env.MICROSOFT_WEBHOOK_SECRET,
+
+  SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID,
+  SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET,
+  SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
+  SLACK_WEBHOOK_SECRET: process.env.SLACK_WEBHOOK_SECRET,
 });
 
 if (!parsed.success) {

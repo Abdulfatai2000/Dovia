@@ -10,3 +10,4 @@ export { Decision } from "./decision";
 export { Task } from "./task";
 export { Notification } from "./notification";
 export { Activity } from "./activity";
+export { Integration, IntegrationProvider, IntegrationStatus } from "./integration";
