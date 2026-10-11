@@ -789,3 +789,12 @@ Status: **COMPLETE**
 
 > Frontend status: unchanged. Existing demo/mock service architecture remains active. No frontend migration to MongoDB has been performed.
 
+
+
+## Backend Phase 3 implementation
+
+Core workspace APIs and frontend adapters now use MongoDB for meetings/content, tasks/follow-up, teams/members, notifications/activity, dashboard, reports, internal calendar and search. Aurora layout/styles are preserved. Shared authorization rechecks the active verified user and workspace membership on every API request. See API.md and DATABASE.md for contracts, permissions, deletion policy and list/report limits.
+
+Google/Microsoft/Slack, Groq, binary uploads, invitations and deployment are deferred. Preferences remain local; account identity is loaded from the server. Topbar sign out uses NextAuth.
+
+Focused verification: tests/phase3-integration.mjs runs against a local production server (DOVIA_TEST_ORIGIN, default http://127.0.0.1:3100). It creates isolated test users/workspaces in the configured MongoDB, performs credential login and core API operations, checks cross-workspace denial and logout, and removes only its own fixtures in finally. It never sends email or prints credentials. Run after lint/build. Runtime results are reported separately; implementation alone is not evidence of successful integration.

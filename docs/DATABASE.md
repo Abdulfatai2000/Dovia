@@ -302,3 +302,16 @@ Meeting confirmation should eventually run as one idempotent operation:
 9. commit transaction
 
 The same confirmation request must not create duplicate tasks.
+
+
+## Phase 3 persistence and authorization
+
+User -> active Membership -> Workspace scopes every business query. Teams contain only active workspace users. Meetings reference organizer/participants/team; MeetingContent shares its parent workspace; Tasks reference same-workspace meetings/decisions and active assignees. Notification queries include both workspaceId and recipient userId. Activity metadata never contains transcripts or credentials.
+
+Meeting, Task and Team DELETE operations set deletedAt (meetings also become CANCELLED). Normal resource lists and lookups exclude archived records. Related task records/history/content are intentionally retained; existing tasks can still be managed after their source meeting is archived. Nothing is cascaded or silently removed.
+
+MeetingContent has a unique workspaceId+meetingId index for one current content record. Existing deployments with duplicate content records must reconcile them before provisioning that index. Mongoose declares indexes when models initialize; review index build permissions for deployment. Added query indexes cover workspace/scheduledAt, workspace/meetingId tasks and workspace/user/readAt notifications.
+
+Stored task statuses: NOT_STARTED, IN_PROGRESS, BLOCKED, COMPLETED. Overdue is dueDate < current instant and not completed. Frontend dueAt retains the full timestamp while dueDate supplies date inputs. Dashboard totals use aggregation; reports query a bounded date window and compute deterministic summaries. No employee scores or rankings.
+
+Migration: frontend service -> authenticated API -> validation/service/repository -> MongoDB. Meeting, content, task and notification adapters no longer read/write demo business localStorage. Existing demo values are neither imported nor deleted. Theme and UI settings remain local. Member identity comes from the authenticated workspace; AI mock generation is blocked for real MongoDB meeting IDs.

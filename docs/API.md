@@ -269,3 +269,33 @@ Page/component
 ```
 
 During frontend-first development, the service can use a mock adapter with the same return types.
+
+
+## Backend Phase 3: authenticated workspace APIs
+
+All routes below return { success: true, data } or { success: false, error: { code, message } }. Every request resolves a verified, active user and active workspace membership from the server session and database. Client workspaceId, userId and role are never accepted as authorization. Errors use 400/401/403/404/413/500; foreign resources return 404. JSON object mutation bodies are size-limited and whitelisted.
+
+| Endpoint | Methods | Behavior |
+| --- | --- | --- |
+| /api/meetings | GET, POST | List/create; status, search, from, to, teamId, page, limit |
+| /api/meetings/:id | GET, PATCH, DELETE | Read/update; DELETE archives without orphaning content/history/tasks |
+| /api/meetings/:id/content | GET, POST | Current notes/transcript and file metadata, maximum 100,000 characters; no binaries |
+| /api/meetings/:id/follow-up | GET | Database totals, derived overdue, completion rate, paginated tasks and recent activity |
+| /api/tasks | GET, POST | List/create manual tasks; status, priority, search, meetingId, assigneeId, from, to, page, limit |
+| /api/tasks/:id | GET, PATCH, DELETE | Whitelisted updates, completion timestamps, activity; DELETE archives |
+| /api/teams | GET, POST | Workspace teams; managers create |
+| /api/teams/:id | GET, PATCH, DELETE | Managers update/archive |
+| /api/teams/:id/members | GET, POST | Active workspace members only; POST accepts memberIds for managers |
+| /api/workspace/members | GET | Safe active user directory, no hashes or auth fields |
+| /api/notifications | GET, PATCH | Always workspace AND current-user scoped; GET includes unreadCount |
+| /api/activity | GET | Paginated history; meetingId, taskId, actorId filters |
+| /api/dashboard | GET | Upcoming meetings/count, task totals, personal tasks, recent activity, identity |
+| /api/reports | GET | range/from/to; computed reports, maximum 366 days and 1,000 records per domain |
+| /api/calendar | GET | Internal meetings/deadlines within from/to; maximum 100 each |
+| /api/search | GET | q, maximum 120 characters; escaped title search, up to 8 results per group |
+
+Notification PATCH: { id, read: true/false } or { all: true, read: true }. Meeting create requires title, scheduledAt (ISO), durationMinutes, platform, meetingType. Participants and task assignees must have active workspace membership. Task source is MANUAL for public creation. OVERDUE is derived and cannot be written. Task completion sets completedAt; reopening clears it.
+
+List pagination defaults to 25, maximum 100; the current frontend adapters traverse bounded pages up to 10,000 records, then show an error instead of silently truncating. Members/teams are currently capped at 100. Reports request narrower periods when their safety cap is exceeded. Calendar UI consumes paginated meeting/task APIs so its existing Month/Week/Day layouts remain unchanged.
+
+Permission policy: active members can read workspace data, create meetings/tasks and capture content; organizers manage their meeting details, task creators/assignees manage task details; OWNER/ADMIN can manage all resources and archive resources/manage teams. Invitations, binary uploads, AI generation/confirmation, external calendars and integrations remain unimplemented. Existing future-phase placeholder endpoints are not persistence APIs.
