@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { useMeetings } from "@/hooks/use-meetings";
 import { createTask } from "@/services/task.service";
-import { DEMO_TODAY } from "@/data/mock/meetings";
+import { DEMO_TODAY } from "@/lib/task-utils";
 import { formatDate } from "@/lib/meeting-format";
 import { CURRENT_USER_ID,isTaskOverdue } from "@/lib/task-utils";
 import type { Task } from "@/types/task";
@@ -31,10 +31,10 @@ export default function TasksPage() {
   const inTab=(task:Task,name:string)=>name==="All"?true:name==="Today"?task.dueDate===DEMO_TODAY&&task.status!=="COMPLETED":name==="Upcoming"?Boolean(task.dueDate&&task.dueDate>DEMO_TODAY&&task.status!=="COMPLETED"):name==="Overdue"?isTaskOverdue(task):task.status==="COMPLETED";
   const filtered=tasks.filter(matches);const visible=filtered.filter(task=>inTab(task,tab));
   const content=visible.length?<TaskTable tasks={visible} meetings={meetingState.meetings} onStatus={actions.onStatus} />:<EmptyState title={tab==="Overdue"?"No overdue tasks 🎉":tasks.length?"No tasks match your filters.":"No tasks yet"} description="Tasks assigned from meetings will appear here. Adjust your filters or add a demo task." />;
-  return <div className="space-y-6"><PageHeader eyebrow="Execution" title="My Tasks" description="Stay on top of action items created from your meetings." actions={<Button onClick={()=>setAdd(true)}><Plus aria-hidden="true" />Add Task</Button>} /><p className="text-xs text-text-muted">Demo calendar: {formatDate(DEMO_TODAY)} · Initially filtered to your demo profile. Choose All owners for workspace tasks.</p>
+  return <div className="space-y-6"><PageHeader eyebrow="Execution" title="My Tasks" description="Stay on top of action items created from your meetings." actions={<Button onClick={()=>setAdd(true)}><Plus aria-hidden="true" />Add Task</Button>} /><p className="text-xs text-text-muted">Workspace calendar: {formatDate(DEMO_TODAY)} · Initially filtered to your demo profile. Choose All owners for workspace tasks.</p>
     <TaskFilters value={filters} onChange={setFilters} meetings={meetingState.meetings} /><Button variant="ghost" size="sm" onClick={()=>setFilters({search:"",status:"",priority:"",meeting:"",owner:"",due:""})}>Clear filters</Button>
     <Tabs label="Task views" value={tab} onValueChange={setTab} items={["All","Today","Upcoming","Overdue","Completed"].map(name=>({value:name,label:`${name} (${filtered.filter(task=>inTab(task,name)).length})`,content:tab===name?content:null}))} />
-    <Modal open={add} onClose={()=>setAdd(false)} title="Add Task" description="Create a manual task in this demo workspace." size="lg">{add&&<TaskForm meetings={meetingState.meetings} onSave={input=>{createTask(input);setAdd(false);setCreated(true);}} onCancel={()=>setAdd(false)} />}</Modal>
-    {created&&<div className="fixed inset-x-4 bottom-4 z-[var(--z-toast)] sm:left-auto"><Toast variant="success" title="Task created for demo." description="Saved in this browser only." onDismiss={()=>setCreated(false)} /></div>}{actions.feedback}
+    <Modal open={add} onClose={()=>setAdd(false)} title="Add Task" description="Create a manual task in this workspace." size="lg">{add&&<TaskForm meetings={meetingState.meetings} onSave={async input=>{await createTask(input);setAdd(false);setCreated(true);}} onCancel={()=>setAdd(false)} />}</Modal>
+    {created&&<div className="fixed inset-x-4 bottom-4 z-[var(--z-toast)] sm:left-auto"><Toast variant="success" title="Task created for demo." description="Saved to your workspace." onDismiss={()=>setCreated(false)} /></div>}{actions.feedback}
   </div>;
 }

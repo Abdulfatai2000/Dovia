@@ -9,13 +9,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-export default function TaskForm({ task, meetings, onSave, onCancel }: {task?:Task;meetings:Meeting[];onSave:(input:TaskInput)=>void;onCancel?:()=>void}) {
+export default function TaskForm({ task, meetings, onSave, onCancel }: {task?:Task;meetings:Meeting[];onSave:(input:TaskInput)=>void|Promise<void>;onCancel?:()=>void}) {
   const [value,setValue]=useState<TaskInput>({title:task?.title??"",description:task?.description??"",meetingId:task?.meetingId??"",assigneeId:task?.assigneeId??CURRENT_USER_ID,dueDate:task?.dueDate??"",priority:task?.priority??"MEDIUM",status:task?.status??"NOT_STARTED",blockedReason:task?.blockedReason??""});
   const [errors,setErrors]=useState<Record<string,string>>({});
   const [failure,setFailure]=useState("");
   const form=useRef<HTMLFormElement>(null);
   const patch=(input:Partial<TaskInput>)=>{setValue(current=>({...current,...input}));setFailure("");};
-  function submit(event:FormEvent<HTMLFormElement>) {
+  async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();const next:Record<string,string>={};
     if(!value.title.trim())next.title="Enter a task title.";
     if(!getTeamMembers().some(user=>user.id===value.assigneeId))next.assigneeId="Choose an owner.";
@@ -23,7 +23,7 @@ export default function TaskForm({ task, meetings, onSave, onCancel }: {task?:Ta
     if(!taskStatuses.includes(value.status))next.status="Choose a status.";
     setErrors(next);
     if(Object.keys(next).length){requestAnimationFrame(()=>{const field=form.current?.elements.namedItem(Object.keys(next)[0]);if(field instanceof HTMLElement)field.focus();});return;}
-    try{onSave(value);}catch(cause){setFailure(cause instanceof Error?cause.message:"Unable to save task.");}
+    try{await onSave(value);}catch(cause){setFailure(cause instanceof Error?cause.message:"Unable to save task.");}
   }
   return <form ref={form} noValidate onSubmit={submit} className="space-y-4">
     {(failure||Object.keys(errors).length>0)&&<p role="alert" className="rounded-md bg-danger-soft p-3 text-sm text-danger-foreground">{failure||"Check the highlighted fields below."}</p>}
@@ -36,6 +36,6 @@ export default function TaskForm({ task, meetings, onSave, onCancel }: {task?:Ta
       <Select name="status" label="Status" required value={value.status} error={errors.status} onChange={e=>patch({status:e.target.value as TaskInput["status"]})} options={taskStatuses.map(v=>({value:v,label:taskStatusLabel(v)}))} /></div>
     {value.status==="BLOCKED"&&<Textarea label="Blocked reason (optional)" placeholder="e.g. Waiting for production API credentials." value={value.blockedReason} onChange={e=>patch({blockedReason:e.target.value})} />}
     <div className="flex flex-wrap gap-3"><Button type="submit">{task?"Save changes":"Add Task"}</Button>{onCancel&&<Button variant="outline" onClick={onCancel}>Cancel</Button>}</div>
-    <p className="text-xs text-text-muted">Demo persistence in this browser only.</p>
+    <p className="text-xs text-text-muted">Saved to your workspace.</p>
   </form>;
 }

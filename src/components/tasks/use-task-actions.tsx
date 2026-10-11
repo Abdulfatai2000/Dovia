@@ -8,8 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 export function useTaskActions() {
   const [notice,setNotice]=useState<{title:string;description:string;variant:"success"|"error"}>();
   const [blocked,setBlocked]=useState<Task>();const [reason,setReason]=useState("");
-  const save=(task:Task,status:TaskStatus,blockedReason?:string)=>{
-    try{updateTask(task.id,{status,...(blockedReason!==undefined?{blockedReason}:{})});setNotice({title:"Task updated.",description:"Saved in this browser only.",variant:"success"});setBlocked(undefined);}
+  const save=async (task:Task,status:TaskStatus,blockedReason?:string)=>{
+    try{await updateTask(task.id,{status,...(blockedReason!==undefined?{blockedReason}:{})});setNotice({title:"Task updated.",description:"Saved to your workspace.",variant:"success"});setBlocked(undefined);}
     catch(cause){setNotice({title:"Unable to update task",description:cause instanceof Error?cause.message:"Try again.",variant:"error"});}
   };
   return { onStatus:(task:Task,status:TaskStatus)=>{if(status==="BLOCKED"){setBlocked(task);setReason(task.blockedReason??"");}else save(task,status);},
