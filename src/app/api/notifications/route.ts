@@ -1,9 +1,5 @@
-// TODO: Implement this endpoint in a later phase. No data is read or changed.
-
-export function GET() {
-  return Response.json({ success: true, message: "Dovia API placeholder" });
-}
-
-export function PATCH() {
-  return Response.json({ success: true, message: "Dovia API placeholder" });
-}
+import { api, jsonBody } from "@/server/api";
+import { requireWorkspaceSession } from "@/server/workspace-session";
+import { listNotifications, updateNotifications } from "@/server/services/notification.service";
+export function GET(request: Request) { return api(async () => listNotifications(await requireWorkspaceSession(), new URL(request.url).searchParams)); }
+export function PATCH(request: Request) { return api(async () => updateNotifications(await requireWorkspaceSession(), await jsonBody(request))); }
