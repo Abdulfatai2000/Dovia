@@ -28,6 +28,9 @@ const MeetingSchema = new Schema(
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     completedAt: { type: Date },
     deletedAt: { type: Date, default: null },
+    aiLeaseToken: { type: String, select: false },
+    aiLeaseUntil: { type: Date },
+    aiLastErrorCode: { type: String },
   },
   { timestamps: true, collection: "meetings" }
 );
