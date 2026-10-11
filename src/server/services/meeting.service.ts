@@ -1,4 +1,6 @@
 import { Meeting } from "../models/meeting";
+import { MeetingStatus } from "../constants";
+import { choice } from "../validation";
 import { MeetingContent } from "../models/meeting-content";
 import { getMeeting } from "../repositories/meeting.repository";
 import { validateMembers, validateTeam } from "../repositories/workspace.repository";
@@ -10,7 +12,7 @@ export async function createMeeting(context: WorkspaceContext, body: Record<stri
   const participants = [...new Set([context.userId, ...((input.participantIds as string[] | undefined) ?? [])])];
   await validateMembers(context, participants);
   if (input.teamId) await validateTeam(context, String(input.teamId));
-  const meeting = await Meeting.create({ ...input, status: input.status ?? "SCHEDULED", completedAt: input.status === "COMPLETED" ? new Date() : undefined, participantIds: participants, workspaceId: context.workspaceId, organizerId: context.userId, createdBy: context.userId });
+  const meeting = await Meeting.create({ ...input, status: choice(input.status ?? "SCHEDULED", MeetingStatus, "status"), completedAt: input.status === "COMPLETED" ? new Date() : undefined, participantIds: participants, workspaceId: context.workspaceId, organizerId: context.userId, createdBy: context.userId });
   await recordActivity(context, "MEETING_CREATED", "meeting", String(meeting._id));
   await notify(context, participants, "MEETING_CREATED", meeting.title, { relatedMeetingId: String(meeting._id) });
   return meeting;
