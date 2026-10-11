@@ -1,8 +1,9 @@
-﻿import { DEMO_TODAY } from "@/data/mock/meetings";
+﻿export const DEMO_TODAY = new Date().toISOString().slice(0,10);
 import type { Task, TaskStatus, TaskPriority } from "@/types/task";
-export const taskStatuses: TaskStatus[] = ["NOT_STARTED", "IN_PROGRESS", "BLOCKED", "COMPLETED", "OVERDUE"];
+export const taskStatuses: TaskStatus[] = ["NOT_STARTED", "IN_PROGRESS", "BLOCKED", "COMPLETED"];
 export const taskPriorities: TaskPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
-export const CURRENT_USER_ID = "user-abdulfatai";
+export let CURRENT_USER_ID = "";
+export function setCurrentUserId(id:string){CURRENT_USER_ID=id;}
 export const isTaskOverdue = (task: Task) => task.status !== "COMPLETED" && (task.status === "OVERDUE" || Boolean(task.dueDate && task.dueDate < DEMO_TODAY));
 export const taskStatusLabel = (status: string) => status.toLowerCase().split("_").map(word => word[0].toUpperCase()+word.slice(1)).join(" ");
 export const taskHref = (id: string) => `/tasks/${encodeURIComponent(id)}`;

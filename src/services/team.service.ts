@@ -1,11 +1,14 @@
-﻿import { users } from "@/data/mock/users";
-import { getProfileSettings } from "./settings.service";
-import { CURRENT_USER_ID } from "@/lib/task-utils";
-export function getTeamMembers(){
-  // A damaged preferences record must not prevent opening Settings to reset it.
-  try { const profile=getProfileSettings();return users.map(user=>user.id===CURRENT_USER_ID?{...user,name:profile.name,email:profile.email,role:profile.jobTitle}:user); }
-  catch { return users; }
+import { apiFetch } from "@/lib/api-client";
+import { setCurrentUserId } from "@/lib/task-utils";
+import type { DemoUser } from "@/data/mock/users";
+let members:DemoUser[]=[];
+let currentUser:DemoUser={id:"",name:"",email:"",role:"",department:"",status:"Active"};
+export async function loadWorkspaceMembers(){
+ const [people,session]=await Promise.all([apiFetch<DemoUser[]>("/api/workspace/members"),fetch("/api/auth/session",{cache:"no-store"}).then(response=>response.json())]);
+ members=people;currentUser=members.find(member=>member.id===session.user?.id)??currentUser;setCurrentUserId(currentUser.id);return members;
 }
-export function getTeamMember(id:string){return getTeamMembers().find(user=>user.id===id);}
+export function clearWorkspaceMembers(){members=[];currentUser={id:"",name:"",email:"",role:"",department:"",status:"Active"};setCurrentUserId("");}
+export function getTeamMembers(){return members;}
+export function getTeamMember(id:string){return members.find(member=>member.id===id);}
 export const getUser=getTeamMember;
-export const getCurrentUser=()=>getTeamMember(CURRENT_USER_ID)!;
+export const getCurrentUser=()=>currentUser;
