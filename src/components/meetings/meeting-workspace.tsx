@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 import { useState } from "react";
 import { useMeetings } from "@/hooks/use-meetings";
 import { Card } from "@/components/ui/card";
@@ -32,7 +33,7 @@ export default function MeetingWorkspace({ meetingId, created = false }: { meeti
   const meeting = meetings.find(m => m.id === meetingId);
   if (loading) return <MeetingLoading />;
   if (error || !meeting) return <MeetingNotFound error={error} />;
-  if (meeting.status === "COMPLETED" && !/^[a-f0-9]{24}$/i.test(meeting.id)) return <CompletedMeeting key={meeting.id} meeting={meeting} />;
+  if (meeting.status === "COMPLETED") return <CompletedMeeting key={meeting.id} meeting={meeting} />;
   const agenda = <MeetingAgenda agenda={meeting.agenda} />;
   const participants = <MeetingParticipants participants={meeting.participants} />;
   const files = <MeetingFiles files={meeting.files} />;
@@ -41,6 +42,7 @@ export default function MeetingWorkspace({ meetingId, created = false }: { meeti
     <MeetingCarryOver meeting={meeting} />{agenda}</div><div className="min-w-0 space-y-6">{participants}{files}</div></div>;
   return <div className="space-y-6"><MeetingHeader meeting={meeting} onEdit={() => {setDraft({title:meeting.title,description:meeting.description??"",status:meeting.status});setFailure("");setEdit(true);}} />
     <p className="text-xs text-text-muted">Meeting · Start Meeting opens content capture; it does not launch a live call.</p>
+    {meeting.status === "REVIEW" && <ButtonLink href={`/meetings/${meeting.id}/ai-review`}>Review AI draft</ButtonLink>}
     <Tabs label="Meeting workspace" value={tab} onValueChange={setTab} items={[
       {value:"overview",label:"Overview",content:tab === "overview" ? overview : null},
       {value:"agenda",label:"Agenda",content:tab === "agenda" ? agenda : null},
