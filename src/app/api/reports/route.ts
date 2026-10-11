@@ -1,5 +1,4 @@
-// TODO: Implement this endpoint in a later phase. No data is read or changed.
-
-export function GET() {
-  return Response.json({ success: true, message: "Dovia API placeholder" });
-}
+import { api } from "@/server/api";
+import { requireWorkspaceSession } from "@/server/workspace-session";
+import { report } from "@/server/services/report.service";
+export function GET(request:Request){return api(async()=>report(await requireWorkspaceSession(),new URL(request.url).searchParams));}

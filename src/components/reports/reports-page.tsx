@@ -24,8 +24,8 @@ export default function ReportsPage() {
   const { data, loading, error } = useDemoQuery(load);
   const options = useMemo(() => reportRanges.map(value => ({ value, label: value })), []);
 
-  if (loading && !data) return <LoadingState label="Building demo report…" />;
-  if (error || !data) return <div className="space-y-6"><PageHeader title="Productivity Reports" /><ErrorState description={error || "Unable to build the demo report."} /></div>;
+  if (loading && !data) return <LoadingState label="Building report…" />;
+  if (error || !data) return <div className="space-y-6"><PageHeader title="Productivity Reports" /><ErrorState description={error || "Unable to build the report."} /></div>;
 
   const rate = data.followUpRate;
   return <div className="space-y-6">
@@ -33,13 +33,13 @@ export default function ReportsPage() {
       description="Get insights into your meetings, tasks, and follow-up progress."
       actions={<Select label="Date range" hideLabel wrapperClassName="w-52" value={range}
         onChange={event => setRange(event.target.value as ReportRange)} options={options} />} />
-    <p className="text-xs text-text-muted">Selected period · {data.start} to {data.end} · Every figure is calculated in this browser.</p>
+    <p className="text-xs text-text-muted">Selected period · {data.start} to {data.end} · Calculated from workspace records.</p>
 
     {data.hasData ? <>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <ReportStatCard label="Meetings Held" value={data.held.length} icon={<CalendarDays aria-hidden="true" />}
           hint={`Selected period · ${data.meetings.length} scheduled or captured`} />
-        <ReportStatCard label="Tasks Completed" value={data.stats.completed} icon={<CircleCheckBig aria-hidden="true" />} tone="success"
+        <ReportStatCard label="Tasks Completed" value={data.completedInRange.length} icon={<CircleCheckBig aria-hidden="true" />} tone="success"
           hint={`Selected period · ${data.completedInRange.length} completed in range`} />
         <ReportStatCard label="Overdue Tasks" value={data.stats.overdue} icon={<CircleAlert aria-hidden="true" />} tone="danger"
           hint={`Selected period · ${data.stats.overdue} currently overdue`} />
