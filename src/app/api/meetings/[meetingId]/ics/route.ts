@@ -25,7 +25,7 @@ export async function GET(
       (p: { _id: { toString: () => string } }) => p._id.toString() === userId
     );
     const organizerId = meeting.organizerId as { _id: { toString: () => string } } | { name: string; email: string } | undefined;
-    const isOrganizer = organizerId?._id?.toString() === userId;
+    const isOrganizer = organizerId && "_id" in organizerId ? organizerId._id.toString() === userId : false;
 
     if (!isParticipant && !isOrganizer) {
       return new Response("Forbidden", { status: 403 });

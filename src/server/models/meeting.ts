@@ -52,11 +52,10 @@ MeetingSchema.index({ participantIds: 1, scheduledAt: 1 });
 MeetingSchema.index({ organizerId: 1, scheduledAt: 1 });
 MeetingSchema.index({ teamId: 1, scheduledAt: 1 });
 
-export type MeetingDocument = mongoose.InferSchemaType<typeof MeetingSchema>;
+export type MeetingDocument = mongoose.InferSchemaType<typeof MeetingSchema> & { id: string };
 
 const Meeting = (mongoose.models.Meeting || mongoose.model("Meeting", MeetingSchema)) as mongoose.Model<
   MeetingDocument
 >;
 
 export { Meeting };
-export type { MeetingDocument as Meeting };

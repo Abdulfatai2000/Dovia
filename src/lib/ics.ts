@@ -1,4 +1,4 @@
-import type { Meeting } from "@/server/models/meeting";
+import type { MeetingDocument } from "@/server/models/meeting";
 
 function escapeIcsValue(value: string): string {
   return value
@@ -21,7 +21,7 @@ function generateUid(meetingId: string): string {
   return `${meetingId}@dovia.app`;
 }
 
-export function generateIcsContent(meeting: Meeting & { organizerName?: string; organizerEmail?: string }): string {
+export function generateIcsContent(meeting: MeetingDocument & { organizerName?: string; organizerEmail?: string }): string {
   const startDate = new Date(meeting.scheduledAt);
   const endDate = new Date(startDate.getTime() + meeting.durationMinutes * 60000);
   const uid = generateUid(meeting.id);
@@ -67,7 +67,7 @@ export function generateIcsContent(meeting: Meeting & { organizerName?: string; 
   return lines.join("\r\n");
 }
 
-export function generateIcsFileName(meeting: Meeting): string {
+export function generateIcsFileName(meeting: MeetingDocument): string {
   const safeTitle = meeting.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
   return `${safeTitle}-${meeting.id}.ics`;
 }
