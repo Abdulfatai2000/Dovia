@@ -1,8 +1,8 @@
-// TODO: Implement this endpoint in a later phase. No data is read or changed.
-// TODO: Use Groq for meeting summary, decisions, action items, suggested owners,
-// deadlines, open questions, risks/blockers, and important notes.
-// AI output is a draft; human confirmation is required before final task creation.
-
-export function POST() {
-  return Response.json({ success: true, message: "Dovia API placeholder" });
-}
+import { api } from "@/server/api";
+import { requireWorkspaceSession } from "@/server/workspace-session";
+import { analyzeMeeting, getAnalysis } from "@/server/services/analysis.service";
+export const runtime = "nodejs";
+export const maxDuration = 90;
+type Context = { params: Promise<{ meetingId: string }> };
+export function GET(_request: Request, context: Context) { return api(async () => getAnalysis(await requireWorkspaceSession(), (await context.params).meetingId)); }
+export function POST(_request: Request, context: Context) { return api(async () => analyzeMeeting(await requireWorkspaceSession(), (await context.params).meetingId)); }
