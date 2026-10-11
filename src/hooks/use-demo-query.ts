@@ -1,12 +1,9 @@
-﻿"use client";
-import { useEffect,useState } from "react";
-import { DEMO_CHANGED,DEMO_RESET } from "@/lib/demo-store";
-import { TASKS_CHANGED } from "@/services/task.service";
-import { OUTCOMES_CHANGED } from "@/services/meeting-outcome.service";
-/** Pass a stable service function (or useCallback) so subscriptions remain stable. */
-export function useDemoQuery<T>(load:()=>T){
-  const [state,setState]=useState<{data:T|null;loading:boolean;error:string}>({data:null,loading:true,error:""});
-  useEffect(()=>{let active=true;const refresh=()=>{Promise.resolve().then(()=>{if(!active)return;try{setState({data:load(),loading:false,error:""});}catch(cause){setState({data:null,loading:false,error:cause instanceof Error?cause.message:"Unable to load demo data."});}});};
-    const events=["storage",DEMO_CHANGED,DEMO_RESET,TASKS_CHANGED,OUTCOMES_CHANGED];refresh();events.forEach(event=>window.addEventListener(event,refresh));return()=>{active=false;events.forEach(event=>window.removeEventListener(event,refresh));};
-  },[load]);return state;
+"use client";
+import { useEffect, useState } from "react";
+import { WORKSPACE_CHANGED } from "@/lib/api-client";
+import { DEMO_CHANGED } from "@/lib/demo-store";
+/** Accepts stable synchronous preference loaders or asynchronous API adapters. */
+export function useDemoQuery<T>(load:()=>T|Promise<T>) {
+ const [state,setState]=useState<{data:T|null;loading:boolean;error:string}>({data:null,loading:true,error:""});
+ useEffect(()=>{let active=true,sequence=0;const refresh=()=>{const current=++sequence;Promise.resolve().then(load).then(data=>{if(active&&current===sequence)setState({data,loading:false,error:""});}).catch(error=>{if(active&&current===sequence)setState({data:null,loading:false,error:error instanceof Error?error.message:"Unable to load data."});});};refresh();window.addEventListener(WORKSPACE_CHANGED,refresh);window.addEventListener(DEMO_CHANGED,refresh);return()=>{active=false;window.removeEventListener(WORKSPACE_CHANGED,refresh);window.removeEventListener(DEMO_CHANGED,refresh);};},[load]);return state;
 }
