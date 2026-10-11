@@ -35,7 +35,9 @@ export function GlobalSearch({ value, onChange, onClose, className, inputRef, pl
   const id = useId();
   const listRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  const load = useCallback(() => (value.trim() ? searchWorkspace(value) : null), [value]);
+  const [debounced,setDebounced]=useState(value);
+  useEffect(()=>{const timer=setTimeout(()=>setDebounced(value),250);return()=>clearTimeout(timer);},[value]);
+  const load = useCallback(() => (debounced.trim() ? searchWorkspace(debounced) : null), [debounced]);
   const { data, loading, error } = useDemoQuery(load);
 
   const flat: SearchResult[] = (data?.groups ?? []).flatMap(group => group.results);
