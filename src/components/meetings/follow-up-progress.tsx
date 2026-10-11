@@ -1,6 +1,6 @@
 ﻿"use client";
 import { useMeetings } from "@/hooks/use-meetings";
-import { useTasks } from "@/hooks/use-tasks";
+import { useFollowUp } from "@/hooks/use-follow-up";
 import { summarizeTasks,taskStatuses,taskStatusLabel } from "@/lib/task-utils";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
-import { DEMO_TODAY } from "@/data/mock/meetings";
+import { DEMO_TODAY } from "@/lib/task-utils";
 import { formatDate } from "@/lib/meeting-format";
 import { MeetingNotFound } from "./meeting-state";
 import TaskTable from "@/components/tasks/task-table";
@@ -17,12 +17,12 @@ import TaskActivityFeed from "@/components/tasks/task-activity-feed";
 import { useTaskActions } from "@/components/tasks/use-task-actions";
 const tones={COMPLETED:"bg-emerald",IN_PROGRESS:"bg-primary",NOT_STARTED:"bg-border-strong",BLOCKED:"bg-orange",OVERDUE:"bg-danger"};
 export default function FollowUpProgress({meetingId}:{meetingId:string}) {
-  const meetingState=useMeetings();const taskState=useTasks();const actions=useTaskActions();
+  const meetingState=useMeetings();const taskState=useFollowUp(meetingId);const actions=useTaskActions();
   if(meetingState.loading||taskState.loading)return <LoadingState label="Loading follow-up progress…" />;
   const meeting=meetingState.meetings.find(m=>m.id===meetingId);
   if(meetingState.error||taskState.error||!meeting)return <MeetingNotFound error={meetingState.error||taskState.error} />;
   const tasks=taskState.tasks.filter(task=>task.meetingId===meetingId);const stats=summarizeTasks(tasks);
-  return <div className="space-y-6"><PageHeader eyebrow={meeting.title} title="Meeting Follow-up" description="Track progress on action items created from this meeting." breadcrumbs={<ButtonLink href={`/meetings/${meetingId}`} variant="ghost" size="sm">← Back to Meeting</ButtonLink>} actions={<ButtonLink href={`/meetings/${meetingId}`} variant="outline">View Meeting Summary</ButtonLink>} /><p className="text-xs text-text-muted">Demo data · Past-due calculations use {formatDate(DEMO_TODAY)}.</p>
+  return <div className="space-y-6"><PageHeader eyebrow={meeting.title} title="Meeting Follow-up" description="Track progress on action items created from this meeting." breadcrumbs={<ButtonLink href={`/meetings/${meetingId}`} variant="ghost" size="sm">← Back to Meeting</ButtonLink>} actions={<ButtonLink href={`/meetings/${meetingId}`} variant="outline">View Meeting Summary</ButtonLink>} /><p className="text-xs text-text-muted">Workspace data · Past-due calculations use {formatDate(DEMO_TODAY)}.</p>
 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">{[{label:"Total Tasks",value:stats.total},{label:"Completed",value:stats.completed},{label:"In Progress",value:stats.inProgress},{label:"Overdue",value:stats.overdue},{label:"Blocked",value:stats.blocked}].map(item=><Card key={item.label} className="dovia-lift space-y-2 p-5"><p className="text-sm text-text-secondary">{item.label}</p><p className="dovia-pop text-3xl font-semibold">{item.value}</p></Card>)}</div>
     <Card className="space-y-5 p-5"><SectionHeader title="Completion" description={`${stats.completed} of ${stats.total} tasks completed`} /><Progress value={stats.completed} max={stats.total||1} label="Meeting task completion" tone="accent" />
       <h3 className="text-sm font-semibold">Status distribution</h3><div aria-hidden="true" className="flex h-3 overflow-hidden rounded-pill bg-surface-soft">{taskStatuses.map(status=><span key={status} className={`dovia-progress-fill ${tones[status]}`} style={{width:`${tasks.length?tasks.filter(t=>t.status===status).length/tasks.length*100:0}%`}} />)}</div>
