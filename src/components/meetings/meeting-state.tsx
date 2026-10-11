@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/ui/page-header";
 
 export function MeetingLoading() {
-  return <div role="status" className="space-y-6"><span className="sr-only">Loading demo meetings…</span>
+  return <div role="status" className="space-y-6"><span className="sr-only">Loading meetings…</span>
     <Skeleton className="h-12 w-2/3" /><Skeleton className="h-24" /><Skeleton className="h-64" /></div>;
 }
 export function MeetingNotFound({ error }: { error?: string }) {

@@ -1,69 +1,17 @@
-﻿import { seedMeetings } from "@/data/mock/meetings";
-import { readStored, writeStored } from "@/lib/demo-store";
-import type { CreateMeetingInput, Meeting, MeetingContent } from "@/types/meeting";
-import { getConfirmedOutcomes } from "./meeting-outcome.service";
-
-const MEETINGS_KEY = "dovia_demo_meetings";
-const CONTENT_KEY = "dovia_demo_meeting_content_";
-
-function isMeeting(value: unknown): value is Meeting {
-  if (!value || typeof value !== "object") return false;
-  const m = value as Record<string, unknown>;
-  return typeof m.id === "string" && typeof m.title === "string" && typeof m.date === "string" &&
-    /^\d{4}-\d{2}-\d{2}$/.test(m.date) && !Number.isNaN(Date.parse(m.date)) &&
-    typeof m.startTime === "string" && /^\d{2}:\d{2}$/.test(m.startTime) &&
-    typeof m.duration === "number" && typeof m.meetingType === "string" &&
-    typeof m.team === "string" && typeof m.platform === "string" &&
-    (m.description === undefined || typeof m.description === "string") &&
-    (m.tags === undefined || (Array.isArray(m.tags) && m.tags.every(tag => typeof tag === "string"))) &&
-    (m.meetingUrl === undefined || typeof m.meetingUrl === "string") &&
-    (m.previousMeetingTitle === undefined || typeof m.previousMeetingTitle === "string") &&
-    ["DRAFT", "SCHEDULED", "IN_PROGRESS", "PROCESSING", "REVIEW", "COMPLETED", "CANCELLED"].includes(String(m.status)) &&
-    Array.isArray(m.participants) && m.participants.every(p => p && typeof p.userId === "string") &&
-    Array.isArray(m.agenda) && m.agenda.every(a => a && typeof a.id === "string" && typeof a.title === "string" && (a.time === undefined || typeof a.time === "string")) &&
-    Array.isArray(m.files) && m.files.every(f => f && typeof f.id === "string" && typeof f.name === "string" && typeof f.type === "string") &&
-    Array.isArray(m.carryOver) && m.carryOver.length === 0;
+import { allPages, apiFetch, changed } from "@/lib/api-client";
+import { meetingDto, type MeetingRecord } from "@/lib/api-adapters";
+import type { CreateMeetingInput, MeetingContent } from "@/types/meeting";
+export async function getMeetings() { return (await allPages<MeetingRecord>("/api/meetings")).map(meetingDto); }
+export async function getMeeting(id:string) { return meetingDto(await apiFetch<MeetingRecord>("/api/meetings/"+id)); }
+export async function createMeeting(input:CreateMeetingInput) {
+ const platforms:Record<string,string>={"Google Meet":"GOOGLE_MEET","Microsoft Teams":"MICROSOFT_TEAMS","Zoom":"ZOOM","In Person":"IN_PERSON","In-person":"IN_PERSON"};
+ const body={title:input.title,description:input.description,scheduledAt:new Date(input.date+"T"+(input.startTime||"09:00")).toISOString(),durationMinutes:input.duration??45,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,platform:platforms[input.platform]??"OTHER",meetingType:"STANDARD",projectName:input.team,participantIds:input.participants.map(p=>p.userId),agenda:input.agenda,recurring:input.recurring??false};
+ const meeting=meetingDto(await apiFetch<MeetingRecord>("/api/meetings",{method:"POST",body:JSON.stringify(body)}));changed();return meeting;
 }
-function demoMeetings(): Meeting[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const data: unknown = JSON.parse(readStored(MEETINGS_KEY) ?? "[]");
-    if (!Array.isArray(data) || !data.every(isMeeting)) throw new Error("Invalid demo data");
-    return data;
-  } catch (cause) {
-    throw new Error(cause instanceof Error && cause.message.startsWith("Unable to read")
-      ? cause.message
-      : "Unable to read demo meetings. Check browser storage or clear the Dovia demo data and try again.");
-  }
+export async function saveMeetingContent(id:string,content:MeetingContent) {
+ await apiFetch("/api/meetings/"+id+"/content",{method:"POST",body:JSON.stringify({contentType:content.mode==="upload"?"FILE":content.mode==="manual"?"MANUAL_NOTES":"PASTED_NOTES",rawText:content.text,files:content.file?[{name:content.file.name,mimeType:content.file.type,size:content.file.size??0}]:[]})});changed();
 }
-export function getMeetings(): Meeting[] {
-  const completed = new Set(getConfirmedOutcomes().map(outcome => outcome.meetingId));
-  return [...demoMeetings(), ...seedMeetings].map(meeting => completed.has(meeting.id) ? { ...meeting, status: "COMPLETED" } : meeting);
-}
-export function getMeeting(id: string): Meeting | undefined { return getMeetings().find(meeting => meeting.id === id); }
-export function createMeeting(input: CreateMeetingInput): Meeting {
-  const meeting: Meeting = { ...input, id: `demo-${crypto.randomUUID()}`, status: "SCHEDULED" };
-  writeStored(MEETINGS_KEY, JSON.stringify([meeting, ...demoMeetings()]));
-  return meeting;
-}
-export function saveMeetingContent(id: string, content: MeetingContent) {
-  writeStored(CONTENT_KEY + id, JSON.stringify(content));
-}
-export function getMeetingContent(id: string): MeetingContent | null {
-  try {
-    const value: unknown = JSON.parse(readStored(CONTENT_KEY + id) ?? "null");
-    if (value === null) return null;
-    if (!value || typeof value !== "object") throw new Error();
-    const content = value as Record<string, unknown>;
-    if (!["paste", "manual", "upload"].includes(String(content.mode)) || typeof content.text !== "string") throw new Error();
-    if (content.file) {
-      const file = content.file as Record<string, unknown>;
-      if (typeof file.id !== "string" || typeof file.name !== "string" || typeof file.type !== "string" || typeof file.size !== "number") throw new Error();
-    }
-    return value as MeetingContent;
-  } catch (cause) {
-    throw new Error(cause instanceof Error && cause.message.startsWith("Unable to read")
-      ? cause.message
-      : "Saved demo content could not be read. You can enter fresh notes below.");
-  }
+export async function getMeetingContent(id:string):Promise<MeetingContent|null> {
+ const saved=await apiFetch<{contentType:string;rawText?:string;files:{name:string;mimeType:string;size:number}[]}|null>("/api/meetings/"+id+"/content");
+ return saved?{mode:saved.contentType==="FILE"?"upload":saved.contentType==="MANUAL_NOTES"?"manual":"paste",text:saved.rawText??"",file:saved.files[0]?{id:"saved-file",name:saved.files[0].name,type:saved.files[0].mimeType,size:saved.files[0].size}:undefined}:null;
 }

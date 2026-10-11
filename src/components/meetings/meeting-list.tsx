@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { CalendarDays, Plus } from "lucide-react";
 import { useMeetings } from "@/hooks/use-meetings";
-import { meetingTypes, teams, DEMO_TODAY } from "@/data/mock/meetings";
+
+import { DEMO_TODAY } from "@/lib/task-utils";
 import { PageHeader } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
 import { Select } from "@/components/ui/select";
@@ -27,6 +28,8 @@ export default function MeetingList() {
   const [tab, setTab] = useState("Upcoming");
   if (loading) return <MeetingLoading />;
   if (error) return <MeetingNotFound error={error} />;
+  const meetingTypes=[...new Set(meetings.map(m=>m.meetingType))];
+  const teams=[...new Set(meetings.map(m=>m.team).filter(Boolean))];
   const filtered = meetings.filter(m =>
     m.title.toLowerCase().includes(search.trim().toLowerCase()) && (!status || m.status === status) &&
     (!type || m.meetingType === type) && (!team || m.team === team) &&
@@ -38,7 +41,7 @@ export default function MeetingList() {
       <EmptyState icon={<CalendarDays />} title="No meetings found" description="Try changing your filters or create a new meeting." action={<ButtonLink href="/meetings/new">Create Meeting</ButtonLink>} />}</>;
   return <div className="space-y-6">
 <PageHeader title="Meetings" description="Plan, review, and follow up on every meeting in one place." actions={<ButtonLink href="/meetings/new"><Plus aria-hidden="true" />New Meeting</ButtonLink>} />
-    <p className="text-xs text-text-muted">Demo calendar · {formatDate(DEMO_TODAY)} · Created meetings are stored only in this browser.</p>
+    <p className="text-xs text-text-muted">Workspace calendar · {formatDate(DEMO_TODAY)} · Meetings are saved to your workspace.</p>
     <div className="grid items-end gap-4 md:grid-cols-2 xl:grid-cols-4">
       <SearchInput label="Search meetings" placeholder="Search meetings..." value={search} onChange={e => setSearch(e.target.value)} />
       <Select label="Status" value={status} onChange={e => setStatus(e.target.value)} options={[{value:"",label:"All statuses"}, ...meetingStatuses.map(value => ({value,label:statusPresentation[value].label}))]} />

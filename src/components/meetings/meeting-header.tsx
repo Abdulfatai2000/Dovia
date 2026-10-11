@@ -13,6 +13,6 @@ export default function MeetingHeader({ meeting, onEdit }: { meeting: Meeting; o
       <span className="flex items-center gap-2"><CalendarDays aria-hidden="true" className="size-4" />{formatDate(meeting.date)} · {formatTime(meeting.startTime)} · {meeting.duration} min</span>
       <span className="flex items-center gap-2"><Video aria-hidden="true" className="size-4" />{meeting.platform}</span>
     </div>
-    {meeting.meetingUrl && <p className="break-all text-xs text-text-muted">Demo meeting URL: {meeting.meetingUrl} (not connected)</p>}
+    {meeting.meetingUrl && <p className="break-all text-xs text-text-muted">Meeting URL: {meeting.meetingUrl} (not connected)</p>}
   </div>;
 }

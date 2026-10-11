@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useId, useRef, useState, type DragEvent } from "react";
-import { useRouter } from "next/navigation";
+
 import { ClipboardList, FileText, Info, PencilLine, Sparkles, UploadCloud, X } from "lucide-react";
 import type { MeetingContent, MeetingFile } from "@/types/meeting";
 import { getMeetingContent, saveMeetingContent } from "@/services/meeting.service";
@@ -30,7 +30,7 @@ const modes = [
 ] as const satisfies readonly { value: MeetingContent["mode"]; label: string; description: string; icon: typeof ClipboardList }[];
 
 export default function ContentInput({ meetingId }: { meetingId: string }) {
-  const router = useRouter();
+
   const [mode, setMode] = useState<MeetingContent["mode"]>("paste");
   const [text, setText] = useState("");
   const [file, setFile] = useState<MeetingFile>();
@@ -44,13 +44,14 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
 
   useEffect(() => {
     let active = true;
-    Promise.resolve().then(() => {
+    Promise.resolve().then(async () => {
       if (!active) return;
       try {
-        const saved = getMeetingContent(meetingId);
+        const saved = await getMeetingContent(meetingId);
+        if (!active) return;
         if (saved) { setMode(saved.mode); setText(saved.text); setFile(saved.file); }
       } catch (cause) {
-        setNotice({ variant: "error", title: "Unable to restore demo content", description: cause instanceof Error ? cause.message : "Enter fresh notes below." });
+        setNotice({ variant: "error", title: "Unable to restore meeting content", description: cause instanceof Error ? cause.message : "Enter fresh notes below." });
       } finally { setLoading(false); }
     });
     return () => { active = false; };
@@ -75,25 +76,26 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
     if (event.dataTransfer.files.length !== 1) { setFile(undefined); setError("Choose one file at a time."); return; }
     chooseFile(event.dataTransfer.files[0]);
   }
-  function save(continueToReview: boolean) {
+  async function save(continueToReview: boolean) {
     if (mode === "upload" ? !file : !text.trim()) {
       setError("Add meeting content before continuing.");
       requestAnimationFrame(() => (mode === "upload" ? upload.current : notes.current)?.focus());
       return;
     }
     try {
-      saveMeetingContent(meetingId, { mode, text, file });
+      await saveMeetingContent(meetingId, { mode, text, file });
       setError("");
       if (continueToReview) {
         setContinuing(true);
-        router.push(`/meetings/${meetingId}/ai-review`);
-      } else setNotice({ variant: "info", title: "Demo content saved in this browser.", description: "No content was uploaded or analyzed. Selected files are stored as metadata only." });
+        setContinuing(false);
+        setNotice({variant:"info",title:"Content saved",description:"AI analysis will be connected in a later phase."});
+      } else setNotice({ variant: "info", title: "Meeting content saved.", description: "No content was uploaded or analyzed. Selected files are stored as metadata only." });
     } catch (cause) {
-      setNotice({ variant: "error", title: "Demo content not saved", description: cause instanceof Error ? cause.message : "Keep a copy of your notes and try again." });
+      setNotice({ variant: "error", title: "Meeting content not saved", description: cause instanceof Error ? cause.message : "Keep a copy of your notes and try again." });
     }
   }
 
-  if (loading) return <LoadingState label="Loading demo content…" />;
+  if (loading) return <LoadingState label="Loading meeting content…" />;
 
   const notesEditor = (manual: boolean) => <div className="space-y-4">
     <SectionHeader title={manual ? "Write your meeting notes" : "Paste your meeting notes or transcript"}

@@ -31,7 +31,7 @@ export default function CompletedMeeting({ meeting }: { meeting: Meeting }) {
   const organizer = meeting.participants.find(person => person.organizer);
   const decisions = <RecordSection title="Key Decisions" items={analysis.decisions.map(item => item.description)} />;
   const notes = <RecordSection title="Important Notes" items={analysis.importantNotes.filter(note => note.trim())} />;
-  const actions = <div className="space-y-4"><SectionHeader title="Confirmed Action Items" description="These are the reviewed values saved for this demo meeting." />
+  const actions = <div className="space-y-4"><SectionHeader title="Confirmed Action Items" description="These are the reviewed values saved for this meeting." />
     {analysis.actionItems.length ? <Table containerLabel="Confirmed meeting action items" className="min-w-[680px]"><TableCaption>Confirmed demo action items. No backend tasks have been created.</TableCaption>
       <TableHeader><TableRow>{["Task","Owner","Due Date","Priority","Status"].map(label => <TableHead key={label}>{label}</TableHead>)}</TableRow></TableHeader>
       <TableBody>{analysis.actionItems.map(item => <TableRow key={item.id}><TableCell className="max-w-sm break-words font-medium">{item.title}</TableCell><TableCell>{getUser(item.assigneeId ?? "")?.name ?? "Unassigned"}</TableCell><TableCell>{item.suggestedDeadline ? formatDate(item.suggestedDeadline) : "Not set"}</TableCell><TableCell><PriorityBadge priority={item.priority ?? "MEDIUM"} /></TableCell><TableCell><StatusBadge status={item.status ?? "NOT_STARTED"} /></TableCell></TableRow>)}</TableBody>

@@ -3,7 +3,8 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Plus, Users } from "lucide-react";
-import { users } from "@/data/mock/users";
+import { getTeamMembers } from "@/services/team.service";
+import { CURRENT_USER_ID } from "@/lib/task-utils";
 import { meetingTypes, platforms, teams } from "@/data/mock/meetings";
 import { createMeeting } from "@/services/meeting.service";
 import { PageHeader } from "@/components/ui/page-header";
@@ -24,6 +25,7 @@ const options = (values: string[]) => values.map(value => ({ value, label: value
 
 export default function MeetingForm() {
   const router = useRouter();
+  const users = getTeamMembers();
   const form = useRef<HTMLFormElement>(null);
   const [values, setValues] = useState(initial);
   const [participants, setParticipants] = useState<string[]>([]);
@@ -37,7 +39,7 @@ export default function MeetingForm() {
     setErrors(current => { const next = { ...current }; delete next[key]; return next; });
   };
   const agendaLines = values.agenda.split("\n").map(line => line.trim()).filter(Boolean);
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const next: Record<string,string> = {};
     if (!values.title.trim()) next.title = "Enter a meeting title.";
@@ -45,28 +47,28 @@ export default function MeetingForm() {
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(values.startTime)) next.startTime = "Choose a valid time.";
     if (!values.duration || Number(values.duration) < 5 || Number(values.duration) > 480) next.duration = "Choose a duration between 5 and 480 minutes.";
     if (!values.meetingType) next.meetingType = "Choose a meeting type.";
-    if (!participants.length) next.participants = "Select at least one participant.";
+
     setErrors(next);
     if (Object.keys(next).length) {
       requestAnimationFrame(() => {
         const name = Object.keys(next)[0];
-        const field = name === "participants" ? document.getElementById("participant-user-sarah") : form.current?.elements.namedItem(name);
+        const field = name === "participants" ? document.querySelector<HTMLElement>("[id^=participant-]") : form.current?.elements.namedItem(name);
         if (field instanceof HTMLElement) field.focus();
       });
       return;
     }
     setSaving(true);
     try {
-      const meeting = createMeeting({
+      const meeting = await createMeeting({
         title: values.title.trim(), description: values.description.trim(), date: values.date, startTime: values.startTime,
         duration: Number(values.duration), meetingType: values.meetingType, platform: values.platform, team: values.team,
-        participants: [{ userId: "user-abdulfatai", organizer: true }, ...participants.map(userId => ({ userId }))],
+        participants: [{ userId: CURRENT_USER_ID, organizer: true }, ...participants.map(userId => ({ userId }))],
         agenda: agendaLines.map((title,index) => ({ id: `agenda-${index + 1}`, title })), files: [], carryOver: [],
         sendInvitations: invitations, recurring,
       });
       router.push(`/meetings/${meeting.id}?created=1`);
     } catch (cause) {
-      setNotice(cause instanceof Error ? cause.message : "Unable to create the demo meeting.");
+      setNotice(cause instanceof Error ? cause.message : "Unable to create the meeting.");
       setSaving(false);
     }
   }
@@ -88,8 +90,8 @@ export default function MeetingForm() {
         </div>
         <fieldset aria-describedby={errors.participants ? "participants-error" : "participants-help"} className="space-y-3">
           <legend className="text-sm font-medium">Participants <span aria-hidden="true" className="text-danger-foreground">*</span></legend>
-          <p id="participants-help" className="text-sm text-text-muted">You are the organizer. Select at least one teammate.</p>
-          <div className="grid gap-2 sm:grid-cols-2">{users.filter(user => user.id !== "user-abdulfatai").map(user => <div key={user.id} className="flex items-start gap-2 rounded-md border border-border p-3">
+          <p id="participants-help" className="text-sm text-text-muted">You are the organizer. Optionally select teammates.</p>
+          <div className="grid gap-2 sm:grid-cols-2">{users.filter(user => user.id !== CURRENT_USER_ID).map(user => <div key={user.id} className="flex items-start gap-2 rounded-md border border-border p-3">
             <Avatar name={user.name} size="sm" className="mt-1.5" />
             <Checkbox id={`participant-${user.id}`} label={user.name} helperText={user.role} checked={participants.includes(user.id)}
               aria-invalid={Boolean(errors.participants)} aria-describedby={errors.participants ? "participants-error" : undefined}
@@ -99,7 +101,7 @@ export default function MeetingForm() {
         </fieldset>
         <Textarea label="Agenda" placeholder={"1. Review current progress\n2. Discuss launch blockers\n3. Assign next steps"} helperText="Add one agenda item per line." value={values.agenda} onChange={e => update("agenda",e.target.value)} />
         <Textarea label="Description (optional)" placeholder="What should your team achieve in this meeting?" value={values.description} onChange={e => update("description",e.target.value)} />
-        <div className="flex flex-wrap gap-3 border-t border-border pt-5"><Button type="submit" loading={saving} loadingText="Opening demo meeting…"><Plus aria-hidden="true" />Create Meeting</Button><ButtonLink href="/meetings" variant="outline">Cancel</ButtonLink></div>
+        <div className="flex flex-wrap gap-3 border-t border-border pt-5"><Button type="submit" loading={saving} loadingText="Opening meeting…"><Plus aria-hidden="true" />Create Meeting</Button><ButtonLink href="/meetings" variant="outline">Cancel</ButtonLink></div>
       </Card>
       <aside className="min-w-0 space-y-5" aria-label="Meeting options and preview">
         <Card className="space-y-4 p-5"><SectionHeader title="Meeting options" />
@@ -116,6 +118,6 @@ export default function MeetingForm() {
         </Card>
       </aside>
     </form>
-    {notice && <div className="fixed inset-x-4 bottom-4 z-[var(--z-toast)] sm:left-auto"><Toast variant="error" title="Demo meeting not saved" description={notice} onDismiss={() => setNotice("")} /></div>}
+    {notice && <div className="fixed inset-x-4 bottom-4 z-[var(--z-toast)] sm:left-auto"><Toast variant="error" title="Meeting not saved" description={notice} onDismiss={() => setNotice("")} /></div>}
   </div>;
 }

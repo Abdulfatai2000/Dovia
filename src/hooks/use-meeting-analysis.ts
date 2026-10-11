@@ -10,6 +10,7 @@ export function useMeetingAnalysis(meetingId: string) {
     let active = true;
     Promise.resolve().then(() => {
       if (!active) return;
+      if (/^[a-f0-9]{24}$/i.test(meetingId)) { setError("AI analysis is not connected yet. Your meeting content is saved; manual tasks are available on the Tasks page."); return; }
       try { setAnalysis(getConfirmedOutcome(meetingId) ?? createMockAnalysis(meetingId)); }
       catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to load demo outcome."); }
     });
