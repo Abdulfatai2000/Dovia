@@ -13,6 +13,7 @@ export interface IntegrationCardProps {
   status: string;
   statusTone?: "neutral" | "info";
   actionLabel?: string;
+  disabled?: boolean;
   onAction: () => void;
   children?: ReactNode;
   className?: string;
@@ -22,7 +23,7 @@ export interface IntegrationCardProps {
  * Connection surfaces are previews only. Nothing here calls an API placeholder or
  * reports a connection that does not exist.
  */
-export function IntegrationCard({ name, description, monogram, status, statusTone = "neutral", actionLabel = "Connect", onAction, children, className }: IntegrationCardProps) {
+export function IntegrationCard({ name, description, monogram, status, statusTone = "neutral", actionLabel = "Connect", disabled = false, onAction, children, className }: IntegrationCardProps) {
   return <Card className={cn("flex h-full flex-col gap-4 p-[var(--card-padding)]", className)}>
     <div className="flex items-start gap-3">
       <span aria-hidden="true" className="dovia-gradient-ai flex size-10 shrink-0 items-center justify-center rounded-md text-sm font-semibold text-on-brand shadow-glow-ai">{monogram}</span>
@@ -34,21 +35,30 @@ export function IntegrationCard({ name, description, monogram, status, statusTon
     {children}
     <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
       <Badge variant={statusTone}>{status}</Badge>
-      <Button variant="outline" size="sm" onClick={onAction}>{actionLabel}</Button>
+      <Button variant="outline" size="sm" onClick={onAction} disabled={disabled}>{actionLabel}</Button>
     </div>
   </Card>;
 }
 
 /** Compact row variant used inside the all-in-one settings dashboard. */
-export function IntegrationRow({ name, description, monogram, onAction }: Pick<IntegrationCardProps, "name" | "description" | "monogram" | "onAction">) {
+export function IntegrationRow({
+  name,
+  description,
+  monogram,
+  status = "Coming Soon",
+  statusTone = "info",
+  actionLabel = "Connect",
+  disabled = false,
+  onAction,
+}: Pick<IntegrationCardProps, "name" | "description" | "monogram" | "status" | "statusTone" | "actionLabel" | "disabled" | "onAction">) {
   return <div className="flex flex-wrap items-center gap-3 py-4">
     <span aria-hidden="true" className="dovia-gradient-ai flex size-10 shrink-0 items-center justify-center rounded-md text-sm font-semibold text-on-brand shadow-glow-ai">{monogram}</span>
     <div className="min-w-0 flex-1">
       <p className="text-sm font-medium text-foreground">{name}</p>
       <p className="mt-0.5 text-xs text-text-secondary">{description}</p>
     </div>
-    <Badge variant="info">Coming Soon</Badge>
-    <Button variant="outline" size="sm" onClick={onAction}>Connect</Button>
+    <Badge variant={statusTone}>{status}</Badge>
+    <Button variant="outline" size="sm" onClick={onAction} disabled={disabled}>{actionLabel}</Button>
   </div>;
 }
 export default IntegrationCard;

@@ -9,7 +9,7 @@ export interface IntegrationStatusInfo {
   connected: boolean;
   status: IntegrationStatus;
   providerAccountId?: string;
-  tokenExpiresAt?: Date;
+  tokenExpiresAt?: Date | null;
   error?: string;
 }
 
