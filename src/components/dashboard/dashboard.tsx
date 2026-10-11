@@ -7,40 +7,41 @@ import { ButtonLink } from "@/components/ui/button-link";
 import StatCard from "./stat-card";
 import UpcomingMeetings from "./upcoming-meetings";
 import TaskPreview from "./task-preview";
-import ActivityFeed from "./activity-feed";
-import { useTasks } from "@/hooks/use-tasks";
-import { CURRENT_USER_ID, isTaskOverdue } from "@/lib/task-utils";
-import { activities } from "@/data/mock/activities";
-import { DEMO_TODAY } from "@/data/mock/meetings";
+
+import { getDashboard } from "@/services/dashboard.service";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+
+
+import { DEMO_TODAY } from "@/lib/task-utils";
 import { formatDate } from "@/lib/meeting-format";
-import { useMeetings } from "@/hooks/use-meetings";
+
 import { useDemoQuery } from "@/hooks/use-demo-query";
-import { getCurrentUser } from "@/services/team.service";
+
 import TaskActivityFeed from "@/components/tasks/task-activity-feed";
 
 export default function Dashboard() {
-  const { meetings, loading, error } = useMeetings();
-  const taskState = useTasks();
-  const { data: currentUser } = useDemoQuery(getCurrentUser);
-  const tasks = taskState.tasks.filter(task => task.assigneeId === CURRENT_USER_ID);
-  const upcoming = meetings.filter(m => ["SCHEDULED", "IN_PROGRESS"].includes(m.status) && m.date >= DEMO_TODAY).sort((a,b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
+  const {data,loading,error}=useDemoQuery(getDashboard);
+  if(loading)return <LoadingState label="Loading dashboard..." />;
+  if(error||!data)return <ErrorState description={error} />;
+  const tasks=data.myTasks,upcoming=data.upcomingMeetings,currentUser=data.currentUser;
   return <div className="space-y-8">
 <PageHeader eyebrow="Overview" title={`Good to see you${currentUser ? `, ${currentUser.name}` : ""} 👋`} description="Here's what's happening across your meetings and follow-up work."
       actions={<ButtonLink href="/meetings/new"><Plus aria-hidden="true" />New Meeting</ButtonLink>} />
-    <p className="text-xs text-text-muted">Demo workspace · Sample calendar: {formatDate(DEMO_TODAY)} · All times are local.</p>
-    {(error || taskState.error) && <p role="alert" className="text-sm text-danger-foreground">{error || taskState.error}</p>}
+    <p className="text-xs text-text-muted">Workspace · Today: {formatDate(DEMO_TODAY)} · All times are local.</p>
+
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <StatCard tone="blue" label="Upcoming Meetings" value={upcoming.length} description={loading ? "Loading demo meetings…" : `${upcoming.filter(m => m.date === DEMO_TODAY).length} on the demo calendar today`} icon={<CalendarDays aria-hidden="true" />} />
-      <StatCard tone="violet" label="My Tasks" value={tasks.filter(t => t.status !== "COMPLETED").length} description="Open follow-up tasks" icon={<ListChecks aria-hidden="true" />} />
-      <StatCard tone="orange" label="Overdue" value={tasks.filter(isTaskOverdue).length} description="Needs your attention" icon={<CircleAlert aria-hidden="true" />} />
-      <StatCard tone="emerald" label="Completed" value={tasks.filter(t => t.status === "COMPLETED").length} description="Completed demo tasks" icon={<CircleCheckBig aria-hidden="true" />} />
+      <StatCard tone="blue" label="Upcoming Meetings" value={data.upcomingCount} description={loading ? "Loading meetings…" : `${upcoming.filter(m => m.date === DEMO_TODAY).length} scheduled today`} icon={<CalendarDays aria-hidden="true" />} />
+      <StatCard tone="violet" label="Open Tasks" value={data.taskStats.open} description="Open follow-up tasks" icon={<ListChecks aria-hidden="true" />} />
+      <StatCard tone="orange" label="Overdue" value={data.taskStats.overdue} description="Needs your attention" icon={<CircleAlert aria-hidden="true" />} />
+      <StatCard tone="emerald" label="Completed" value={data.taskStats.completed} description="Completed workspace tasks" icon={<CircleCheckBig aria-hidden="true" />} />
     </div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
       <section className="min-w-0 space-y-5"><SectionHeader title="Upcoming Meetings" action={<ButtonLink href="/meetings" variant="ghost" size="sm">View all</ButtonLink>} /><UpcomingMeetings meetings={upcoming.slice(0,4)} loading={loading} /></section>
-      <section className="min-w-0 space-y-5"><SectionHeader title="My Tasks" action={<ButtonLink href="/tasks" variant="ghost" size="sm">View all</ButtonLink>} /><TaskPreview tasks={tasks.slice(0,5)} loading={taskState.loading} /></section>
+      <section className="min-w-0 space-y-5"><SectionHeader title="My Tasks" action={<ButtonLink href="/tasks" variant="ghost" size="sm">View all</ButtonLink>} /><TaskPreview tasks={tasks.slice(0,5)} loading={loading} /></section>
     </div>
-    <section className="space-y-5"><SectionHeader title="Recent Activity" description="Task changes saved in this browser." /><TaskActivityFeed tasks={taskState.tasks} activity={taskState.activity} />
-      <details><summary className="cursor-pointer text-sm text-text-muted">Sample workspace activity</summary><ActivityFeed activities={activities} /></details>
+    <section className="space-y-5"><SectionHeader title="Recent Activity" description="Recent workspace changes." /><TaskActivityFeed tasks={tasks} activity={data.recentActivity} />
+
     </section>
   </div>;
 }

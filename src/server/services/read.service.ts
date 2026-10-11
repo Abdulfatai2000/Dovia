@@ -27,10 +27,11 @@ export async function followUp(context: WorkspaceContext, id: string, query: URL
  return {meetingId:id,totalTasks:stats.total,...stats,tasks:tasks.items,pagination:{total:tasks.total,page:tasks.page,limit:tasks.limit},recentActivity:recentActivity.items};
 }
 export async function dashboard(context: WorkspaceContext) {
- const [upcomingMeetings,stats,myTasks,overdueTasks,completedTasks,recentActivity,workspace,members] = await Promise.all([
+ const [upcomingCount,upcomingMeetings,stats,myTasks,overdueTasks,completedTasks,recentActivity,workspace,members] = await Promise.all([
+  Meeting.countDocuments({workspaceId:context.workspaceId,deletedAt:null,scheduledAt:{$gte:new Date()},status:{$in:["SCHEDULED","DRAFT"]}}),
   Meeting.find({workspaceId:context.workspaceId,deletedAt:null,scheduledAt:{$gte:new Date()},status:{$in:["SCHEDULED","DRAFT"]}}).sort({scheduledAt:1}).limit(6).lean(),taskStats(context),
   listTasks(context,new URLSearchParams({assigneeId:context.userId,limit:"10"})),listTasks(context,new URLSearchParams({status:"OVERDUE",limit:"10"})),listTasks(context,new URLSearchParams({status:"COMPLETED",limit:"10"})),activity(context,new URLSearchParams({limit:"10"})),Workspace.findOne({_id:context.workspaceId}).select("name").lean(),workspaceMembers(context)]);
- return {upcomingMeetings,taskStats:stats,myTasks:myTasks.items,overdueTasks:overdueTasks.items,completedTasks:completedTasks.items,recentActivity:recentActivity.items,currentUser:members.find(member=>member.id===context.userId),workspace};
+ return {upcomingCount,upcomingMeetings,taskStats:stats,myTasks:myTasks.items,overdueTasks:overdueTasks.items,completedTasks:completedTasks.items,recentActivity:recentActivity.items,currentUser:members.find(member=>member.id===context.userId),workspace};
 }
 export function dateWindow(query: URLSearchParams) {
  const now = new Date(), from = query.has("from") ? date(query.get("from"),"from") : new Date(now.getTime()-29*86400000), to = query.has("to") ? date(query.get("to"),"to") : now;
