@@ -1,4 +1,4 @@
-﻿import { DEMO_TODAY } from "@/lib/task-utils";
+﻿
 import type { Meeting } from "@/types/meeting";
 import type { DemoUser } from "@/data/mock/users";
 
@@ -15,6 +15,7 @@ const distributionOrder = ["COMPLETED", "IN_PROGRESS", "NOT_STARTED", "BLOCKED"]
 export const distributionLabels = ["Completed", "In Progress", "Not Started", "Blocked"] as const;
 
 export function reportWindow(range: ReportRange) {
+  const DEMO_TODAY = new Date().toISOString().slice(0,10);
   const end = range === "Previous Month" ? shiftDay(DEMO_TODAY.slice(0, 7) + "-01", -1) : DEMO_TODAY;
   const start = range === "Last 7 Days" ? shiftDay(end, -6)
     : range === "Last 30 Days" ? shiftDay(end, -29)
@@ -35,7 +36,7 @@ function volumeBuckets(start: string, end: string, held: { date: string }[]) {
   const buckets: { label: string; range: string; count: number }[] = [];
   let cursor = weekStart(start);
   let guard = 0;
-  while (cursor <= end && guard < 40) {
+  while (cursor <= end && guard < 54) {
     const last = shiftDay(cursor, 6) > end ? end : shiftDay(cursor, 6);
     buckets.push({ label: `${cursor.slice(5)} – ${last.slice(5)}`, range: `${cursor} to ${last}`, count: held.filter(meeting => meeting.date >= cursor && meeting.date <= last).length });
     cursor = shiftDay(cursor, 7);
@@ -56,15 +57,6 @@ function distribution(tasks: Task[]) {
 }
 
 /** The heaviest department by open commitments. Distribution only, never a ranking. */
-function busiestDepartment(tasks: Task[], members: DemoUser[]) {
-  const counts = new Map<string, number>();
-  tasks.filter(task => task.status !== "COMPLETED").forEach(task => {
-    const department = members.find(member => member.id === task.assigneeId)?.department;
-    if (department) counts.set(department, (counts.get(department) ?? 0) + 1);
-  });
-  const top = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
-  return top ? { department: top[0], open: top[1] } : null;
-}
 
 export function calculateReport(range: ReportRange, allMeetings: Meeting[], allTasks: Task[], members: DemoUser[], window = reportWindow(range)) {
   const { start, end } = window;
@@ -89,12 +81,11 @@ export function calculateReport(range: ReportRange, allMeetings: Meeting[], allT
 
   const stats = summarizeTasks(tasks);
   const needingAttention = followUp.filter(item => item.stats.open > 0);
-  const heavy = busiestDepartment(tasks, members);
+
 
   const insights: string[] = [];
   const overdueMeetings = new Set(stats.overdue > 0 ? tasks.filter(isTaskOverdue).map(task => task.meetingId).filter(Boolean) : []);
   if (stats.overdue > 0) insights.push(`${stats.overdue} task${stats.overdue === 1 ? " is" : "s are"} overdue across ${overdueMeetings.size} meeting${overdueMeetings.size === 1 ? "" : "s"}.`);
-  if (heavy) insights.push(`Most open tasks are currently assigned to the ${heavy.department} team (${heavy.open} open).`);
   if (needingAttention.length > 0) insights.push(`${needingAttention.length} meeting${needingAttention.length === 1 ? "" : "s"} still ${needingAttention.length === 1 ? "has" : "have"} unfinished follow-up work.`);
   if (completedInRange.length > 0) insights.push(`${completedInRange.length} task${completedInRange.length === 1 ? " was" : "s were"} completed during the selected period.`);
   if (stats.blocked > 0) insights.push(`${stats.blocked} task${stats.blocked === 1 ? " is" : "s are"} blocked and waiting on someone else.`);

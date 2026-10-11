@@ -10,7 +10,7 @@ export type MeetingStatus = (typeof MeetingStatus)[number];
 export const MeetingPlatform = ["GOOGLE_MEET", "MICROSOFT_TEAMS", "ZOOM", "IN_PERSON", "OTHER"] as const;
 export type MeetingPlatform = (typeof MeetingPlatform)[number];
 
-export const MeetingType = ["STANDARD", "ONE_ON_ONE", "WORKSHOP", "RETROSPECTIVE", "INTERVIEW", "OTHER"] as const;
+export const MeetingType = ["STANDARD", "TEAM_SYNC", "PROJECT_REVIEW", "PLANNING", "CLIENT_MEETING", "LEADERSHIP_MEETING", "ONE_ON_ONE", "WORKSHOP", "RETROSPECTIVE", "INTERVIEW", "OTHER"] as const;
 export type MeetingType = (typeof MeetingType)[number];
 
 export const TaskStatus = ["NOT_STARTED", "IN_PROGRESS", "BLOCKED", "COMPLETED"] as const;

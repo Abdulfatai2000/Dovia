@@ -32,7 +32,7 @@ const MeetingContentSchema = new Schema(
 );
 
 MeetingContentSchema.index({ meetingId: 1 });
-MeetingContentSchema.index({ workspaceId: 1, meetingId: 1 });
+MeetingContentSchema.index({ workspaceId: 1, meetingId: 1 }, { unique: true });
 
 const MeetingContent = (mongoose.models.MeetingContent ||
   mongoose.model("MeetingContent", MeetingContentSchema)) as mongoose.Model<

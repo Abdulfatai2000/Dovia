@@ -5,7 +5,7 @@ export async function getMeetings() { return (await allPages<MeetingRecord>("/ap
 export async function getMeeting(id:string) { return meetingDto(await apiFetch<MeetingRecord>("/api/meetings/"+id)); }
 export async function createMeeting(input:CreateMeetingInput) {
  const platforms:Record<string,string>={"Google Meet":"GOOGLE_MEET","Microsoft Teams":"MICROSOFT_TEAMS","Zoom":"ZOOM","In Person":"IN_PERSON","In-person":"IN_PERSON"};
- const body={title:input.title,description:input.description,scheduledAt:new Date(input.date+"T"+(input.startTime||"09:00")).toISOString(),durationMinutes:input.duration??45,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,platform:platforms[input.platform]??"OTHER",meetingType:"STANDARD",projectName:input.team,participantIds:input.participants.map(p=>p.userId),agenda:input.agenda,recurring:input.recurring??false};
+ const body={title:input.title,description:input.description,scheduledAt:new Date(input.date+"T"+(input.startTime||"09:00")).toISOString(),durationMinutes:input.duration??45,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,platform:platforms[input.platform]??"OTHER",meetingType:({"Team Sync":"TEAM_SYNC","Project Review":"PROJECT_REVIEW","Planning":"PLANNING","Client Meeting":"CLIENT_MEETING","Leadership Meeting":"LEADERSHIP_MEETING","One-on-One":"ONE_ON_ONE"} as Record<string,string>)[input.meetingType]??"OTHER",projectName:input.team,participantIds:input.participants.map(p=>p.userId),agenda:input.agenda,recurring:input.recurring??false};
  const meeting=meetingDto(await apiFetch<MeetingRecord>("/api/meetings",{method:"POST",body:JSON.stringify(body)}));changed();return meeting;
 }
 export async function saveMeetingContent(id:string,content:MeetingContent) {

@@ -12,7 +12,7 @@ function valid(value:unknown):value is DemoSettings {
   return [p.name,p.email,p.jobTitle,p.timezone,w.name,w.timezone].every(v=>typeof v==="string")&&w.language==="English"&&["DD/MM/YYYY","MM/DD/YYYY","YYYY-MM-DD"].includes(String(w.dateFormat))&&["Monday","Sunday"].includes(String(w.weekStartsOn))&&w.appearance==="Light"&&[15,30,45,60,90,120].includes(Number(m.duration))&&meetingTypes.includes(String(m.meetingType))&&platforms.includes(String(m.platform))&&[0,5,15,30,60].includes(Number(m.reminder))&&typeof m.autoOpenReview==="boolean"&&typeof m.autoGenerate==="boolean"&&Object.keys(defaultSettings.notifications).every(key=>typeof (value.notifications as Record<string,unknown>)[key]==="boolean");
 }
 const KEY="dovia_demo_settings";
-export const getSettings=()=>readDemo(KEY,defaultSettings,valid);
+export const getSettings=()=>{const settings=readDemo(KEY,defaultSettings,valid),current=getCurrentUser();return {...settings,profile:{...settings.profile,name:current.name,email:current.email}};};
 function save<K extends keyof DemoSettings>(key:K,value:DemoSettings[K]){const settings={...getSettings(),[key]:value};if(!valid(settings))throw new Error("Choose valid settings values.");writeDemo(KEY,settings);}
 export const getProfileSettings=()=>({...getSettings().profile,name:getCurrentUser().name,email:getCurrentUser().email});
 export function updateProfileSettings(value:ProfileSettings){if(!value.name.trim()||!/^\S+@\S+\.\S+$/.test(value.email)||!timezones.includes(value.timezone))throw new Error("Enter a name, valid email, and timezone.");save("profile",{...value,name:value.name.trim(),email:value.email.trim()});}

@@ -4,7 +4,7 @@ export const taskStatuses: TaskStatus[] = ["NOT_STARTED", "IN_PROGRESS", "BLOCKE
 export const taskPriorities: TaskPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 export let CURRENT_USER_ID = "";
 export function setCurrentUserId(id:string){CURRENT_USER_ID=id;}
-export const isTaskOverdue = (task: Task) => task.status !== "COMPLETED" && (task.status === "OVERDUE" || Boolean(task.dueDate && task.dueDate < DEMO_TODAY));
+export const isTaskOverdue = (task: Task) => task.status !== "COMPLETED" && (task.status === "OVERDUE" || Boolean((task.dueAt || task.dueDate) && new Date(task.dueAt || task.dueDate!) < new Date()));
 export const taskStatusLabel = (status: string) => status.toLowerCase().split("_").map(word => word[0].toUpperCase()+word.slice(1)).join(" ");
 export const taskHref = (id: string) => `/tasks/${encodeURIComponent(id)}`;
 export function summarizeTasks(tasks: Task[]) {

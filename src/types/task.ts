@@ -7,6 +7,7 @@ export interface Task {
   meetingId?: string;
   assigneeId?: string;
   dueDate?: string;
+  dueAt?: string;
   priority: TaskPriority;
   status: TaskStatus;
   blockedReason?: string;
