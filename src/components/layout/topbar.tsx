@@ -6,7 +6,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Dropdown, type DropdownItem } from "@/components/ui/dropdown";
 import { IconButton } from "@/components/ui/icon-button";
-import { Toast } from "@/components/ui/toast";
+import { signOut } from "next-auth/react";
+import { clearWorkspaceMembers } from "@/services/team.service";
 import { GlobalSearch } from "@/components/search/global-search";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useNotifications } from "@/hooks/use-notifications";
@@ -22,7 +23,7 @@ export interface TopbarProps { onOpenNavigation: () => void; navigationOpen: boo
 export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
   const [query, setQuery] = useState("");
   const [mobileSearch, setMobileSearch] = useState(false);
-  const [signOutNotice, setSignOutNotice] = useState(false);
+
   const searchField = useRef<HTMLInputElement>(null);
   const mobileSearchField = useRef<HTMLInputElement>(null);
   const mobileSearchArea = useRef<HTMLDivElement>(null);
@@ -31,7 +32,7 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
   const { unread } = useNotifications();
 
   // One notification source: the same service state the /notifications page mutates.
-  const load = useCallback(() => getNotifications().slice(0, 5), []);
+  const load = useCallback(async () => (await getNotifications()).slice(0, 5), []);
   const { data: previews } = useDemoQuery(load);
   const { data: user } = useDemoQuery(getCurrentUser);
 
@@ -69,7 +70,7 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
     { id: "workspace", label: "Workspace settings", href: "/settings/workspace", icon: <Settings /> },
     { id: "notifications", label: "Notification preferences", href: "/settings/notifications", icon: <Bell /> },
     { id: "security", label: "Security", href: "/settings/security", icon: <ShieldCheck /> },
-    { id: "sign-out", label: "Sign out", icon: <LogOut />, separatorBefore: true, onSelect: () => setSignOutNotice(true) },
+    { id: "sign-out", label: "Sign out", icon: <LogOut />, separatorBefore: true, onSelect: () => { clearWorkspaceMembers(); void signOut({callbackUrl:"/login"}); } },
   ];
 
   return <>
@@ -107,7 +108,6 @@ export function Topbar({ onOpenNavigation, navigationOpen }: TopbarProps) {
         </div>
       </div>}
     </header>
-    {signOutNotice && <div className="fixed right-4 bottom-4 left-4 z-[var(--z-toast)] sm:left-auto"><Toast title="Authentication will be connected later." description="Sign out is a preview action for now." onDismiss={() => setSignOutNotice(false)} /></div>}
-  </>;
+   </>;
 }
 export default Topbar;

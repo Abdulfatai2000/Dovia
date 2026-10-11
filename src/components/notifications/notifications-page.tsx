@@ -30,12 +30,12 @@ export default function NotificationsPage() {
   const countFor = (name: Category) => name === "All" ? notifications.length : notifications.filter(item => item.category === name).length;
   const visible = notifications.filter(item => (category === "All" || item.category === category) && (!unreadOnly || !item.read));
 
-  function toggleRead(id: string, read: boolean) {
-    try { setNotificationRead(id, read); }
+  async function toggleRead(id: string, read: boolean) {
+    try { await setNotificationRead(id, read); }
     catch (cause) { setFeedback({ variant: "error", title: "Read state was not saved.", description: cause instanceof Error ? cause.message : "Check browser storage access and try again." }); }
   }
-  function markAll() {
-    try { markAllNotificationsRead(); setFeedback({ variant: "success", title: "All notifications marked as read.", description: "Saved in this browser only." }); }
+  async function markAll() {
+    try { await markAllNotificationsRead(); setFeedback({ variant: "success", title: "All notifications marked as read.", description: "Saved to your workspace." }); }
     catch (cause) { setFeedback({ variant: "error", title: "Notifications were not updated.", description: cause instanceof Error ? cause.message : "Check browser storage access and try again." }); }
   }
 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { DEMO_TODAY } from "@/data/mock/meetings";
+import { DEMO_TODAY } from "@/lib/task-utils";
 import { formatTime } from "@/lib/meeting-format";
 import type { DemoNotification, NotificationType } from "@/types/notification";
 
@@ -23,7 +23,7 @@ const icons: Record<NotificationType, typeof Bell> = {
   SYSTEM: Bell,
 };
 
-/** Timestamps are rendered relative to the fixed demo calendar so the demo stays stable. */
+/** Timestamps are rendered relative to the fixed workspace calendar so the demo stays stable. */
 function relativeTime(timestamp: string) {
   const day = Math.round((Date.parse(DEMO_TODAY + "T12:00:00Z") - Date.parse(timestamp.slice(0, 10) + "T12:00:00Z")) / 86_400_000);
   if (day > 6) return timestamp.slice(0, 10);
