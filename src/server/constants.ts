@@ -49,6 +49,9 @@ export const MeetingContentType = ["PASTED_NOTES", "MANUAL_NOTES", "TRANSCRIPT",
 export type MeetingContentType = (typeof MeetingContentType)[number];
 
 export const ActivityType = [
+  "MEETING_ANALYZED",
+  "MEETING_ANALYSIS_REGENERATED",
+  "MEETING_ANALYSIS_CONFIRMED",
   "MEETING_CONTENT_ADDED",
   "TASK_STATUS_CHANGED",
   "TASK_ASSIGNEE_CHANGED",
