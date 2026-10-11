@@ -1,6 +1,8 @@
 ﻿"use client";
 
 import { useEffect, useId, useRef, useState, type DragEvent } from "react";
+import { useRouter } from "next/navigation";
+import { AI_ENABLED, analyzeMeeting } from "@/services/ai.service";
 
 import { ClipboardList, FileText, Info, PencilLine, Sparkles, UploadCloud, X } from "lucide-react";
 import type { MeetingContent, MeetingFile } from "@/types/meeting";
@@ -30,7 +32,7 @@ const modes = [
 ] as const satisfies readonly { value: MeetingContent["mode"]; label: string; description: string; icon: typeof ClipboardList }[];
 
 export default function ContentInput({ meetingId }: { meetingId: string }) {
-
+  const router = useRouter();
   const [mode, setMode] = useState<MeetingContent["mode"]>("paste");
   const [text, setText] = useState("");
   const [file, setFile] = useState<MeetingFile>();
@@ -77,22 +79,27 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
     chooseFile(event.dataTransfer.files[0]);
   }
   async function save(continueToReview: boolean) {
+    if (continuing) return;
     if (mode === "upload" ? !file : !text.trim()) {
       setError("Add meeting content before continuing.");
       requestAnimationFrame(() => (mode === "upload" ? upload.current : notes.current)?.focus());
       return;
     }
+    if (continueToReview && !text.trim()) {
+      setError("Paste or type the transcript before analyzing. Selected files contain metadata only.");
+      return;
+    }
+    setContinuing(true);
     try {
       await saveMeetingContent(meetingId, { mode, text, file });
       setError("");
       if (continueToReview) {
-        setContinuing(true);
-        setContinuing(false);
-        setNotice({variant:"info",title:"Content saved",description:"AI analysis will be connected in a later phase."});
+        await analyzeMeeting(meetingId);
+        router.push(`/meetings/${meetingId}/ai-review`);
       } else setNotice({ variant: "info", title: "Meeting content saved.", description: "No content was uploaded or analyzed. Selected files are stored as metadata only." });
     } catch (cause) {
-      setNotice({ variant: "error", title: "Meeting content not saved", description: cause instanceof Error ? cause.message : "Keep a copy of your notes and try again." });
-    }
+      setNotice({ variant: "error", title: continueToReview ? "Unable to generate summary" : "Meeting content not saved", description: cause instanceof Error ? cause.message : "Keep a copy of your notes and try again." });
+    } finally { setContinuing(false); }
   }
 
   if (loading) return <LoadingState label="Loading meeting content…" />;
@@ -104,7 +111,7 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
         : "Copy and paste your meeting notes, transcript, or any raw meeting content into the box below."} />
     <Textarea ref={notes} label={manual ? "Meeting notes" : "Meeting notes or transcript"} hideLabel
       placeholder={placeholder} className="min-h-[22rem] lg:min-h-[24rem]"
-      aria-describedby={countId} value={text}
+      aria-describedby={countId} value={text} maxLength={100000} disabled={continuing}
       onChange={event => { setText(event.target.value); setError(""); }} error={error} />
     <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-text-muted">
       <span id={countId}>{text.length} characters</span>
@@ -164,12 +171,12 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
     </Card>
 
     <div className="space-y-3">
-      <Button variant="gradient" size="lg" className="w-full" loading={continuing} loadingText="Opening review preview…" onClick={() => save(true)}>
+      {AI_ENABLED && <Button variant="gradient" size="lg" className="w-full" loading={continuing} loadingText="Processing meeting content…" onClick={() => save(true)}>
         <Sparkles aria-hidden="true" />Generate Meeting Summary
-      </Button>
+      </Button>}
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <Button variant="outline" onClick={() => save(false)}>Save demo draft</Button>
-        <p className="text-xs text-text-muted">Next: review an illustrative mock AI draft. No AI generation runs in this demo.</p>
+        <Button variant="outline" disabled={continuing} onClick={() => save(false)}>Save content</Button>
+        <p className="text-xs text-text-muted">{AI_ENABLED ? "Review the AI draft and choose task owners before confirming." : "AI analysis is currently disabled. You can still save your notes."}</p>
       </div>
     </div>
 
@@ -180,7 +187,7 @@ export default function ContentInput({ meetingId }: { meetingId: string }) {
           <h2 className="dovia-card-title">Accepted transcript formats</h2>
           <p className="text-sm leading-relaxed text-text-secondary">
             Dovia accepts {acceptedFormats} files up to 10 MB, or text pasted directly into the notes box.
-            In this frontend demo the selected file is recorded as metadata only: its contents are never read,
+            The selected file is recorded as metadata only: its contents are never read,
             uploaded, or sent to an AI provider.
           </p>
         </div>
