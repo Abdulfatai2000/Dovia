@@ -798,3 +798,11 @@ Core workspace APIs and frontend adapters now use MongoDB for meetings/content, 
 Google/Microsoft/Slack, Groq, binary uploads, invitations and deployment are deferred. Preferences remain local; account identity is loaded from the server. Topbar sign out uses NextAuth.
 
 Focused verification: tests/phase3-integration.mjs runs against a local production server (DOVIA_TEST_ORIGIN, default http://127.0.0.1:3100). It creates isolated test users/workspaces in the configured MongoDB, performs credential login and core API operations, checks cross-workspace denial and logout, and removes only its own fixtures in finally. It never sends email or prints credentials. Run after lint/build. Runtime results are reported separately; implementation alone is not evidence of successful integration.
+
+### Phase 3 validation (2026-10-11)
+
+- npm run lint: passed.
+- npm run build: passed after correcting meeting status narrowing and nullable avatar typing.
+- tests/phase3-integration.mjs: passed against the local production server and configured MongoDB. Login, persistent meeting/content/task operations, foreign-workspace denial, follow-up, notification read states, dashboard/report calculations and date ranges, calendar, search, teams and logout were verified. Test fixtures were removed.
+- No browser automation or external integrations were run.
+- Remote push was blocked by automatic approval review pending direct authorization for origin/main.
