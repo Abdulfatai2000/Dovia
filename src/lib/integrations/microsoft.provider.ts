@@ -79,6 +79,10 @@ export class MicrosoftCalendarProvider implements CalendarProvider {
   async deleteEvent(tokens: TokenSet, calendarId: string, eventId: string): Promise<void> {
     throw new Error("MICROSOFT_INTEGRATION_NOT_CONFIGURED");
   }
+
+  async listCalendars(tokens: TokenSet): Promise<{ id: string; summary: string; primary: boolean; accessRole: string }[]> {
+    throw new Error("MICROSOFT_INTEGRATION_NOT_CONFIGURED");
+  }
 }
 
 export function createMicrosoftCalendarProvider(): MicrosoftCalendarProvider | null {
