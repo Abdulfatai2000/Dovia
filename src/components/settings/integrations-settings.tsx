@@ -68,6 +68,35 @@ function getStatusDisplay(status: IntegrationStatusInfo) {
   }
 }
 
+async function handleGoogleConnect() {
+  try {
+    const response = await fetch("/api/integrations/google/connect");
+    const data = await response.json();
+    if (data.authUrl) {
+      window.location.href = data.authUrl;
+    }
+  } catch {
+    // Error handled by toast
+  }
+}
+
+async function handleGoogleDisconnect() {
+  try {
+    await fetch("/api/integrations/google/disconnect", { method: "POST" });
+    window.location.reload();
+  } catch {
+    // Error handled by toast
+  }
+}
+
+async function handleMicrosoftAction() {
+  // Placeholder for Microsoft
+}
+
+async function handleSlackAction() {
+  // Placeholder for Slack
+}
+
 /** Content only. The surrounding card chrome comes from the settings dashboard/section route. */
 export default function IntegrationsSettings() {
   const [notice, setNotice] = useState<{ name: string } | null>(null);
@@ -104,6 +133,14 @@ export default function IntegrationsSettings() {
           const status = integrationStatus?.find((s) => s.provider === provider);
           const display = status ? getStatusDisplay(status) : { label: "Unknown", tone: "neutral" as const, actionLabel: "Connect", disabled: true };
           const info = providerInfo[provider];
+          let onAction: () => void;
+          if (provider === "GOOGLE_CALENDAR") {
+            onAction = status?.status === "CONNECTED" ? handleGoogleDisconnect : handleGoogleConnect;
+          } else if (provider === "MICROSOFT_CALENDAR") {
+            onAction = handleMicrosoftAction;
+          } else {
+            onAction = handleSlackAction;
+          }
           return (
             <IntegrationRow
               key={provider}
@@ -114,7 +151,7 @@ export default function IntegrationsSettings() {
               statusTone={display.tone}
               actionLabel={display.actionLabel}
               disabled={display.disabled}
-              onAction={() => setNotice({ name: info.displayName })}
+              onAction={onAction}
             />
           );
         })}
