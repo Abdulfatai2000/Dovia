@@ -50,6 +50,7 @@ export interface BaseProvider {
 }
 
 export interface CalendarProvider extends BaseProvider {
+  listCalendars(tokens: TokenSet): Promise<{ id: string; summary: string; primary: boolean; accessRole: string }[]>;
   listEvents(tokens: TokenSet, calendarId: string, timeMin: Date, timeMax: Date): Promise<ExternalCalendarEvent[]>;
   createEvent(tokens: TokenSet, calendarId: string, event: Partial<ExternalCalendarEvent>): Promise<ExternalCalendarEvent>;
   updateEvent(tokens: TokenSet, calendarId: string, eventId: string, event: Partial<ExternalCalendarEvent>): Promise<ExternalCalendarEvent>;
