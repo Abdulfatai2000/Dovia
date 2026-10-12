@@ -89,8 +89,25 @@ async function handleGoogleDisconnect() {
   }
 }
 
-async function handleMicrosoftAction() {
-  // Placeholder for Microsoft
+async function handleMicrosoftConnect() {
+  try {
+    const response = await fetch("/api/integrations/microsoft/connect");
+    const data = await response.json();
+    if (data.authUrl) {
+      window.location.href = data.authUrl;
+    }
+  } catch {
+    // Error handled by toast
+  }
+}
+
+async function handleMicrosoftDisconnect() {
+  try {
+    await fetch("/api/integrations/microsoft/disconnect", { method: "POST" });
+    window.location.reload();
+  } catch {
+    // Error handled by toast
+  }
 }
 
 async function handleSlackAction() {
@@ -137,7 +154,7 @@ export default function IntegrationsSettings() {
           if (provider === "GOOGLE_CALENDAR") {
             onAction = status?.status === "CONNECTED" ? handleGoogleDisconnect : handleGoogleConnect;
           } else if (provider === "MICROSOFT_CALENDAR") {
-            onAction = handleMicrosoftAction;
+            onAction = status?.status === "CONNECTED" ? handleMicrosoftDisconnect : handleMicrosoftConnect;
           } else {
             onAction = handleSlackAction;
           }
