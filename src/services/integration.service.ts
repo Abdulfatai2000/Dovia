@@ -16,6 +16,8 @@ export interface IntegrationStatusInfo {
 export interface IntegrationTokens {
   accessToken: string;
   refreshToken?: string;
+  expiresAt: Date;
+  scopes: string[];
 }
 
 async function getIntegrationModel() {
@@ -121,6 +123,8 @@ export async function getDecryptedTokens(workspaceId: string, provider: Integrat
   return {
     accessToken: decryptSecret(integration.encryptedAccessToken),
     refreshToken: integration.encryptedRefreshToken ? decryptSecret(integration.encryptedRefreshToken) : undefined,
+    expiresAt: integration.tokenExpiresAt || new Date(),
+    scopes: integration.scopes || [],
   };
 }
 
